@@ -1,5 +1,6 @@
-package kernel360.ckt.core.common;
+package kernel360.ckt.core.common.response;
 
+import kernel360.ckt.core.common.error.ErrorCode;
 import lombok.Getter;
 
 @Getter

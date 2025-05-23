@@ -1,8 +1,8 @@
 package kernel360.ckt.admin.common.exception;
 
-import kernel360.ckt.core.common.CustomException;
-import kernel360.ckt.core.common.ErrorCode;
-import kernel360.ckt.core.common.ErrorResponse;
+import kernel360.ckt.core.common.exception.CustomException;
+import kernel360.ckt.core.common.error.ErrorCode;
+import kernel360.ckt.core.common.response.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

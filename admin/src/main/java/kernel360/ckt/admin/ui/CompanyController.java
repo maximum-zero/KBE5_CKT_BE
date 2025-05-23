@@ -6,7 +6,7 @@ import kernel360.ckt.admin.ui.dto.response.CompanyCreateResponse;
 import kernel360.ckt.admin.application.CompanyService;
 import kernel360.ckt.admin.ui.dto.response.CompanyListResponse;
 import kernel360.ckt.admin.ui.dto.response.CompanyResponse;
-import kernel360.ckt.core.common.CommonResponse;
+import kernel360.ckt.core.common.response.CommonResponse;
 import kernel360.ckt.core.domain.entity.CompanyEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

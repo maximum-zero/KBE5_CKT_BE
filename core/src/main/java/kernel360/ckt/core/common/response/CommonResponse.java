@@ -1,4 +1,4 @@
-package kernel360.ckt.core.common;
+package kernel360.ckt.core.common.response;
 
 import lombok.Getter;
 
