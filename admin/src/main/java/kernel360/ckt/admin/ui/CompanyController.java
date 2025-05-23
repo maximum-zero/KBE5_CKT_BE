@@ -6,9 +6,9 @@ import kernel360.ckt.admin.ui.dto.response.CompanyCreateResponse;
 import kernel360.ckt.admin.application.CompanyService;
 import kernel360.ckt.admin.ui.dto.response.CompanyListResponse;
 import kernel360.ckt.admin.ui.dto.response.CompanyResponse;
+import kernel360.ckt.core.common.CommonResponse;
 import kernel360.ckt.core.domain.entity.CompanyEntity;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,41 +21,33 @@ public class CompanyController {
     private final CompanyService companyService;
 
     @GetMapping
-    ResponseEntity<CompanyListResponse> selectCompanyList() {
+    CommonResponse<CompanyListResponse> selectCompanyList() {
         final List<CompanyEntity> companyListEntity = companyService.findAll();
-        return ResponseEntity.ok(
-            CompanyListResponse.from(companyListEntity)
-        );
+        return CommonResponse.success(CompanyListResponse.from(companyListEntity));
     }
 
     @GetMapping("/{id}")
-    ResponseEntity<CompanyResponse> selectCompany(@PathVariable Long id) {
+    CommonResponse<CompanyResponse> selectCompany(@PathVariable Long id) {
         final CompanyEntity companyEntity = companyService.findById(id);
-        return ResponseEntity.ok(
-            CompanyResponse.from(companyEntity)
-        );
+        return CommonResponse.success(CompanyResponse.from(companyEntity));
     }
 
     @PostMapping
-    ResponseEntity<CompanyCreateResponse> createCompany(@RequestBody CompanyCreateRequest request) {
+    CommonResponse<CompanyCreateResponse> createCompany(@RequestBody CompanyCreateRequest request) {
         final CompanyEntity companyEntity = companyService.create(request);
-        return ResponseEntity.ok(
-            CompanyCreateResponse.from(companyEntity)
-        );
+        return CommonResponse.success(CompanyCreateResponse.from(companyEntity));
     }
 
     @PutMapping("/{id}")
-    ResponseEntity<CompanyResponse> updateCompany(@PathVariable Long id, @RequestBody CompanyUpdateRequest request) {
+    CommonResponse<CompanyResponse> updateCompany(@PathVariable Long id, @RequestBody CompanyUpdateRequest request) {
         final CompanyEntity companyEntity = companyService.update(id, request);
-        return ResponseEntity.ok(
-            CompanyResponse.from(companyEntity)
-        );
+        return CommonResponse.success(CompanyResponse.from(companyEntity));
     }
 
     @DeleteMapping("/{id}")
-    ResponseEntity<Void> deleteCompany(@PathVariable Long id) {
+    CommonResponse<Void> deleteCompany(@PathVariable Long id) {
         companyService.delete(id);
-        return ResponseEntity.ok(null);
+        return CommonResponse.success(null);
     }
 
 }
