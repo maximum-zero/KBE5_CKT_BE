@@ -6,9 +6,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 @Table(name = "company")
 @Entity
 public class CompanyEntity {
@@ -38,4 +36,21 @@ public class CompanyEntity {
     @Column
     private LocalDateTime updateAt;
 
+    private CompanyEntity(String email, String password, String name, String ceoName, String telNumber) {
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.ceoName = ceoName;
+        this.telNumber = telNumber;
+    }
+
+    public static CompanyEntity create(String email, String password, String name, String ceoName, String telNumber) {
+        return new CompanyEntity(email, password, name, ceoName, telNumber);
+    }
+
+    public void update(String name, String ceoName, String telNumber) {
+        this.name = name;
+        this.ceoName = ceoName;
+        this.telNumber = telNumber;
+    }
 }
