@@ -3,6 +3,8 @@ package kernel360.ckt.admin.application;
 import kernel360.ckt.admin.ui.dto.request.CompanyCreateRequest;
 import kernel360.ckt.admin.infra.repository.CompanyRepositoryImpl;
 import kernel360.ckt.admin.ui.dto.request.CompanyUpdateRequest;
+import kernel360.ckt.core.common.CompanyErrorCode;
+import kernel360.ckt.core.common.CustomException;
 import kernel360.ckt.core.domain.entity.CompanyEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,7 +23,7 @@ public class CompanyService {
 
     public CompanyEntity findById(Long companyId) {
         return companyRepositoryImpl.findById(companyId)
-            .orElseThrow(() -> new IllegalArgumentException("업체가 존재하지 않습니다."));
+            .orElseThrow(() -> new CustomException(CompanyErrorCode.COMPANY_NOT_FOUND));
     }
 
     public List<CompanyEntity> findAll() {
