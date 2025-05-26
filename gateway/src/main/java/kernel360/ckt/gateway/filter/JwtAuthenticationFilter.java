@@ -38,12 +38,21 @@ public class JwtAuthenticationFilter implements GlobalFilter {
         // token 헤더 가져오기
         String token = exchange.getRequest().getHeaders().getFirst("Token");
 
-        // 유효하지 않으면 401 반환
+        // 토큰이 없거나 유효하지 않으면 401 반환
         if (token == null || !jwtTokenProvider.validationToken(token)) {
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
             return exchange.getResponse().setComplete();
         }
 
-        return chain.filter(exchange);
+        // 토큰이 유효한 경우, 사용자 ID 추출 후 헤더에 추가
+        String userId = jwtTokenProvider.getUserId(token);
+
+        ServerWebExchange mutatedExchange = exchange.mutate()
+            .request(exchange.getRequest().mutate()
+                .header("X-User-Id", userId)
+                .build())
+            .build();
+
+        return chain.filter(mutatedExchange);
     }
 }
