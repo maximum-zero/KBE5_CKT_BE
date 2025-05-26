@@ -6,6 +6,9 @@ spring:
     gateway:
       routes:
         - id: admin-service
-          uri: http://localhost:8080  # admin 
+          uri: http://localhost:8080  # admin
           predicates:
             - Path=/api/v1/admin/**
+
+jwt:
+  secret: ${JWT_SECRET}
