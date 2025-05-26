@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @SpringBootApplication
 @EntityScan(basePackages = "kernel360.ckt.core")
 @ComponentScan(basePackages = {"kernel360.ckt.core", "kernel360.ckt.admin"})
-@EnableJpaRepositories(basePackages = "kernel360.ckt.core")
+@EnableJpaRepositories(basePackages = "kernel360.ckt.admin")
 public class CktAdminApplication {
 
     public static void main(String[] args) {
