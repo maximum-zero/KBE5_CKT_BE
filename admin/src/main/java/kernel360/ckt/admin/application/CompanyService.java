@@ -1,11 +1,11 @@
 package kernel360.ckt.admin.application;
 
 import kernel360.ckt.admin.ui.dto.request.CompanyCreateRequest;
-import kernel360.ckt.admin.infra.repository.CompanyRepositoryImpl;
 import kernel360.ckt.admin.ui.dto.request.CompanyUpdateRequest;
 import kernel360.ckt.core.common.error.CompanyErrorCode;
 import kernel360.ckt.core.common.exception.CustomException;
 import kernel360.ckt.core.domain.entity.CompanyEntity;
+import kernel360.ckt.core.repository.CompanyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,29 +15,29 @@ import java.util.List;
 @Service
 public class CompanyService {
 
-    private final CompanyRepositoryImpl companyRepositoryImpl;
+    private final CompanyRepository companyRepository;
 
     public CompanyEntity create(CompanyCreateRequest companyCreateRequest) {
-        return companyRepositoryImpl.save(companyCreateRequest.toEntity());
+        return companyRepository.save(companyCreateRequest.toEntity());
     }
 
     public CompanyEntity findById(Long companyId) {
-        return companyRepositoryImpl.findById(companyId)
+        return companyRepository.findById(companyId)
             .orElseThrow(() -> new CustomException(CompanyErrorCode.COMPANY_NOT_FOUND));
     }
 
     public List<CompanyEntity> findAll() {
-        return companyRepositoryImpl.findAll();
+        return companyRepository.findAll();
     }
 
     public CompanyEntity update(Long companyId, CompanyUpdateRequest companyUpdateRequest) {
         final CompanyEntity companyEntity = findById(companyId);
         companyEntity.update(companyUpdateRequest.name(), companyUpdateRequest.ceoName(), companyUpdateRequest.telNumber());
-        return companyRepositoryImpl.update(companyEntity);
+        return companyRepository.save(companyEntity);
     }
 
     public void delete(Long companyId) {
-        companyRepositoryImpl.delete(companyId);
+        companyRepository.deleteById(companyId);
     }
 
 }

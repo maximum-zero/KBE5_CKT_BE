@@ -7,8 +7,7 @@ import java.util.Optional;
 
 public interface CompanyRepository {
     CompanyEntity save(CompanyEntity companyEntity);
-    CompanyEntity update(CompanyEntity companyEntity);
-    void delete(Long companyId);
+    void deleteById(Long companyId);
     List<CompanyEntity> findAll();
     Optional<CompanyEntity> findById(Long companyId);
 }
