@@ -36,14 +36,14 @@ public class CompanyController {
 
     @PostMapping
     CommonResponse<CompanyCreateResponse> createCompany(@RequestBody CompanyCreateRequest request) {
-        final CreateCompanyCommand command = CreateCompanyCommand.from(request);
+        final CreateCompanyCommand command = request.toCommand();
         final CompanyEntity companyEntity = companyService.create(command);
         return CommonResponse.success(CompanyCreateResponse.from(companyEntity));
     }
 
     @PutMapping("/{id}")
     CommonResponse<CompanyResponse> updateCompany(@PathVariable Long id, @RequestBody CompanyUpdateRequest request) {
-        final UpdateCompanyCommand command = UpdateCompanyCommand.from(request);
+        final UpdateCompanyCommand command = request.toCommand();
         final CompanyEntity companyEntity = companyService.update(id, command);
         return CommonResponse.success(CompanyResponse.from(companyEntity));
     }

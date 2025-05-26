@@ -1,6 +1,6 @@
 package kernel360.ckt.admin.ui.dto.request;
 
-import kernel360.ckt.core.domain.entity.CompanyEntity;
+import kernel360.ckt.admin.application.command.CreateCompanyCommand;
 
 public record CompanyCreateRequest(
     String email,
@@ -9,8 +9,13 @@ public record CompanyCreateRequest(
     String ceoName,
     String telNumber
 ) {
-    public CompanyEntity toEntity() {
-        return CompanyEntity.create(email, password, name, ceoName, telNumber);
+    public CreateCompanyCommand toCommand() {
+        return new CreateCompanyCommand(
+            this.email,
+            this.password,
+            this.name,
+            this.ceoName,
+            this.telNumber
+        );
     }
-
 }
