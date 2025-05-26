@@ -1,5 +1,7 @@
 package kernel360.ckt.admin.application;
 
+import kernel360.ckt.admin.application.command.CreateCompanyCommand;
+import kernel360.ckt.admin.application.command.UpdateCompanyCommand;
 import kernel360.ckt.admin.ui.dto.request.CompanyCreateRequest;
 import kernel360.ckt.admin.ui.dto.request.CompanyUpdateRequest;
 import kernel360.ckt.core.common.error.CompanyErrorCode;
@@ -17,8 +19,8 @@ public class CompanyService {
 
     private final CompanyRepository companyRepository;
 
-    public CompanyEntity create(CompanyCreateRequest companyCreateRequest) {
-        return companyRepository.save(companyCreateRequest.toEntity());
+    public CompanyEntity create(CreateCompanyCommand createCompanyCommand) {
+        return companyRepository.save(createCompanyCommand.toEntity());
     }
 
     public CompanyEntity findById(Long companyId) {
@@ -30,9 +32,9 @@ public class CompanyService {
         return companyRepository.findAll();
     }
 
-    public CompanyEntity update(Long companyId, CompanyUpdateRequest companyUpdateRequest) {
+    public CompanyEntity update(Long companyId, UpdateCompanyCommand updateCompanyCommand) {
         final CompanyEntity companyEntity = findById(companyId);
-        companyEntity.update(companyUpdateRequest.name(), companyUpdateRequest.ceoName(), companyUpdateRequest.telNumber());
+        companyEntity.update(updateCompanyCommand.getName(), updateCompanyCommand.getCeoName(), updateCompanyCommand.getTelNumber());
         return companyRepository.save(companyEntity);
     }
 

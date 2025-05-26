@@ -1,5 +1,7 @@
 package kernel360.ckt.admin.ui;
 
+import kernel360.ckt.admin.application.command.CreateCompanyCommand;
+import kernel360.ckt.admin.application.command.UpdateCompanyCommand;
 import kernel360.ckt.admin.ui.dto.request.CompanyCreateRequest;
 import kernel360.ckt.admin.ui.dto.request.CompanyUpdateRequest;
 import kernel360.ckt.admin.ui.dto.response.CompanyCreateResponse;
@@ -34,13 +36,15 @@ public class CompanyController {
 
     @PostMapping
     CommonResponse<CompanyCreateResponse> createCompany(@RequestBody CompanyCreateRequest request) {
-        final CompanyEntity companyEntity = companyService.create(request);
+        final CreateCompanyCommand command = CreateCompanyCommand.from(request);
+        final CompanyEntity companyEntity = companyService.create(command);
         return CommonResponse.success(CompanyCreateResponse.from(companyEntity));
     }
 
     @PutMapping("/{id}")
     CommonResponse<CompanyResponse> updateCompany(@PathVariable Long id, @RequestBody CompanyUpdateRequest request) {
-        final CompanyEntity companyEntity = companyService.update(id, request);
+        final UpdateCompanyCommand command = UpdateCompanyCommand.from(request);
+        final CompanyEntity companyEntity = companyService.update(id, command);
         return CommonResponse.success(CompanyResponse.from(companyEntity));
     }
 
