@@ -22,8 +22,8 @@ public class CompanyController {
 
     @GetMapping
     CommonResponse<CompanyListResponse> selectCompanyList() {
-        final List<CompanyEntity> companyListEntity = companyService.findAll();
-        return CommonResponse.success(CompanyListResponse.from(companyListEntity));
+        final List<CompanyEntity> companies = companyService.findAll();
+        return CommonResponse.success(CompanyListResponse.from(companies));
     }
 
     @GetMapping("/{id}")
