@@ -7,6 +7,8 @@ import kernel360.ckt.core.domain.entity.CustomerEntity;
 import kernel360.ckt.core.domain.entity.CustomerStatus;
 import kernel360.ckt.core.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -82,6 +84,12 @@ public class CustomerService {
         return customerRepository.findByCustomerNameContaining(customerName).stream()
             .map(this::toResponse)
             .collect(Collectors.toList());
+    }
+
+    // paging
+    public Page<CustomerResponse> getPagedCustomers(Pageable pageable) {
+        return customerRepository.findAll(pageable)
+            .map(this::toResponse);
     }
 
 }

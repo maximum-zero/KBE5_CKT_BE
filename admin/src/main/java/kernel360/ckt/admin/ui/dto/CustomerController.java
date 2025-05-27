@@ -4,6 +4,9 @@ import kernel360.ckt.admin.application.command.CustomerService;
 import kernel360.ckt.admin.ui.dto.request.CustomerRequest;
 import kernel360.ckt.admin.ui.dto.response.CustomerResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,6 +48,14 @@ public class CustomerController {
     @GetMapping("/search")
     public ResponseEntity<List<CustomerResponse>> search(@RequestParam String customerName) {
         return ResponseEntity.ok(customerService.searchByName(customerName));
+    }
+
+    @GetMapping("/paging")
+    public ResponseEntity<Page<CustomerResponse>> getPagedCustomers(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(customerService.getPagedCustomers(pageable));
     }
 
 }
