@@ -5,11 +5,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
+import org.springframework.core.io.buffer.DataBuffer;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Component
@@ -38,10 +41,16 @@ public class JwtAuthenticationFilter implements GlobalFilter {
         // token 헤더 가져오기
         String token = exchange.getRequest().getHeaders().getFirst("Token");
 
-        // 토큰이 없거나 유효하지 않으면 401 반환
+        // 토큰이 없거나 유효하지 않으면 401 응답 본문 포함하여 반환
         if (token == null || !jwtTokenProvider.validationToken(token)) {
+            String responseBody = "{\"code\":401,\"message\":\"Unauthorized\"}";
+            byte[] bytes = responseBody.getBytes(StandardCharsets.UTF_8);
+            DataBuffer buffer = exchange.getResponse().bufferFactory().wrap(bytes);
+
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-            return exchange.getResponse().setComplete();
+            exchange.getResponse().getHeaders().setContentType(MediaType.APPLICATION_JSON);
+
+            return exchange.getResponse().writeWith(Mono.just(buffer));
         }
 
         // 토큰이 유효한 경우, 사용자 ID 추출 후 헤더에 추가
