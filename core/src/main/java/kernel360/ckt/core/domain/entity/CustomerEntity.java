@@ -3,8 +3,6 @@ package kernel360.ckt.core.domain.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Table(name = "customer")
 @Getter
@@ -12,7 +10,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class CustomerEntity {
+public class CustomerEntity extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,6 +35,4 @@ public class CustomerEntity {
     @Column(nullable = false)
     private String status;
 
-    private LocalDateTime createAt;
-    private LocalDateTime updateAt;
 }
