@@ -38,9 +38,8 @@ public class VehicleEntity {
     @Column(length = 10)
     private String transmissionType;
 
-    @Enumerated(EnumType.STRING)
-    @Column
-    private VehicleStatus status;
+    @Column(length = 20)
+    private String status;
 
     @Lob
     private String memo;
@@ -61,7 +60,7 @@ public class VehicleEntity {
         this.batteryVoltage = batteryVoltage;
         this.fuelType = fuelType;
         this.transmissionType = transmissionType;
-        this.status = status;
+        this.status = status.name();
         this.memo = memo;
         this.createAt = LocalDateTime.now();
     }
@@ -73,8 +72,13 @@ public class VehicleEntity {
             batteryVoltage, fuelType, transmissionType, status, memo);
     }
 
+    // String -> Enum
+    public VehicleStatus getStatusAsEnum() {
+        return VehicleStatus.valueOf(this.status);
+    }
+
     public void updateStatus(VehicleStatus status) {
-        this.status = status;
+        this.status = status.name();
         this.updateAt = LocalDateTime.now();
     }
 

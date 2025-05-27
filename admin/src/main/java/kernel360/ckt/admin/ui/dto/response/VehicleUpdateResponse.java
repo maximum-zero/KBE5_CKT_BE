@@ -11,7 +11,7 @@ public record VehicleUpdateResponse(
     public static VehicleUpdateResponse from(VehicleEntity vehicleEntity) {
         return new VehicleUpdateResponse(
             vehicleEntity.getId(),
-            vehicleEntity.getStatus(),
+            vehicleEntity.getStatusAsEnum(),
             vehicleEntity.getMemo()
         );
     }
