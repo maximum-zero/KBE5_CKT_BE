@@ -1,0 +1,8 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: admin-service
+          uri: http://admin:8080
+          predicates:
+            - Path=/api/v1/admin/**

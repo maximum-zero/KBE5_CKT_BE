@@ -2,13 +2,18 @@ server:
   port: 8081  # 게이트웨이 포트
 
 spring:
+  profiles:
+    active: local # 기본 프로파일은 local
+
   cloud:
     gateway:
-      routes:
-        - id: admin-service
-          uri: http://localhost:8080  # admin
-          predicates:
-            - Path=/api/v1/admin/**
+      # 각 profile에서 route만 분기되므로 여긴 공통 설정만 유지
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
 
 jwt:
   secret: ${JWT_SECRET}
