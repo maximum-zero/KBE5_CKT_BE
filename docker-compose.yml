@@ -28,6 +28,16 @@ services:
     networks:
       - ckt_network  # 네트워크 이름 변경
 
+  gateway:
+    build:
+      context: ./gateway
+    ports:
+      - "8081:8081"
+    depends_on:
+      - admin
+    networks:
+      - ckt_network
+
 volumes:
   db_data:
 
