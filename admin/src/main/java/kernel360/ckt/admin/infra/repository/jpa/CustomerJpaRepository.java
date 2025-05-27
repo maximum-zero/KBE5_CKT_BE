@@ -5,4 +5,5 @@ import kernel360.ckt.core.repository.CustomerRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CustomerJpaRepository extends JpaRepository<CustomerEntity, Long>, CustomerRepository {
+
 }

@@ -10,4 +10,5 @@ public interface CustomerRepository {
     void deleteById(Long id);
     List<CustomerEntity> findAll();
     Optional<CustomerEntity> findById(Long id);
+    List<CustomerEntity> findByCustomerNameContaining(String name);
 }

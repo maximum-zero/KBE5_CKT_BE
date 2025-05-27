@@ -76,4 +76,12 @@ public class CustomerService {
             CustomerStatus.valueOf(customer.getStatus())
         );
     }
+
+    // 고객 검색
+    public List<CustomerResponse> searchByName(String customerName) {
+        return customerRepository.findByCustomerNameContaining(customerName).stream()
+            .map(this::toResponse)
+            .collect(Collectors.toList());
+    }
+
 }

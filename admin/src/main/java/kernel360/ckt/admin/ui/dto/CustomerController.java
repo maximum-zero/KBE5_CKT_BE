@@ -41,4 +41,10 @@ public class CustomerController {
         customerService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<CustomerResponse>> search(@RequestParam String customerName) {
+        return ResponseEntity.ok(customerService.searchByName(customerName));
+    }
+
 }
