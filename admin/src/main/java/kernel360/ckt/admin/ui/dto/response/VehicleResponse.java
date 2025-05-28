@@ -13,6 +13,7 @@ public record VehicleResponse(
     String fuelType,
     String transmissionType,
     VehicleStatus status,
+    String statusName,
     String memo
 ) {
     public static VehicleResponse from(VehicleEntity vehicleEntity) {
@@ -26,6 +27,7 @@ public record VehicleResponse(
             vehicleEntity.getFuelType(),
             vehicleEntity.getTransmissionType(),
             vehicleEntity.getStatusAsEnum(),
+            vehicleEntity.getStatusAsEnum().getDescription(),
             vehicleEntity.getMemo()
         );
     }
