@@ -11,7 +11,6 @@ public record VehicleCreateRequest(
     String batteryVoltage,
     String fuelType,
     String transmissionType,
-    VehicleStatus status,
     String memo
 ) {
     public CreateVehicleCommand toCommand() {
@@ -23,7 +22,7 @@ public record VehicleCreateRequest(
             this.batteryVoltage,
             this.fuelType,
             this.transmissionType,
-            this.status,
+            VehicleStatus.AVAILABLE,
             this.memo
         );
     }
