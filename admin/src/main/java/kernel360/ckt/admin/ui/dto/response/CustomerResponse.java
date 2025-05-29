@@ -1,14 +1,33 @@
 package kernel360.ckt.admin.ui.dto.response;
 
-import kernel360.ckt.core.domain.entity.CustomerStatus;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import kernel360.ckt.core.domain.entity.CustomerEntity;
 
-@Data
-@AllArgsConstructor
-public class CustomerResponse {
-    private Long id;
-    private String customerName;
-    private String phoneNumber;
-    private CustomerStatus status;
+public record CustomerResponse (
+    Long id,
+    String customerType,
+    String customerName,
+    String phoneNumber,
+    String licenseNumber,
+    String zipCode,
+    String address,
+    String detailAddress,
+    String birthday,
+    String status,
+    String memo
+){
+    public static CustomerResponse from(CustomerEntity customerEntity) {
+        return new CustomerResponse(
+            customerEntity.getId(),
+            customerEntity.getCustomerType(),
+            customerEntity.getCustomerName(),
+            customerEntity.getPhoneNumber(),
+            customerEntity.getLicenseNumber(),
+            customerEntity.getZipCode(),
+            customerEntity.getAddress(),
+            customerEntity.getDetailedAddress(),
+            customerEntity.getBirthday(),
+            customerEntity.getStatus(),
+            customerEntity.getMemo()
+        );
+    }
 }
