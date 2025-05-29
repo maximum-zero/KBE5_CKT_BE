@@ -26,8 +26,8 @@ public record VehicleResponse(
             vehicleEntity.getBatteryVoltage(),
             vehicleEntity.getFuelType(),
             vehicleEntity.getTransmissionType(),
-            vehicleEntity.getStatusAsEnum(),
-            vehicleEntity.getStatusAsEnum().getDescription(),
+            vehicleEntity.getStatus(),
+            vehicleEntity.getStatus().getDescription(),
             vehicleEntity.getMemo()
         );
     }
