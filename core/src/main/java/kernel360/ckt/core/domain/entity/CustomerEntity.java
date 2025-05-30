@@ -19,9 +19,10 @@ public class CustomerEntity extends BaseTimeEntity {
     @Column(nullable = false)
     private String customerType;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String phoneNumber;
 
+    @Column(nullable = false, unique = true)
     private String licenseNumber;
     private String zipCode;
     private String address;
