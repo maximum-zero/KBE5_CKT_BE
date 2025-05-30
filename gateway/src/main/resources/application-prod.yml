@@ -3,6 +3,6 @@ spring:
     gateway:
       routes:
         - id: admin-service
-          uri: http://admin:8080
+          uri: http://localhost:8080
           predicates:
             - Path=/api/v1/admin/**
