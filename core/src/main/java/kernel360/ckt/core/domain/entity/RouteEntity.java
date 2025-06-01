@@ -66,4 +66,12 @@ public class RouteEntity {
         return new RouteEntity(drivingLog, RouteStatus.ACTIVE, startLat, startLon, startOdometer, startAt);
     }
 
+    public void completed(double endLat, double endLon, long endOdometer, LocalDateTime endAt) {
+        this.status = RouteStatus.COMPLETED;
+        this.endLat = endLat;
+        this.endLon = endLon;
+        this.endOdometer = endOdometer;
+        this.totalDistance = endOdometer - this.startOdometer;
+        this.endAt = endAt;
+    }
 }

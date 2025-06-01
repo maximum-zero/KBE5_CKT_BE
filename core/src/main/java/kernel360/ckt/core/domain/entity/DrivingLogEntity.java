@@ -22,7 +22,9 @@ public class DrivingLogEntity {
     @JoinColumn(name = "rental_id", unique = true)
     private RentalEntity rental;
 
-    private Long vehicleId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "vehicle_id", nullable = false)
+    private VehicleEntity vehicle;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -31,19 +33,29 @@ public class DrivingLogEntity {
     @Lob
     private String memo;
 
-    // TODO: 감사 listener 로 변경 필요- 하경님 PR
     @Column
     private LocalDateTime createAt;
 
     @Column
     private LocalDateTime updateAt;
 
-    private DrivingLogEntity(RentalEntity rental, DrivingLogStatus status) {
+    private DrivingLogEntity(RentalEntity rental, VehicleEntity vehicle, DrivingLogStatus status) {
         this.rental = rental;
+        this.vehicle = vehicle;
         this.status = status;
+        this.createAt = LocalDateTime.now();
     }
 
-    public static DrivingLogEntity create(RentalEntity rental) {
-        return new DrivingLogEntity(rental, DrivingLogStatus.STARTED);
+    public static DrivingLogEntity create(RentalEntity rental, VehicleEntity vehicle) {
+        return new DrivingLogEntity(rental, vehicle, DrivingLogStatus.STARTED);
+    }
+
+    public void inProgress() {
+        this.status = DrivingLogStatus.IN_PROGRESS;
+    }
+
+    public void completed() {
+        this.status = DrivingLogStatus.COMPLETED;
+        this.updateAt = LocalDateTime.now();
     }
 }

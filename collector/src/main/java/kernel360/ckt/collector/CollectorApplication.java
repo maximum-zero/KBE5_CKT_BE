@@ -7,7 +7,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 
 @EntityScan(basePackages = "kernel360.ckt.core")
-@ComponentScan(basePackages = {"kernel360.ckt.core"})
+@ComponentScan(basePackages = {"kernel360.ckt.core", "kernel360.ckt.collector"})
 @SpringBootApplication
 public class CollectorApplication {
     public static void main(String[] args) {

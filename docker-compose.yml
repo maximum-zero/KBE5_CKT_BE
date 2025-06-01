@@ -55,6 +55,20 @@ services:
     networks:
       - ckt_network
 
+  collector:
+    build:
+      context: ./collector
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://${DB_URL}:3306/${DB_DATABASE}
+      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "8090:8090"
+    networks:
+      - ckt_network
+
 volumes:
   db_data:
 

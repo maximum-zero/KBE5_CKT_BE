@@ -21,32 +21,44 @@ public class RentalEntity {
     @JoinColumn(name = "company_id")
     private CompanyEntity company;
 
-    // TODO: 차량 엔티티로 변경 필요- 현경님 PR
-    @Column(nullable = false)
-    private Long vehicleId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "vehicle_id", nullable = false)
+    private VehicleEntity vehicle;
 
-    // TODO: 고객 엔티티로 변경 필요 - 하경님 PR
-    @Column(nullable = false)
-    private Long customerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id")
+    private CustomerEntity customer;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private RentalStatus status;
 
-    // TODO: 감사 listener 로 변경 - 하경님 PR
+    @Column
+    private LocalDateTime pickupAt;
+
+    @Column
+    private LocalDateTime returnAt;
+
     @Column
     private LocalDateTime createAt;
 
     @Column
     private LocalDateTime updateAt;
 
-    private RentalEntity(Long vehicleId, RentalStatus status) {
-        this.vehicleId = vehicleId;
+    private RentalEntity(VehicleEntity vehicle, LocalDateTime pickupAt, RentalStatus status) {
+        this.vehicle = vehicle;
         this.status = status;
+        this.pickupAt = pickupAt;
+        this.createAt = LocalDateTime.now();
     }
 
-    public static RentalEntity create(Long vehicleId) {
-        return new RentalEntity(vehicleId, RentalStatus.RENTED);
+    public static RentalEntity create(VehicleEntity vehicle, LocalDateTime pickupAt) {
+        return new RentalEntity(vehicle, pickupAt, RentalStatus.RENTED);
+    }
+
+    public void returned(LocalDateTime returnAt) {
+        this.status = RentalStatus.RENTED;
+        this.returnAt = returnAt;
     }
 
 }

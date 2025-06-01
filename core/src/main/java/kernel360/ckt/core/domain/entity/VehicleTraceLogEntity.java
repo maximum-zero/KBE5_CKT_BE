@@ -1,11 +1,15 @@
 package kernel360.ckt.core.domain.entity;
 
 import jakarta.persistence.*;
+import java.util.List;
+import kernel360.ckt.core.domain.dto.CycleInformation;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -18,13 +22,24 @@ public class VehicleTraceLogEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "route_id", unique = true)
+    @JoinColumn(name = "route_id")
     private RouteEntity route;
 
-    @Lob
-    private String traceDataJson;
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "trace_data_json", columnDefinition = "json")
+    private List<CycleInformation> traceDataJson;
 
     @Column
     private LocalDateTime occurredAt;
+
+    private VehicleTraceLogEntity(RouteEntity route, List<CycleInformation> traceDataJson, LocalDateTime occurredAt) {
+        this.route = route;
+        this.traceDataJson = traceDataJson;
+        this.occurredAt = occurredAt;
+    }
+
+    public static VehicleTraceLogEntity create(RouteEntity route, List<CycleInformation> traceDataJson, LocalDateTime occurredAt) {
+        return new VehicleTraceLogEntity(route, traceDataJson, occurredAt);
+    }
 
 }
