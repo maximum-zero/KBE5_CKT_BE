@@ -42,4 +42,5 @@ public class CompanyService {
         companyRepository.deleteById(companyId);
     }
 
+    public CompanyEntity findMyCompany(Long companyId) { return findById(companyId); }
 }
