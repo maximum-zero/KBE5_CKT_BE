@@ -1,5 +1,6 @@
 package kernel360.ckt.admin.infra.repository.jpa;
 
+import kernel360.ckt.admin.ui.dto.response.DailyVehicleLogResponse;
 import kernel360.ckt.admin.ui.dto.response.VehicleLogSummaryResponse;
 import kernel360.ckt.admin.ui.dto.response.WeeklyVehicleLogResponse;
 import kernel360.ckt.core.domain.entity.RouteEntity;
@@ -68,6 +69,28 @@ public interface RouteJpaRepository extends Repository<RouteEntity, Long> {
     List<WeeklyVehicleLogResponse> findWeeklyVehicleLogSummary(
         @Param("startDate") LocalDateTime startDate,
         @Param("endDate")   LocalDateTime endDate,
+        @Param("registrationNumber") String registrationNumber
+    );
+
+    @Query("""
+SELECT new kernel360.ckt.admin.ui.dto.response.DailyVehicleLogResponse(
+    FUNCTION('DATE', r.startAt),
+    FUNCTION('DAYNAME', r.startAt),
+    SUM(r.totalDistance),
+    CAST(FUNCTION('SEC_TO_TIME', SUM(FUNCTION('TIMESTAMPDIFF', SECOND, r.startAt, r.endAt))) AS string)
+)
+FROM RouteEntity r
+JOIN r.drivingLog dl
+JOIN dl.rental rent
+JOIN rent.vehicle v
+WHERE r.startAt BETWEEN :startDate AND :endDate
+  AND v.registrationNumber = :registrationNumber
+GROUP BY FUNCTION('DATE', r.startAt), FUNCTION('DAYNAME', r.startAt)
+ORDER BY FUNCTION('DATE', r.startAt)
+""")
+    List<DailyVehicleLogResponse> findDailyVehicleLogSummary(
+        @Param("startDate") LocalDateTime startDate,
+        @Param("endDate") LocalDateTime endDate,
         @Param("registrationNumber") String registrationNumber
     );
 

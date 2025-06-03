@@ -1,12 +1,15 @@
 package kernel360.ckt.admin.ui;
 
 import kernel360.ckt.admin.application.LogSummaryService;
+import kernel360.ckt.admin.ui.dto.response.DailyVehicleLogResponse;
 import kernel360.ckt.admin.ui.dto.response.VehicleLogSummaryResponse;
 import kernel360.ckt.admin.ui.dto.response.WeeklyVehicleLogResponse;
+import kernel360.ckt.core.common.response.CommonResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -34,5 +37,17 @@ public class LogSummaryController {
         @RequestParam String registrationNumber
     ) {
         return logSummaryService.getWeeklyVehicleLogSummary(from, to, registrationNumber);
+    }
+
+    @GetMapping("/daily")
+    public CommonResponse<List<DailyVehicleLogResponse>> getDailySummary(
+        @RequestParam
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate weekStart,
+        @RequestParam
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate weekEnd,
+        @RequestParam String registrationNumber
+    ) {
+        var dailyList = logSummaryService.getDailyVehicleLogSummary(weekStart, weekEnd, registrationNumber);
+        return CommonResponse.success(dailyList);
     }
 }
