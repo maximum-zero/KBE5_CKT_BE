@@ -2,6 +2,7 @@ package kernel360.ckt.admin.ui;
 
 import kernel360.ckt.admin.application.LogSummaryService;
 import kernel360.ckt.admin.ui.dto.response.VehicleLogSummaryResponse;
+import kernel360.ckt.admin.ui.dto.response.WeeklyVehicleLogResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
@@ -24,5 +25,14 @@ public class LogSummaryController {
         @RequestParam(required = false) String driverName
     ) {
         return logSummaryService.getVehicleLogSummary(from, to, registrationNumber, driverName);
+    }
+
+    @GetMapping("/weekly")
+    public List<WeeklyVehicleLogResponse> getWeeklySummary(
+        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from,
+        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime to,
+        @RequestParam String registrationNumber
+    ) {
+        return logSummaryService.getWeeklyVehicleLogSummary(from, to, registrationNumber);
     }
 }

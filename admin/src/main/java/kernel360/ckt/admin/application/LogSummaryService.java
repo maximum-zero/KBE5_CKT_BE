@@ -2,6 +2,7 @@ package kernel360.ckt.admin.application;
 
 import kernel360.ckt.admin.infra.repository.jpa.RouteJpaRepository;
 import kernel360.ckt.admin.ui.dto.response.VehicleLogSummaryResponse;
+import kernel360.ckt.admin.ui.dto.response.WeeklyVehicleLogResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,5 +22,9 @@ public class LogSummaryService {
         String driverName
     ) {
         return routeJpaRepository.findVehicleLogSummaryBetween(from, to, registrationNumber, driverName);
+    }
+
+    public List<WeeklyVehicleLogResponse> getWeeklyVehicleLogSummary(LocalDateTime from, LocalDateTime to, String registrationNumber) {
+        return routeJpaRepository.findWeeklyVehicleLogSummary(from, to, registrationNumber);
     }
 }
