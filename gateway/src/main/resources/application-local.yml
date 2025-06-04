@@ -1,8 +1,4 @@
-spring:
-  cloud:
-    gateway:
-      routes:
-        - id: admin-service
-          uri: http://localhost:8080
-          predicates:
-            - Path=/api/v1/admin/**
+backend:
+  auth-url: http://localhost:8082
+  admin-url: http://localhost:8080
+  frontend-origin: http://localhost:5173

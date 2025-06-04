@@ -1,0 +1,29 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+          - id: auth
+            uri: http://auth:8082
+            predicates:
+              - Path=/api/v1/auth/**
+          - id: admin
+            uri: http://admin:8080
+            predicates:
+              - Path=/api/v1/companies/**
+          - id: customer
+            uri: http://admin:8080
+            predicates:
+              - Path=/api/v1/customers/**
+          - id: vehicle
+            uri: http://admin:8080
+            predicates:
+              - Path=/api/v1/vehicles/**
+          - id: logs
+            uri: http://admin:8080
+            predicates:
+              - Path=/api/v1/logs/**
+
+backend:
+  frontend-origin: http://localhost:5173
+  auth-url: http://auth:8082
+  admin-url: http://admin:8080
