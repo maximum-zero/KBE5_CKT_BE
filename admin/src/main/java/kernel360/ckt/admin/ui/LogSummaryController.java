@@ -77,7 +77,7 @@ public class LogSummaryController {
 
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
-            "attachment; filename*=UTF-8''" + encodedFileName); // ← 이 형식이 중요!
+            "attachment; filename*=UTF-8''" + encodedFileName);
 
         response.getOutputStream().write(excelBytes);
         response.getOutputStream().flush();
