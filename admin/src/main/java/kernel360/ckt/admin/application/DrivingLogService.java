@@ -7,6 +7,8 @@ import kernel360.ckt.core.domain.entity.RouteEntity;
 import kernel360.ckt.core.repository.DrivingLogRepository;
 import kernel360.ckt.core.repository.RouteRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,14 +22,13 @@ public class DrivingLogService {
     private final RouteRepository routeRepository;
 
     @Transactional
-    public DrivingLogListResponse getDrivingLogList() {
-        List<DrivingLogEntity> drivingLogs = drivingLogRepository.findAll();
-
-        List<RouteEntity> allRoutes = routeRepository.findByDrivingLogIn(drivingLogs);
+    public DrivingLogListResponse getDrivingLogList(Pageable pageable) {
+        Page<DrivingLogEntity> drivingLogPage = drivingLogRepository.findAllByOrderByCreateAtDesc(pageable);
+        List<RouteEntity> allRoutes = routeRepository.findByDrivingLogIn(drivingLogPage.getContent());
 
         Map<Long, List<RouteEntity>> routeMap = allRoutes.stream()
             .collect(Collectors.groupingBy(route -> route.getDrivingLog().getId()));
 
-        return DrivingLogListResponse.from(drivingLogs, routeMap);
+        return DrivingLogListResponse.from(drivingLogPage, routeMap);
     }
 }
