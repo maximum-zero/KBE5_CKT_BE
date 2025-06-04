@@ -41,7 +41,7 @@ public interface RouteJpaRepository extends Repository<RouteEntity, Long> {
         @Param("driverName") String driverName
     );
 
-    // ── 주간 운행 통계 ─────────────────────────────────────────────────────────────
+    // 주간 운행 통계
     @Query("""
     SELECT new kernel360.ckt.admin.ui.dto.response.WeeklyVehicleLogResponse(
         CAST(
@@ -72,22 +72,23 @@ public interface RouteJpaRepository extends Repository<RouteEntity, Long> {
         @Param("registrationNumber") String registrationNumber
     );
 
+    // 일별 운행 통계
     @Query("""
-SELECT new kernel360.ckt.admin.ui.dto.response.DailyVehicleLogResponse(
-    FUNCTION('DATE', r.startAt),
-    FUNCTION('DAYNAME', r.startAt),
-    SUM(r.totalDistance),
-    CAST(FUNCTION('SEC_TO_TIME', SUM(FUNCTION('TIMESTAMPDIFF', SECOND, r.startAt, r.endAt))) AS string)
-)
-FROM RouteEntity r
-JOIN r.drivingLog dl
-JOIN dl.rental rent
-JOIN rent.vehicle v
-WHERE r.startAt BETWEEN :startDate AND :endDate
-  AND v.registrationNumber = :registrationNumber
-GROUP BY FUNCTION('DATE', r.startAt), FUNCTION('DAYNAME', r.startAt)
-ORDER BY FUNCTION('DATE', r.startAt)
-""")
+        SELECT new kernel360.ckt.admin.ui.dto.response.DailyVehicleLogResponse(
+            FUNCTION('DATE', r.startAt),
+            FUNCTION('DAYNAME', r.startAt),
+            SUM(r.totalDistance),
+            CAST(FUNCTION('SEC_TO_TIME', SUM(FUNCTION('TIMESTAMPDIFF', SECOND, r.startAt, r.endAt))) AS string)
+        )
+        FROM RouteEntity r
+        JOIN r.drivingLog dl
+        JOIN dl.rental rent
+        JOIN rent.vehicle v
+        WHERE r.startAt BETWEEN :startDate AND :endDate
+          AND v.registrationNumber = :registrationNumber
+        GROUP BY FUNCTION('DATE', r.startAt), FUNCTION('DAYNAME', r.startAt)
+        ORDER BY FUNCTION('DATE', r.startAt)
+        """)
     List<DailyVehicleLogResponse> findDailyVehicleLogSummary(
         @Param("startDate") LocalDateTime startDate,
         @Param("endDate") LocalDateTime endDate,
