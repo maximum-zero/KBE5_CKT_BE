@@ -20,9 +20,11 @@ public class DrivingLogController {
 
     @GetMapping
     public CommonResponse<DrivingLogListResponse> getAllDrivingLogs(
+        @RequestParam(required = false) String vehicleNumber,
+        @RequestParam(required = false) String userName,
         @PageableDefault(size = 10, sort = "createAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        DrivingLogListResponse response = drivingLogService.getDrivingLogList(pageable);
+        DrivingLogListResponse response = drivingLogService.getDrivingLogList(vehicleNumber, userName, pageable);
         return CommonResponse.success(response);
     }
 }

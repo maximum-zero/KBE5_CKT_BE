@@ -22,8 +22,19 @@ public class DrivingLogService {
     private final RouteRepository routeRepository;
 
     @Transactional
-    public DrivingLogListResponse getDrivingLogList(Pageable pageable) {
-        Page<DrivingLogEntity> drivingLogPage = drivingLogRepository.findAllByOrderByCreateAtDesc(pageable);
+    public DrivingLogListResponse getDrivingLogList(
+        String vehicleNumber,
+        String userName,
+        Pageable pageable
+        ) {
+
+        Page<DrivingLogEntity> drivingLogPage = drivingLogRepository.searchDrivingLogs(
+            vehicleNumber,
+            userName,
+            pageable
+        );
+        //Page<DrivingLogEntity> drivingLogPage = drivingLogRepository.findAllByOrderByCreateAtDesc(pageable);
+
         List<RouteEntity> allRoutes = routeRepository.findByDrivingLogIn(drivingLogPage.getContent());
 
         Map<Long, List<RouteEntity>> routeMap = allRoutes.stream()

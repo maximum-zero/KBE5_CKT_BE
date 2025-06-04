@@ -9,7 +9,8 @@ import java.util.Optional;
 
 public interface DrivingLogRepository {
     DrivingLogEntity save(DrivingLogEntity drivingLog);
-    Page<DrivingLogEntity> findAllByOrderByCreateAtDesc(Pageable pageable);
+//    Page<DrivingLogEntity> findAllByOrderByCreateAtDesc(Pageable pageable);
+    Page<DrivingLogEntity> searchDrivingLogs(String vehicleNumber, String userName, Pageable pageable);
 
     Optional<DrivingLogEntity> findFirstByVehicleIdAndStatusOrderByCreateAtDesc(Long vehicleId, DrivingLogStatus status);
     Optional<DrivingLogEntity> findFirstByRentalIdAndStatus(Long rentalId, DrivingLogStatus status);
