@@ -1,5 +1,7 @@
 package kernel360.ckt.admin.ui;
 
+import jakarta.servlet.http.HttpServletResponse;
+import kernel360.ckt.admin.application.ExcelExportService;
 import kernel360.ckt.admin.application.LogSummaryService;
 import kernel360.ckt.admin.ui.dto.response.DailyVehicleLogResponse;
 import kernel360.ckt.admin.ui.dto.response.VehicleLogSummaryResponse;
@@ -7,10 +9,14 @@ import kernel360.ckt.admin.ui.dto.response.WeeklyVehicleLogResponse;
 import kernel360.ckt.core.common.response.CommonResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.web.bind.annotation.*;import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
@@ -19,6 +25,7 @@ import java.util.List;
 public class LogSummaryController {
 
     private final LogSummaryService logSummaryService;
+    private final ExcelExportService excelExportService;
 
     @GetMapping
     public List<VehicleLogSummaryResponse> getSummary(
@@ -50,4 +57,30 @@ public class LogSummaryController {
         var dailyList = logSummaryService.getDailyVehicleLogSummary(weekStart, weekEnd, registrationNumber);
         return CommonResponse.success(dailyList);
     }
+
+    @GetMapping("/excel")
+    public void downloadSummaryExcel(
+        @RequestParam("from") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from,
+        @RequestParam("to")   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime to,
+        @RequestParam("registrationNumber") String registrationNumber,
+        HttpServletResponse response
+    ) throws IOException {
+
+        byte[] excelBytes = excelExportService.createExcel(from, to, registrationNumber, null);
+
+        // 파일명: “운행기록부_yyyyMMdd_HHmmss.xlsx”
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+        String fileName = "운행기록부_" + timestamp + ".xlsx";
+
+        // 한글 인코딩 처리
+        String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8).replaceAll("\\+", "%20");
+
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
+            "attachment; filename*=UTF-8''" + encodedFileName); // ← 이 형식이 중요!
+
+        response.getOutputStream().write(excelBytes);
+        response.getOutputStream().flush();
+    }
+
 }
