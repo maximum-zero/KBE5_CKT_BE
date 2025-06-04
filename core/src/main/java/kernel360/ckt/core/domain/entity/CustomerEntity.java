@@ -1,6 +1,7 @@
 package kernel360.ckt.core.domain.entity;
 
 import jakarta.persistence.*;
+import kernel360.ckt.core.domain.enums.CustomerStatus;
 import lombok.*;
 
 @Getter
@@ -15,9 +16,6 @@ public class CustomerEntity extends BaseTimeEntity {
 
     @Column(nullable = false)
     private String customerName;
-
-    @Column(nullable = false)
-    private String customerType;
 
     @Column(nullable = false, unique = true)
     private String phoneNumber;
@@ -37,7 +35,6 @@ public class CustomerEntity extends BaseTimeEntity {
     private String status;
 
     public CustomerEntity(String customerName,
-                          String customerType,
                           String phoneNumber,
                           String licenseNumber,
                           String zipCode,
@@ -47,7 +44,6 @@ public class CustomerEntity extends BaseTimeEntity {
                           String memo,
                           String status) {
         this.customerName = customerName;
-        this.customerType = customerType;
         this.phoneNumber = phoneNumber;
         this.licenseNumber = licenseNumber;
         this.zipCode = zipCode;
@@ -60,7 +56,6 @@ public class CustomerEntity extends BaseTimeEntity {
 
     public static CustomerEntity create(
         String customerName,
-        String customerType,
         String phoneNumber,
         String licenseNumber,
         String zipCode,
@@ -71,7 +66,6 @@ public class CustomerEntity extends BaseTimeEntity {
     ) {
         return new CustomerEntity(
             customerName,
-            customerType,
             phoneNumber,
             licenseNumber,
             zipCode,
@@ -84,7 +78,6 @@ public class CustomerEntity extends BaseTimeEntity {
     }
 
     public void updateBasicInfo(String customerName,
-                                String customerType,
                                 String phoneNumber,
                                 String licenseNumber,
                                 String zipCode,
@@ -94,7 +87,6 @@ public class CustomerEntity extends BaseTimeEntity {
                                 String birthday,
                                 String memo) {
                                                 this.customerName = customerName;
-                                                this.customerType = customerType;
                                                 this.phoneNumber = phoneNumber;
                                                 this.licenseNumber = licenseNumber;
                                                 this.zipCode = zipCode;

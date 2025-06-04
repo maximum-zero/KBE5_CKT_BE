@@ -9,7 +9,7 @@ import kernel360.ckt.admin.ui.dto.response.CustomerListResponse;
 import kernel360.ckt.admin.ui.dto.response.CustomerResponse;
 import kernel360.ckt.core.common.response.CommonResponse;
 import kernel360.ckt.core.domain.entity.CustomerEntity;
-import kernel360.ckt.core.domain.entity.CustomerStatus;
+import kernel360.ckt.core.domain.enums.CustomerStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

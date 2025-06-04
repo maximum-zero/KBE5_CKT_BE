@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 public class CreateCustomerCommand {
 
     private final String customerName;
-    private final String customerType;
     private final String phoneNumber;
     private final String licenseNumber;
     private final String zipCode;
@@ -21,7 +20,6 @@ public class CreateCustomerCommand {
     public CustomerEntity toEntity() {
         return CustomerEntity.create(
             this.customerName,
-            this.customerType,
             this.phoneNumber,
             this.licenseNumber,
             this.zipCode,

@@ -4,7 +4,6 @@ import kernel360.ckt.core.domain.entity.CustomerEntity;
 
 public record CustomerResponse (
     Long id,
-    String customerType,
     String customerName,
     String phoneNumber,
     String licenseNumber,
@@ -18,7 +17,6 @@ public record CustomerResponse (
     public static CustomerResponse from(CustomerEntity customerEntity) {
         return new CustomerResponse(
             customerEntity.getId(),
-            customerEntity.getCustomerType(),
             customerEntity.getCustomerName(),
             customerEntity.getPhoneNumber(),
             customerEntity.getLicenseNumber(),

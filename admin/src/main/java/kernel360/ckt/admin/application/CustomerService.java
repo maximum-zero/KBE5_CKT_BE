@@ -4,7 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import kernel360.ckt.admin.application.command.CreateCustomerCommand;
 import kernel360.ckt.admin.ui.dto.request.CustomerUpdateRequest;
 import kernel360.ckt.core.domain.entity.CustomerEntity;
-import kernel360.ckt.core.domain.entity.CustomerStatus;
+import kernel360.ckt.core.domain.enums.CustomerStatus;
 import kernel360.ckt.core.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -27,7 +27,6 @@ public class CustomerService {
         if (request != null) {
             customer.updateBasicInfo(
                 request.customerName(),
-                request.customerType(),
                 request.phoneNumber(),
                 request.licenseNumber(),
                 request.zipCode(),

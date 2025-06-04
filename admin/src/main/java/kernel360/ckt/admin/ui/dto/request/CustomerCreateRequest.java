@@ -4,7 +4,6 @@ import kernel360.ckt.admin.application.command.CreateCustomerCommand;
 
 public record CustomerCreateRequest(
     String customerName,
-    String customerType,
     String phoneNumber,
     String licenseNumber,
     String zipCode,
@@ -18,7 +17,6 @@ public record CustomerCreateRequest(
     public CreateCustomerCommand toCommand() {
         return new CreateCustomerCommand(
             customerName,
-            customerType,
             phoneNumber,
             licenseNumber,
             zipCode,

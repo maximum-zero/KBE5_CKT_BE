@@ -1,7 +1,7 @@
 package kernel360.ckt.core.repository;
 
 import kernel360.ckt.core.domain.entity.CustomerEntity;
-import kernel360.ckt.core.domain.entity.CustomerStatus;
+import kernel360.ckt.core.domain.enums.CustomerStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;

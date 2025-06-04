@@ -1,4 +1,4 @@
-package kernel360.ckt.core.domain.entity;
+package kernel360.ckt.core.domain.enums;
 
 import lombok.Getter;
 
