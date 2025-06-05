@@ -163,7 +163,7 @@ public class ExcelExportService {
 
                 // A열: 날짜(요일)
                 Cell cellA = row.createCell(0);
-                String displayDate = dto.getDriveDate().toLocalDate().format(dateFormatter) + " (" + dto.getDayOfWeek() + ")";
+                String displayDate = dto.getDriveDate().toLocalDate().format(dateFormatter);
 
                 cellA.setCellValue(displayDate);
                 cellA.setCellStyle(bodyStyle);
