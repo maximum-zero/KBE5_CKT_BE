@@ -24,16 +24,6 @@ public record DrivingLogResponse(
     String memo
 ) {
     public static DrivingLogResponse of(DrivingLogEntity drivingLogEntity, List<RouteEntity> routes) {
-        LocalDateTime startAt = routes.stream()
-            .map(RouteEntity::getStartAt)
-            .min(LocalDateTime::compareTo)
-            .get();
-
-        LocalDateTime endAt = routes.stream()
-            .map(RouteEntity::getEndAt)
-            .max(LocalDateTime::compareTo)
-            .get();
-
         Long startOdometer = routes.stream()
             .map(RouteEntity::getStartOdometer)
             .min(Long::compareTo)
@@ -53,8 +43,8 @@ public record DrivingLogResponse(
             drivingLogEntity.getId(),
             drivingLogEntity.getVehicle().getModelName(),
             drivingLogEntity.getVehicle().getRegistrationNumber(),
-            startAt,
-            endAt,
+            drivingLogEntity.getRental().getPickupAt(),
+            drivingLogEntity.getRental().getReturnAt(),
             startOdometer,
             endOdometer,
             endOdometer-startOdometer,

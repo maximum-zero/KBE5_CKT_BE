@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.*;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -25,15 +26,35 @@ public class DrivingLogService {
     public DrivingLogListResponse getDrivingLogList(
         String vehicleNumber,
         String userName,
+        LocalDate startDate,
+        LocalDate endDate,
         Pageable pageable
-        ) {
+    ) {
+        ZoneId zone = ZoneId.of("Asia/Seoul");
+
+        LocalDateTime startDateTime = null;
+        LocalDateTime endDateTime = null;
+
+        if (startDate != null) {
+            startDateTime = startDate.atStartOfDay(zone)
+                .withZoneSameInstant(ZoneOffset.UTC)
+                .toLocalDateTime();
+        }
+
+        if (endDate != null) {
+            endDateTime = endDate.atTime(LocalTime.MAX)
+                .atZone(zone)
+                .withZoneSameInstant(ZoneOffset.UTC)
+                .toLocalDateTime();
+        }
 
         Page<DrivingLogEntity> drivingLogPage = drivingLogRepository.searchDrivingLogs(
             vehicleNumber,
             userName,
+            startDateTime,
+            endDateTime,
             pageable
         );
-        //Page<DrivingLogEntity> drivingLogPage = drivingLogRepository.findAllByOrderByCreateAtDesc(pageable);
 
         List<RouteEntity> allRoutes = routeRepository.findByDrivingLogIn(drivingLogPage.getContent());
 

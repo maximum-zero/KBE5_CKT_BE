@@ -7,10 +7,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.time.LocalDate;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,9 +25,11 @@ public class DrivingLogController {
     public CommonResponse<DrivingLogListResponse> getAllDrivingLogs(
         @RequestParam(required = false) String vehicleNumber,
         @RequestParam(required = false) String userName,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
         @PageableDefault(size = 10, sort = "createAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        DrivingLogListResponse response = drivingLogService.getDrivingLogList(vehicleNumber, userName, pageable);
+        DrivingLogListResponse response = drivingLogService.getDrivingLogList(vehicleNumber, userName, startDate, endDate,pageable);
         return CommonResponse.success(response);
     }
 }
