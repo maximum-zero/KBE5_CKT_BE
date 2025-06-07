@@ -1,6 +1,7 @@
 package kernel360.ckt.admin.application;
 
 import jakarta.transaction.Transactional;
+import kernel360.ckt.admin.ui.dto.response.DrivingLogDetailResponse;
 import kernel360.ckt.admin.ui.dto.response.DrivingLogListResponse;
 import kernel360.ckt.core.domain.entity.DrivingLogEntity;
 import kernel360.ckt.core.domain.entity.RouteEntity;
@@ -14,15 +15,16 @@ import org.springframework.stereotype.Service;
 import java.time.*;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
+@Transactional
 public class DrivingLogService {
     private final DrivingLogRepository drivingLogRepository;
     private final RouteRepository routeRepository;
 
-    @Transactional
     public DrivingLogListResponse getDrivingLogList(
         String vehicleNumber,
         String userName,
@@ -62,5 +64,14 @@ public class DrivingLogService {
             .collect(Collectors.groupingBy(route -> route.getDrivingLog().getId()));
 
         return DrivingLogListResponse.from(drivingLogPage, routeMap);
+    }
+
+    public DrivingLogDetailResponse getDrivingLogDetail(Long id) {
+        DrivingLogEntity drivingLogEntity = drivingLogRepository.findById(id)
+            .orElseThrow(() -> new NoSuchElementException("DrivingLog not found with id: " + id));
+
+        List<RouteEntity> routes = routeRepository.findByDrivingLogId(id);
+
+        return DrivingLogDetailResponse.from(drivingLogEntity, routes);
     }
 }

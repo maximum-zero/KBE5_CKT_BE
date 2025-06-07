@@ -1,17 +1,18 @@
 package kernel360.ckt.admin.ui;
 
 import kernel360.ckt.admin.application.DrivingLogService;
+import kernel360.ckt.admin.ui.dto.response.DrivingLogDetailResponse;
 import kernel360.ckt.admin.ui.dto.response.DrivingLogListResponse;
+import kernel360.ckt.admin.ui.dto.response.VehicleResponse;
 import kernel360.ckt.core.common.response.CommonResponse;
+import kernel360.ckt.core.domain.entity.DrivingLogEntity;
+import kernel360.ckt.core.domain.entity.VehicleEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 
@@ -30,6 +31,12 @@ public class DrivingLogController {
         @PageableDefault(size = 10, sort = "createAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         DrivingLogListResponse response = drivingLogService.getDrivingLogList(vehicleNumber, userName, startDate, endDate,pageable);
+        return CommonResponse.success(response);
+    }
+
+    @GetMapping("/{id}")
+    public CommonResponse<DrivingLogDetailResponse> selectDrivingLog(@PathVariable Long id) {
+        DrivingLogDetailResponse response = drivingLogService.getDrivingLogDetail(id);
         return CommonResponse.success(response);
     }
 }
