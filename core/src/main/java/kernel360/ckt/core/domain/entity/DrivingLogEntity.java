@@ -2,6 +2,7 @@ package kernel360.ckt.core.domain.entity;
 
 import jakarta.persistence.*;
 import kernel360.ckt.core.domain.enums.DrivingLogStatus;
+import kernel360.ckt.core.domain.enums.DrivingType;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,10 +40,15 @@ public class DrivingLogEntity {
     @Column
     private LocalDateTime updateAt;
 
+    @Enumerated(EnumType.STRING)
+    @Column
+    private DrivingType type;
+
     private DrivingLogEntity(RentalEntity rental, VehicleEntity vehicle, DrivingLogStatus status) {
         this.rental = rental;
         this.vehicle = vehicle;
         this.status = status;
+        this.type = DrivingType.NOT_REGISTERED;
         this.createAt = LocalDateTime.now();
     }
 
