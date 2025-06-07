@@ -1,6 +1,8 @@
 package kernel360.ckt.admin.application;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import kernel360.ckt.admin.ui.dto.request.DrivingLogUpdateRequest;
 import kernel360.ckt.admin.ui.dto.response.DrivingLogDetailResponse;
 import kernel360.ckt.admin.ui.dto.response.DrivingLogListResponse;
 import kernel360.ckt.core.domain.entity.DrivingLogEntity;
@@ -73,5 +75,19 @@ public class DrivingLogService {
         List<RouteEntity> routes = routeRepository.findByDrivingLogId(id);
 
         return DrivingLogDetailResponse.from(drivingLogEntity, routes);
+    }
+
+    public DrivingLogEntity update(Long id, DrivingLogUpdateRequest request) {
+        DrivingLogEntity drivingLog = drivingLogRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("운행 기록을 찾을 수 없습니다."));
+
+        if (request.type() != null) {
+            drivingLog.setType(request.type());
+        }
+
+        if (request.memo() != null) {
+            drivingLog.setMemo(request.memo());
+        }
+        return drivingLog;
     }
 }

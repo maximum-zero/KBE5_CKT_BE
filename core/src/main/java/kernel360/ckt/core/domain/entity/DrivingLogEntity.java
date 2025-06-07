@@ -64,4 +64,14 @@ public class DrivingLogEntity {
         this.status = DrivingLogStatus.COMPLETED;
         this.updateAt = LocalDateTime.now();
     }
+
+    public void setType(DrivingType type) {
+        this.type = type;
+        this.updateAt = LocalDateTime.now();
+    }
+
+    public void setMemo(String memo) {
+        this.memo = memo;
+        this.updateAt = LocalDateTime.now();
+    }
 }

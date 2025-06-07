@@ -1,8 +1,10 @@
 package kernel360.ckt.admin.ui;
 
 import kernel360.ckt.admin.application.DrivingLogService;
+import kernel360.ckt.admin.ui.dto.request.DrivingLogUpdateRequest;
 import kernel360.ckt.admin.ui.dto.response.DrivingLogDetailResponse;
 import kernel360.ckt.admin.ui.dto.response.DrivingLogListResponse;
+import kernel360.ckt.admin.ui.dto.response.DrivingLogUpdateResponse;
 import kernel360.ckt.admin.ui.dto.response.VehicleResponse;
 import kernel360.ckt.core.common.response.CommonResponse;
 import kernel360.ckt.core.domain.entity.DrivingLogEntity;
@@ -38,5 +40,14 @@ public class DrivingLogController {
     public CommonResponse<DrivingLogDetailResponse> selectDrivingLog(@PathVariable Long id) {
         DrivingLogDetailResponse response = drivingLogService.getDrivingLogDetail(id);
         return CommonResponse.success(response);
+    }
+
+    @PutMapping("/{id}")
+    public CommonResponse<DrivingLogUpdateResponse> updateDrivingLog(
+        @PathVariable Long id,
+        @RequestBody DrivingLogUpdateRequest request
+    ) {
+        final DrivingLogEntity updated = drivingLogService.update(id, request);
+        return CommonResponse.success(DrivingLogUpdateResponse.from(updated));
     }
 }
