@@ -7,6 +7,7 @@ import kernel360.ckt.admin.ui.dto.response.DrivingLogDetailResponse;
 import kernel360.ckt.admin.ui.dto.response.DrivingLogListResponse;
 import kernel360.ckt.core.domain.entity.DrivingLogEntity;
 import kernel360.ckt.core.domain.entity.RouteEntity;
+import kernel360.ckt.core.domain.enums.DrivingType;
 import kernel360.ckt.core.repository.DrivingLogRepository;
 import kernel360.ckt.core.repository.RouteRepository;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,7 @@ public class DrivingLogService {
         String userName,
         LocalDate startDate,
         LocalDate endDate,
+        DrivingType type,
         Pageable pageable
     ) {
         ZoneId zone = ZoneId.of("Asia/Seoul");
@@ -57,6 +59,7 @@ public class DrivingLogService {
             userName,
             startDateTime,
             endDateTime,
+            type,
             pageable
         );
 

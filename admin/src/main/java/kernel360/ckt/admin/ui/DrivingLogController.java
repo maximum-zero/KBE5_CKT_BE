@@ -9,6 +9,7 @@ import kernel360.ckt.admin.ui.dto.response.VehicleResponse;
 import kernel360.ckt.core.common.response.CommonResponse;
 import kernel360.ckt.core.domain.entity.DrivingLogEntity;
 import kernel360.ckt.core.domain.entity.VehicleEntity;
+import kernel360.ckt.core.domain.enums.DrivingType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -30,9 +31,10 @@ public class DrivingLogController {
         @RequestParam(required = false) String userName,
         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+        @RequestParam(required = false) DrivingType type,
         @PageableDefault(size = 10, sort = "createAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        DrivingLogListResponse response = drivingLogService.getDrivingLogList(vehicleNumber, userName, startDate, endDate,pageable);
+        DrivingLogListResponse response = drivingLogService.getDrivingLogList(vehicleNumber, userName, startDate, endDate, type, pageable);
         return CommonResponse.success(response);
     }
 

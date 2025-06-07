@@ -2,6 +2,7 @@ package kernel360.ckt.core.repository;
 
 import kernel360.ckt.core.domain.entity.DrivingLogEntity;
 import kernel360.ckt.core.domain.enums.DrivingLogStatus;
+import kernel360.ckt.core.domain.enums.DrivingType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -10,7 +11,7 @@ import java.util.Optional;
 
 public interface DrivingLogRepository {
     DrivingLogEntity save(DrivingLogEntity drivingLog);
-    Page<DrivingLogEntity> searchDrivingLogs(String vehicleNumber, String userName, LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
+    Page<DrivingLogEntity> searchDrivingLogs(String vehicleNumber, String userName, LocalDateTime startDate, LocalDateTime endDate, DrivingType type, Pageable pageable);
     Optional<DrivingLogEntity> findById(Long drivingLogId);
 
     Optional<DrivingLogEntity> findFirstByVehicleIdAndStatusOrderByCreateAtDesc(Long vehicleId, DrivingLogStatus status);
