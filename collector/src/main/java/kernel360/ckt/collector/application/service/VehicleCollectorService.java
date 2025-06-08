@@ -1,15 +1,18 @@
-package kernel360.ckt.collector.application;
+package kernel360.ckt.collector.application.service;
 
 import jakarta.transaction.Transactional;
-import kernel360.ckt.collector.application.command.VehicleCollectorCycleCommand;
-import kernel360.ckt.collector.application.command.VehicleCollectorOffCommand;
-import kernel360.ckt.collector.application.command.VehicleCollectorOnCommand;
+import kernel360.ckt.collector.application.repository.DrivingLogRepository;
+import kernel360.ckt.collector.application.repository.RentalRepository;
+import kernel360.ckt.collector.application.repository.RouteRepository;
+import kernel360.ckt.collector.application.repository.VehicleTraceLogRepository;
+import kernel360.ckt.collector.application.service.command.VehicleCollectorCycleCommand;
+import kernel360.ckt.collector.application.service.command.VehicleCollectorOffCommand;
+import kernel360.ckt.collector.application.service.command.VehicleCollectorOnCommand;
 import kernel360.ckt.collector.ui.dto.response.VehicleCollectorResponse;
 import kernel360.ckt.core.domain.entity.*;
 import kernel360.ckt.core.domain.enums.DrivingLogStatus;
 import kernel360.ckt.core.domain.enums.RentalStatus;
 import kernel360.ckt.core.domain.enums.RouteStatus;
-import kernel360.ckt.core.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -42,21 +45,21 @@ public class VehicleCollectorService {
     public VehicleCollectorResponse sendVehicleOff(VehicleCollectorOffCommand command) {
         final VehicleEntity vehicle = vehicleService.findById(command.getVehicleId());
 
-        final RentalEntity rental = rentalRepository.findFirstByVehicleIdAndStatusAndPickupAt(vehicle.getId(), RentalStatus.RENTED, command.getOnTime())
-            .orElseThrow(() -> new RuntimeException("렌탈 정보를 찾을 수 없습니다."));
-        rental.returned(command.getOnTime());
-        rentalRepository.save(rental);
+//        final RentalEntity rental = rentalRepository.findFirstByVehicleIdAndStatusAndPickupAt(vehicle.getId(), RentalStatus.RENTED, command.getOnTime())
+//            .orElseThrow(() -> new RuntimeException("렌탈 정보를 찾을 수 없습니다."));
+//        rental.returned(command.getOnTime());
+//        rentalRepository.save(rental);
 
-        final DrivingLogEntity drivingLog = drivingLogRepository.findFirstByRentalIdAndStatus(rental.getId(), DrivingLogStatus.IN_PROGRESS)
-            .orElseThrow(() -> new RuntimeException("운행 일지 정보를 찾을 수 없습니다."));
-
-        drivingLog.completed();
-        drivingLogRepository.save(drivingLog);
-
-        final RouteEntity route = routeRepository.findFirstByDrivingLogIdAndStatusOrderByStartAtDesc(drivingLog.getId(), RouteStatus.ACTIVE)
-            .orElseThrow(() -> new RuntimeException("경로 정보를 찾을 수 없습니다."));
-        route.completed(command.getLat(), command.getLon(), command.getTotalDistance(), command.getOffTime());
-        routeRepository.save(route);
+//        final DrivingLogEntity drivingLog = drivingLogRepository.findFirstByRentalIdAndStatus(rental.getId(), DrivingLogStatus.IN_PROGRESS)
+//            .orElseThrow(() -> new RuntimeException("운행 일지 정보를 찾을 수 없습니다."));
+//
+//        drivingLog.completed();
+//        drivingLogRepository.save(drivingLog);
+//
+//        final RouteEntity route = routeRepository.findFirstByDrivingLogIdAndStatusOrderByStartAtDesc(drivingLog.getId(), RouteStatus.ACTIVE)
+//            .orElseThrow(() -> new RuntimeException("경로 정보를 찾을 수 없습니다."));
+//        route.completed(command.getLat(), command.getLon(), command.getTotalDistance(), command.getOffTime());
+//        routeRepository.save(route);
 
         return VehicleCollectorResponse.from(command.getVehicleId());
     }

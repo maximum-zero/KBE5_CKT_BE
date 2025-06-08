@@ -1,6 +1,6 @@
 package kernel360.ckt.collector.ui.dto.request;
 
-import kernel360.ckt.collector.application.command.VehicleCollectorCycleCommand;
+import kernel360.ckt.collector.application.service.command.VehicleCollectorCycleCommand;
 import kernel360.ckt.core.domain.dto.CycleInformation;
 
 import java.time.LocalDateTime;

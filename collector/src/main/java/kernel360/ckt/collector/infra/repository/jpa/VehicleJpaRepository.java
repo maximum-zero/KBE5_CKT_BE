@@ -1,8 +1,8 @@
 package kernel360.ckt.collector.infra.repository.jpa;
 
+import kernel360.ckt.collector.application.repository.VehicleRepository;
 import kernel360.ckt.core.domain.entity.VehicleEntity;
 import kernel360.ckt.core.domain.enums.VehicleStatus;
-import kernel360.ckt.core.repository.VehicleRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
