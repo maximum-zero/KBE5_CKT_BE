@@ -34,7 +34,13 @@ public class ExcelExportService {
     ) {
         // 1) 먼저 일별 통계 데이터를 조회
         List<DailyVehicleLogResponse> dailyList =
-            routeJpaRepository.findDailyVehicleLogSummary(from, to, registrationNumber);
+            routeJpaRepository.findDailyVehicleLogSummary(from, to, registrationNumber).stream()
+                .map(p -> new DailyVehicleLogResponse(
+                    java.sql.Date.valueOf(p.getDrivingDate()),
+                    p.getTotalDistance(),
+                    p.getTotalDrivingTime()
+                ))
+                .toList();
 
         // 2) 엑셀 워크북/시트 생성
         try (Workbook workbook = new XSSFWorkbook();

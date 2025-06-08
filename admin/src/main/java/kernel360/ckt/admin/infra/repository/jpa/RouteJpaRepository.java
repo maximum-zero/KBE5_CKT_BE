@@ -1,8 +1,8 @@
 package kernel360.ckt.admin.infra.repository.jpa;
 
-import kernel360.ckt.admin.ui.dto.response.DailyVehicleLogResponse;
-import kernel360.ckt.admin.ui.dto.response.VehicleLogSummaryResponse;
-import kernel360.ckt.admin.ui.dto.response.WeeklyVehicleLogResponse;
+import kernel360.ckt.admin.infra.repository.projection.DailyVehicleLogProjection;
+import kernel360.ckt.admin.infra.repository.projection.VehicleLogSummaryProjection;
+import kernel360.ckt.admin.infra.repository.projection.WeeklyVehicleLogProjection;
 import kernel360.ckt.core.domain.entity.RouteEntity;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
@@ -14,27 +14,29 @@ import java.util.List;
 public interface RouteJpaRepository extends Repository<RouteEntity, Long> {
 
     // 차량 운행 통계
-    @Query("""
-    SELECT new kernel360.ckt.admin.ui.dto.response.VehicleLogSummaryResponse(
-        v.registrationNumber,
-        c.name,
-        COUNT(DISTINCT FUNCTION('DATE', r.startAt)),
-        SUM(r.totalDistance),
-        AVG(r.totalDistance),
-        CAST(FUNCTION('SEC_TO_TIME', AVG(FUNCTION('TIMESTAMPDIFF', SECOND, r.startAt, r.endAt))) AS string)
+    @Query(
+        value = """
+        SELECT
+            v.registration_number AS registrationNumber,
+            c.name AS companyName,
+            COUNT(DISTINCT DATE(r.start_at)) AS drivingDays,
+            SUM(r.total_distance) AS totalDistance,
+            AVG(r.total_distance) AS averageDistance,
+            SEC_TO_TIME(AVG(TIMESTAMPDIFF(SECOND, r.start_at, r.end_at))) AS averageDrivingTime
+        FROM route r
+        LEFT JOIN driving_log dl ON r.driving_log_id = dl.id
+        LEFT JOIN rental rent ON dl.rental_id = rent.id
+        LEFT JOIN vehicle v ON rent.vehicle_id = v.id
+        LEFT JOIN company c ON rent.company_id = c.id
+        LEFT JOIN customer cu ON rent.customer_id = cu.id
+        WHERE r.start_at BETWEEN :startDate AND :endDate
+          AND (:registrationNumber IS NULL OR :registrationNumber = '' OR v.registration_number = :registrationNumber)
+          AND (:driverName IS NULL OR :driverName = '' OR cu.customer_name LIKE CONCAT('%', :driverName, '%'))
+        GROUP BY v.registration_number, c.name
+        """,
+        nativeQuery = true
     )
-    FROM RouteEntity r
-    LEFT JOIN r.drivingLog dl
-    LEFT JOIN dl.rental rent
-    LEFT JOIN rent.vehicle v
-    LEFT JOIN rent.company c
-    LEFT JOIN rent.customer cu
-    WHERE r.startAt BETWEEN :startDate AND :endDate
-        AND (:registrationNumber IS NULL OR :registrationNumber = '' OR v.registrationNumber = :registrationNumber)
-        AND (:driverName IS NULL OR :driverName = '' OR cu.customerName LIKE %:driverName%)
-    GROUP BY v.registrationNumber, c.name
-    """)
-    List<VehicleLogSummaryResponse> findVehicleLogSummaryBetween(
+    List<VehicleLogSummaryProjection> findVehicleLogSummaryBetween(
         @Param("startDate") LocalDateTime startDate,
         @Param("endDate") LocalDateTime endDate,
         @Param("registrationNumber") String registrationNumber,
@@ -42,53 +44,47 @@ public interface RouteJpaRepository extends Repository<RouteEntity, Long> {
     );
 
     // 주간 운행 통계
-    @Query("""
-    SELECT new kernel360.ckt.admin.ui.dto.response.WeeklyVehicleLogResponse(
-        CAST(
-            MIN(FUNCTION('DATE_FORMAT', r.startAt, '%x-W%v'))
-        AS string),
-        MIN(FUNCTION('DATE', r.startAt)),
-        MAX(FUNCTION('DATE', r.startAt)),
-        SUM(r.totalDistance),
-        CAST(
-            FUNCTION('SEC_TO_TIME',
-                SUM(FUNCTION('TIMESTAMPDIFF', SECOND, r.startAt, r.endAt))
-            )
-        AS string),
-        COUNT(DISTINCT FUNCTION('DATE', r.startAt))
+    @Query(
+        value = """
+        SELECT
+            DATE_FORMAT(MIN(r.start_at), '%x-W%v') AS weekNumber,
+            MIN(DATE(r.start_at)) AS startDate,
+            MAX(DATE(r.start_at)) AS endDate,
+            SUM(r.total_distance) AS totalDistance,
+            SEC_TO_TIME(SUM(TIMESTAMPDIFF(SECOND, r.start_at, r.end_at))) AS totalDrivingTime,
+            COUNT(DISTINCT DATE(r.start_at)) AS drivingDays
+        FROM route r
+        JOIN driving_log dl ON r.driving_log_id = dl.id
+        JOIN rental rent ON dl.rental_id = rent.id
+        JOIN vehicle v ON rent.vehicle_id = v.id
+        WHERE r.start_at BETWEEN :startDate AND :endDate
+          AND v.registration_number = :registrationNumber
+        GROUP BY YEARWEEK(r.start_at, 1)
+        ORDER BY startDate
+        """,
+        nativeQuery = true
     )
-    FROM RouteEntity r
-    JOIN r.drivingLog dl
-    JOIN dl.rental rent
-    JOIN rent.vehicle v
-    WHERE r.startAt BETWEEN :startDate AND :endDate
-      AND v.registrationNumber = :registrationNumber
-    GROUP BY FUNCTION('YEARWEEK', r.startAt, 1)
-    ORDER BY MIN(FUNCTION('DATE', r.startAt))
-    """)
-    List<WeeklyVehicleLogResponse> findWeeklyVehicleLogSummary(
+    List<WeeklyVehicleLogProjection> findWeeklyVehicleLogSummary(
         @Param("startDate") LocalDateTime startDate,
-        @Param("endDate")   LocalDateTime endDate,
+        @Param("endDate") LocalDateTime endDate,
         @Param("registrationNumber") String registrationNumber
     );
-
     // 일별 운행 통계
-    @Query("""
-        SELECT new kernel360.ckt.admin.ui.dto.response.DailyVehicleLogResponse(
-            FUNCTION('DATE', r.startAt),
-            SUM(r.totalDistance),
-            CAST(FUNCTION('SEC_TO_TIME', SUM(FUNCTION('TIMESTAMPDIFF', SECOND, r.startAt, r.endAt))) AS string)
-        )
-        FROM RouteEntity r
-        JOIN r.drivingLog dl
-        JOIN dl.rental rent
-        JOIN rent.vehicle v
-        WHERE r.startAt BETWEEN :startDate AND :endDate
-          AND v.registrationNumber = :registrationNumber
-        GROUP BY FUNCTION('DATE', r.startAt)
-        ORDER BY FUNCTION('DATE', r.startAt)
-        """)
-    List<DailyVehicleLogResponse> findDailyVehicleLogSummary(
+    @Query(value = """
+    SELECT
+        DATE(r.start_at) AS drivingDate,
+        SUM(r.total_distance) AS totalDistance,
+        SEC_TO_TIME(SUM(TIMESTAMPDIFF(SECOND, r.start_at, r.end_at))) AS totalDrivingTime
+    FROM route r
+    JOIN driving_log dl ON r.driving_log_id = dl.id
+    JOIN rental rent ON dl.rental_id = rent.id
+    JOIN vehicle v ON rent.vehicle_id = v.id
+    WHERE r.start_at BETWEEN :startDate AND :endDate
+      AND v.registration_number = :registrationNumber
+    GROUP BY DATE(r.start_at)
+    ORDER BY drivingDate
+""", nativeQuery = true)
+    List<DailyVehicleLogProjection> findDailyVehicleLogSummary(
         @Param("startDate") LocalDateTime startDate,
         @Param("endDate") LocalDateTime endDate,
         @Param("registrationNumber") String registrationNumber
