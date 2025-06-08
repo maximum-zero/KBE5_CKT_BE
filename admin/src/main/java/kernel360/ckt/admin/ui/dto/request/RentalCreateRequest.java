@@ -18,7 +18,9 @@ public record RentalCreateRequest(
 
     @NotNull(message = "반납 시간은 필수입니다.")
     @FutureOrPresent(message = "반납 시간은 현재보다 미래여야 합니다.")
-    LocalDateTime returnAt
+    LocalDateTime returnAt,
+
+    String memo
 ) {
     public RentalCreateRequest {
         if (pickupAt != null && returnAt != null && pickupAt.isAfter(returnAt)) {
@@ -32,7 +34,8 @@ public record RentalCreateRequest(
             vehicleId,
             customerId,
             pickupAt,
-            returnAt
+            returnAt,
+            memo
         );
     }
 }

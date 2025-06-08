@@ -17,7 +17,8 @@ public record RentalResponse(
     RentalStatus rentalStatus,
     String rentalStatusName,
     LocalDateTime pickupAt,
-    LocalDateTime returnAt
+    LocalDateTime returnAt,
+    String memo
 ) {
     public static RentalResponse from(RentalEntity rentalEntity) {
         final String vehicleRegistrationNumber = Optional.ofNullable(rentalEntity.getVehicle())
@@ -50,7 +51,8 @@ public record RentalResponse(
             rentalEntity.getStatus(),
             rentalEntity.getStatus().getValue(),
             rentalEntity.getPickupAt(),
-            rentalEntity.getReturnAt()
+            rentalEntity.getReturnAt(),
+            rentalEntity.getMemo()
         );
     }
 }

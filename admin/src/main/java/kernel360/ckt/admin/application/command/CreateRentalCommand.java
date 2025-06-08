@@ -13,9 +13,10 @@ public class CreateRentalCommand {
     private final Long customerId;
     private final LocalDateTime pickupAt;
     private final LocalDateTime returnAt;
+    private final String memo;
 
-    public static CreateRentalCommand create(Long companyId, Long vehicleId, Long customerId, LocalDateTime pickupAt, LocalDateTime returnAt) {
-        return new CreateRentalCommand(companyId, vehicleId, customerId, pickupAt, returnAt);
+    public static CreateRentalCommand create(Long companyId, Long vehicleId, Long customerId, LocalDateTime pickupAt, LocalDateTime returnAt, String memo) {
+        return new CreateRentalCommand(companyId, vehicleId, customerId, pickupAt, returnAt, memo);
     }
 
 }

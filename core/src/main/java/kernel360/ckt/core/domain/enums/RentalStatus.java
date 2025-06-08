@@ -15,7 +15,7 @@ public enum RentalStatus {
             }
         }
     },
-    RENTED("렌트 중") {
+    RENTED("예약 중") {
         @Override
         public void update(RentalEntity rental, RentalStatus newStatus) {
             if (newStatus == RETURNED) {
@@ -31,7 +31,7 @@ public enum RentalStatus {
             throw new IllegalStateException("반납 완료된 상태는 변경할 수 없습니다.");
         }
     },
-    CANCELED("렌트 취소") {
+    CANCELED("예약 취소") {
         @Override
         public void update(RentalEntity rental, RentalStatus newStatus) {
             throw new IllegalStateException("취소된 상태는 변경할 수 없습니다.");
