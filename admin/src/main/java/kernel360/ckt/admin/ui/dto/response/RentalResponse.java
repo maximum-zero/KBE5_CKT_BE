@@ -13,7 +13,8 @@ public record RentalResponse(
     String customerPhoneNumber,
     String vehicleRegistrationNumber,
     String vehicleModelName,
-    String vehicleManufactureYear,
+    String vehicleManufacture,
+    String vehicleModelYear,
     RentalStatus rentalStatus,
     String rentalStatusName,
     LocalDateTime pickupAt,
@@ -29,8 +30,12 @@ public record RentalResponse(
             .map(VehicleEntity::getModelName)
             .orElse(null);
 
-        final String vehicleManufactureYear = Optional.ofNullable(rentalEntity.getVehicle())
+        final String vehicleManufacture = Optional.ofNullable(rentalEntity.getVehicle())
             .map(VehicleEntity::getManufacturer)
+            .orElse(null);
+
+        final String vehicleModelYear = Optional.ofNullable(rentalEntity.getVehicle())
+            .map(VehicleEntity::getModelYear)
             .orElse(null);
 
         final String customerName = Optional.ofNullable(rentalEntity.getCustomer())
@@ -47,7 +52,8 @@ public record RentalResponse(
             customerPhoneNumber,
             vehicleRegistrationNumber,
             vehicleModelName,
-            vehicleManufactureYear,
+            vehicleManufacture,
+            vehicleModelYear,
             rentalEntity.getStatus(),
             rentalEntity.getStatus().getValue(),
             rentalEntity.getPickupAt(),
