@@ -8,11 +8,13 @@ import kernel360.ckt.admin.application.command.CreateRentalCommand;
 import kernel360.ckt.admin.application.command.RentalListCommand;
 import kernel360.ckt.core.domain.entity.CompanyEntity;
 import kernel360.ckt.core.domain.entity.CustomerEntity;
+import kernel360.ckt.core.domain.entity.DrivingLogEntity;
 import kernel360.ckt.core.domain.entity.RentalEntity;
 import kernel360.ckt.core.domain.entity.VehicleEntity;
 import kernel360.ckt.core.domain.enums.RentalStatus;
 import kernel360.ckt.core.repository.CompanyRepository;
 import kernel360.ckt.core.repository.CustomerRepository;
+import kernel360.ckt.core.repository.DrivingLogRepository;
 import kernel360.ckt.core.repository.RentalRepository;
 import kernel360.ckt.core.repository.VehicleRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +31,7 @@ public class RentalService {
     private final CompanyRepository companyRepository;
     private final VehicleRepository vehicleRepository;
     private final CustomerRepository customerRepository;
+    private final DrivingLogRepository drivingLogRepository;
 
     /**
      * 새로운 렌탈(예약)을 생성하는 메서드.
@@ -89,6 +92,34 @@ public class RentalService {
         return rentalRepository.findById(id)
             .orElseThrow(() -> new NoSuchElementException("예약 정보를 찾을 수 없습니다: " + id));
     }
+
+    /**
+     * 렌탈(예약)의 상태를 변경합니다.
+     * 상태 변경 시 비즈니스 규칙을 준수하며, 필요 시 운행일지 상태를 업데이트합니다.
+     *
+     * @param id     변경할 렌탈의 ID
+     * @param status 변경하고자 하는 새로운 렌탈 상태
+     * @return 상태가 업데이트된 RentalEntity 객체
+     * @throws NoSuchElementException 렌탈, 운행 일지를 찾을 수 없는 경우
+     * @throws IllegalStateException 유효하지 않은 상태 전환이 요청될 경우 (예: RENTED -> PENDING)
+     */
+    @Transactional
+    public RentalEntity updateRentalStatus(Long id, RentalStatus status) {
+        final RentalEntity rental = rentalRepository.findById(id)
+            .orElseThrow(() -> new NoSuchElementException("예약 정보를 찾을 수 없습니다: " + id));
+
+        rental.changeStatus(status);
+        if (rental.getStatus() == RentalStatus.RETURNED) {
+            final DrivingLogEntity drivingLog = drivingLogRepository.findByRental(rental)
+                .orElseThrow(() -> new NoSuchElementException("운행 일지를 찾을 수 없습니다: " + id));
+
+            drivingLog.completed();
+            drivingLogRepository.save(drivingLog);
+        }
+
+        return rentalRepository.save(rental);
+    }
+
 
     /**
      * ID로 회사를 조회하고, 없으면 예외를 발생시킵니다.

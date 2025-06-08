@@ -5,6 +5,7 @@ import kernel360.ckt.admin.application.RentalService;
 import kernel360.ckt.admin.application.command.CreateRentalCommand;
 import kernel360.ckt.admin.ui.dto.request.RentalCreateRequest;
 import kernel360.ckt.admin.ui.dto.request.RentalListRequest;
+import kernel360.ckt.admin.ui.dto.request.RentalStatusUpdateRequest;
 import kernel360.ckt.admin.ui.dto.response.RentalCreateResponse;
 import kernel360.ckt.admin.ui.dto.response.RentalListResponse;
 import kernel360.ckt.admin.ui.dto.response.RentalResponse;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -56,6 +58,14 @@ public class RentalController {
     CommonResponse<RentalResponse> selectRental(@PathVariable Long id) {
         final RentalEntity rental = rentalService.findById(id);
         return CommonResponse.success(RentalResponse.from(rental));
+    }
+    @PatchMapping("/{id}/status")
+    public CommonResponse<RentalResponse> updateRentalStatus(
+        @PathVariable Long id,
+        @Valid @RequestBody RentalStatusUpdateRequest request
+    ) {
+        final RentalEntity updatedRental = rentalService.updateRentalStatus(id, request.status());
+        return CommonResponse.success(RentalResponse.from(updatedRental));
     }
 
 }

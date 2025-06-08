@@ -49,12 +49,15 @@ public class RentalEntity extends BaseTimeEntity {
     }
 
     public static RentalEntity create(CompanyEntity company, VehicleEntity vehicle, CustomerEntity customer, LocalDateTime pickupAt, LocalDateTime returnAt) {
-        return new RentalEntity(company, vehicle, customer, pickupAt, returnAt, RentalStatus.RENTED);
+        return new RentalEntity(company, vehicle, customer, pickupAt, returnAt, RentalStatus.PENDING);
     }
 
-    public void returned(LocalDateTime returnAt) {
-        this.status = RentalStatus.RENTED;
-        this.returnAt = returnAt;
+    public void changeStatus(RentalStatus status) {
+        this.status.update(this, status);
+    }
+
+    public void updateStatus(RentalStatus status) {
+        this.status = status;
     }
 
 }
