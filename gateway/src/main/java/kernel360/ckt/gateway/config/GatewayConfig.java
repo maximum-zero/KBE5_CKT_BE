@@ -25,6 +25,9 @@ public class GatewayConfig {
     @Value("${backend.admin-url}")
     private String adminUrl;
 
+    @Value("${backend.collector-url}")
+    private String collectorUrl;
+
     @Value("${backend.frontend-origin}")
     private String frontendOrigin;
 
@@ -34,6 +37,9 @@ public class GatewayConfig {
 
             .route("auth", r -> r.path("/api/v1/auth/**")
                 .uri(authUrl))
+
+            .route("collector", r -> r.path("/api/v1/vehicles/collector/**")
+                .uri(collectorUrl))
 
             .route("admin", r -> r.path("/api/v1/companies/**")
                 .uri(adminUrl))
