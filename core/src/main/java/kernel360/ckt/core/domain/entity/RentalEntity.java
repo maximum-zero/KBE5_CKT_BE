@@ -39,17 +39,21 @@ public class RentalEntity extends BaseTimeEntity {
     @Column
     private LocalDateTime returnAt;
 
-    private RentalEntity(CompanyEntity company, VehicleEntity vehicle, CustomerEntity customer, LocalDateTime pickupAt, LocalDateTime returnAt, RentalStatus status) {
+    @Lob
+    private String memo;
+
+    private RentalEntity(CompanyEntity company, VehicleEntity vehicle, CustomerEntity customer, LocalDateTime pickupAt, LocalDateTime returnAt, RentalStatus status, String memo) {
         this.company = company;
         this.vehicle = vehicle;
         this.customer = customer;
         this.status = status;
         this.pickupAt = pickupAt;
         this.returnAt = returnAt;
+        this.memo = memo;
     }
 
-    public static RentalEntity create(CompanyEntity company, VehicleEntity vehicle, CustomerEntity customer, LocalDateTime pickupAt, LocalDateTime returnAt) {
-        return new RentalEntity(company, vehicle, customer, pickupAt, returnAt, RentalStatus.PENDING);
+    public static RentalEntity create(CompanyEntity company, VehicleEntity vehicle, CustomerEntity customer, LocalDateTime pickupAt, LocalDateTime returnAt, String memo) {
+        return new RentalEntity(company, vehicle, customer, pickupAt, returnAt, RentalStatus.PENDING, memo);
     }
 
     public void changeStatus(RentalStatus status) {

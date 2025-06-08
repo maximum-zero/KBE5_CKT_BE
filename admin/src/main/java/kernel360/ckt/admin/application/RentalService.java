@@ -55,7 +55,8 @@ public class RentalService {
             vehicle,
             customer,
             command.getPickupAt(),
-            command.getReturnAt()
+            command.getReturnAt(),
+            command.getMemo()
         );
 
         return rentalRepository.save(rental);
