@@ -7,6 +7,6 @@ import kernel360.ckt.core.domain.enums.RentalStatus;
 
 public interface RentalRepository {
 
-    Optional<RentalEntity> findFirstByVehicleIdAndStatusAndPickupAt(Long vehicleId, RentalStatus status, LocalDateTime pickupAt);
+    Optional<RentalEntity> findActiveRental(Long vehicleId, LocalDateTime onTime, RentalStatus status);
 
 }

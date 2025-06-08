@@ -34,7 +34,7 @@ public class VehicleCollectorOnCommand {
         return new VehicleCollectorOnCommand(vehicleId, gcd, lat, lon, direction, speed, totalDistance, onTime);
     }
 
-    public DrivingLogEntity toDrivingLogentity(RentalEntity rental, VehicleEntity vehicle) {
+    public DrivingLogEntity toDrivingLogEntity(RentalEntity rental, VehicleEntity vehicle) {
         return DrivingLogEntity.create(rental, vehicle);
     }
 
