@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "rental")
 @Entity
-public class RentalEntity {
+public class RentalEntity extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +26,7 @@ public class RentalEntity {
     private VehicleEntity vehicle;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_id")
+    @JoinColumn(name = "customer_id", nullable = false)
     private CustomerEntity customer;
 
     @Enumerated(EnumType.STRING)
@@ -39,21 +39,17 @@ public class RentalEntity {
     @Column
     private LocalDateTime returnAt;
 
-    @Column
-    private LocalDateTime createAt;
-
-    @Column
-    private LocalDateTime updateAt;
-
-    private RentalEntity(VehicleEntity vehicle, LocalDateTime pickupAt, RentalStatus status) {
+    private RentalEntity(CompanyEntity company, VehicleEntity vehicle, CustomerEntity customer, LocalDateTime pickupAt, LocalDateTime returnAt, RentalStatus status) {
+        this.company = company;
         this.vehicle = vehicle;
+        this.customer = customer;
         this.status = status;
         this.pickupAt = pickupAt;
-        this.createAt = LocalDateTime.now();
+        this.returnAt = returnAt;
     }
 
-    public static RentalEntity create(VehicleEntity vehicle, LocalDateTime pickupAt) {
-        return new RentalEntity(vehicle, pickupAt, RentalStatus.RENTED);
+    public static RentalEntity create(CompanyEntity company, VehicleEntity vehicle, CustomerEntity customer, LocalDateTime pickupAt, LocalDateTime returnAt) {
+        return new RentalEntity(company, vehicle, customer, pickupAt, returnAt, RentalStatus.RENTED);
     }
 
     public void returned(LocalDateTime returnAt) {

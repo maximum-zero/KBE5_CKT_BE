@@ -44,6 +44,9 @@ public class GatewayConfig {
             .route("vehicle", r -> r.path("/api/v1/vehicles/**")
                 .uri(adminUrl))
 
+            .route("rental", r -> r.path("/api/v1/rentals/**")
+                .uri(adminUrl))
+
             .build();
     }
     @Bean

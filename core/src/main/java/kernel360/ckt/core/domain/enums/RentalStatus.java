@@ -6,7 +6,8 @@ import lombok.Getter;
 public enum RentalStatus {
     PENDING("대기 중"),
     RENTED("대여 중"),
-    RETURNED("반납 완료")
+    RETURNED("반납 완료"),
+    CANCEL("대여 취소")
     ;
 
     private final String value;

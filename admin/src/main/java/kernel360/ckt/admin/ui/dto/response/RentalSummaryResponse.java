@@ -1,0 +1,56 @@
+package kernel360.ckt.admin.ui.dto.response;
+
+import java.time.LocalDateTime;
+import java.util.Optional;
+import kernel360.ckt.core.domain.entity.CustomerEntity;
+import kernel360.ckt.core.domain.entity.RentalEntity;
+import kernel360.ckt.core.domain.entity.VehicleEntity;
+import kernel360.ckt.core.domain.enums.RentalStatus;
+
+public record RentalSummaryResponse(
+    Long id,
+    String customerName,
+    String customerPhoneNumber,
+    String vehicleRegistrationNumber,
+    String vehicleModelName,
+    String vehicleManufactureYear,
+    RentalStatus rentalStatus,
+    String rentalStatusName,
+    LocalDateTime pickupAt,
+    LocalDateTime returnAt
+) {
+    public static RentalSummaryResponse from(RentalEntity rentalEntity) {
+        final String vehicleRegistrationNumber = Optional.ofNullable(rentalEntity.getVehicle())
+            .map(VehicleEntity::getRegistrationNumber)
+            .orElse(null);
+
+        final String vehicleModelName = Optional.ofNullable(rentalEntity.getVehicle())
+            .map(VehicleEntity::getModelName)
+            .orElse(null);
+
+        final String vehicleManufactureYear = Optional.ofNullable(rentalEntity.getVehicle())
+            .map(VehicleEntity::getManufacturer)
+            .orElse(null);
+
+        final String customerName = Optional.ofNullable(rentalEntity.getCustomer())
+            .map(CustomerEntity::getCustomerName)
+            .orElse(null);
+
+        final String customerPhoneNumber = Optional.ofNullable(rentalEntity.getCustomer())
+            .map(CustomerEntity::getPhoneNumber)
+            .orElse(null);
+
+        return new RentalSummaryResponse(
+            rentalEntity.getId(),
+            customerName,
+            customerPhoneNumber,
+            vehicleRegistrationNumber,
+            vehicleModelName,
+            vehicleManufactureYear,
+            rentalEntity.getStatus(),
+            rentalEntity.getStatus().getValue(),
+            rentalEntity.getPickupAt(),
+            rentalEntity.getReturnAt()
+        );
+    }
+}

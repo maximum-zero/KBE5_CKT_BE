@@ -25,15 +25,15 @@ public class VehicleCollectorService {
 
     @Transactional
     public VehicleCollectorResponse sendVehicleOn(VehicleCollectorOnCommand command) {
-        final VehicleEntity vehicle = vehicleService.findById(command.getVehicleId());
-
-        final RentalEntity rental = rentalRepository.save(command.toRentalEntity(vehicle));
-
-        final DrivingLogEntity drivingLog = command.toDrivingLogentity(rental, vehicle);
-        drivingLog.inProgress();
-
-        final DrivingLogEntity savedDrivingLog = drivingLogRepository.save(drivingLog);
-        routeRepository.save(command.toRouteEntity(savedDrivingLog));
+//        final VehicleEntity vehicle = vehicleService.findById(command.getVehicleId());
+//
+//        final RentalEntity rental = rentalRepository.save(command.toRentalEntity(vehicle));
+//
+//        final DrivingLogEntity drivingLog = command.toDrivingLogentity(rental, vehicle);
+//        drivingLog.inProgress();
+//
+//        final DrivingLogEntity savedDrivingLog = drivingLogRepository.save(drivingLog);
+//        routeRepository.save(command.toRouteEntity(savedDrivingLog));
 
         return VehicleCollectorResponse.from(command.getVehicleId());
     }
