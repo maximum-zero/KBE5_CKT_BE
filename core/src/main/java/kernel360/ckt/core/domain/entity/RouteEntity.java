@@ -19,7 +19,7 @@ public class RouteEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "driving_log_id", unique = true)
+    @JoinColumn(name = "driving_log_id")
     private DrivingLogEntity drivingLog;
 
     @Enumerated(EnumType.STRING)

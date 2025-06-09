@@ -1,11 +1,13 @@
-package kernel360.ckt.collector.application.command;
+package kernel360.ckt.collector.application.service.command;
 
-import kernel360.ckt.core.domain.entity.*;
+import java.time.LocalDateTime;
+import kernel360.ckt.core.domain.entity.DrivingLogEntity;
+import kernel360.ckt.core.domain.entity.RentalEntity;
+import kernel360.ckt.core.domain.entity.RouteEntity;
+import kernel360.ckt.core.domain.entity.VehicleEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-
-import java.time.LocalDateTime;
 
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
@@ -32,11 +34,7 @@ public class VehicleCollectorOnCommand {
         return new VehicleCollectorOnCommand(vehicleId, gcd, lat, lon, direction, speed, totalDistance, onTime);
     }
 
-    public RentalEntity toRentalEntity(VehicleEntity vehicle) {
-        return RentalEntity.create(vehicle, this.onTime);
-    }
-
-    public DrivingLogEntity toDrivingLogentity(RentalEntity rental, VehicleEntity vehicle) {
+    public DrivingLogEntity toDrivingLogEntity(RentalEntity rental, VehicleEntity vehicle) {
         return DrivingLogEntity.create(rental, vehicle);
     }
 

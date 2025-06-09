@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface RouteRepository {
     RouteEntity save(RouteEntity route);
-    Optional<RouteEntity> findFirstByDrivingLogIdAndStatusOrderByStartAtDesc(Long drivingLogId, RouteStatus routeStatus);
+    Optional<RouteEntity> findFirstByDrivingLogAndStatusOrderByStartAtDesc(Long drivingLogId, RouteStatus routeStatus);
 }
