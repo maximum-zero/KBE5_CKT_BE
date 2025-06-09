@@ -23,7 +23,7 @@ spring:
             predicates:
               - Path=/api/v1/logs/**
           - id: collector
-            uri: http://collector:8000
+            uri: http://collector:8090
             predicates:
               - Path=/api/v1/vehicles/collector/**
 
@@ -31,3 +31,4 @@ backend:
   frontend-origin: http://localhost:5173
   auth-url: http://auth:8082
   admin-url: http://admin:8080
+  collector-url: http://collector:8090
