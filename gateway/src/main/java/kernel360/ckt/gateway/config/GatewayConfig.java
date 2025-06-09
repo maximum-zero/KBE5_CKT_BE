@@ -53,6 +53,9 @@ public class GatewayConfig {
             .route("rental", r -> r.path("/api/v1/rentals/**")
                 .uri(adminUrl))
 
+            .route("logs", r -> r.path("/api/v1/logs/**")
+                .uri("http://admin:8080"))
+
             .build();
     }
     @Bean
