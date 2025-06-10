@@ -31,34 +31,17 @@ public class DrivingLogService {
     public DrivingLogListResponse getDrivingLogList(
         String vehicleNumber,
         String userName,
-        LocalDate startDate,
-        LocalDate endDate,
+        LocalDateTime startDate,
+        LocalDateTime endDate,
         DrivingType type,
         Pageable pageable
     ) {
-        ZoneId zone = ZoneId.of("Asia/Seoul");
-
-        LocalDateTime startDateTime = null;
-        LocalDateTime endDateTime = null;
-
-        if (startDate != null) {
-            startDateTime = startDate.atStartOfDay(zone)
-                .withZoneSameInstant(ZoneOffset.UTC)
-                .toLocalDateTime();
-        }
-
-        if (endDate != null) {
-            endDateTime = endDate.atTime(LocalTime.MAX)
-                .atZone(zone)
-                .withZoneSameInstant(ZoneOffset.UTC)
-                .toLocalDateTime();
-        }
 
         Page<DrivingLogEntity> drivingLogPage = drivingLogRepository.searchDrivingLogs(
             vehicleNumber,
             userName,
-            startDateTime,
-            endDateTime,
+            startDate,
+            endDate,
             type,
             pageable
         );
