@@ -3,14 +3,19 @@ package kernel360.ckt.admin.application;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import kernel360.ckt.admin.application.command.CreateVehicleCommand;
+import kernel360.ckt.admin.application.command.VehicleKeywordCommand;
 import kernel360.ckt.admin.ui.dto.request.VehicleUpdateRequest;
 import kernel360.ckt.core.domain.entity.VehicleEntity;
+import kernel360.ckt.core.domain.enums.RentalStatus;
 import kernel360.ckt.core.domain.enums.VehicleStatus;
 import kernel360.ckt.core.repository.VehicleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -51,5 +56,10 @@ public class VehicleService {
 
     public void delete(Long vehicleId) {
         vehicleRepository.deleteById(vehicleId);
+    }
+
+    public List<VehicleEntity> searchKeyword(VehicleKeywordCommand command) {
+        final String keyword = command.getKeyword();
+        return vehicleRepository.findAvailableVehicles(keyword, RentalStatus.RENTED);
     }
 }
