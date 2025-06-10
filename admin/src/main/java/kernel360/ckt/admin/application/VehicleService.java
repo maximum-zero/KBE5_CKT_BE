@@ -5,7 +5,9 @@ import jakarta.transaction.Transactional;
 import kernel360.ckt.admin.application.command.CreateVehicleCommand;
 import kernel360.ckt.admin.ui.dto.request.VehicleUpdateRequest;
 import kernel360.ckt.admin.ui.dto.response.ControlTowerSummaryResponse;
+import kernel360.ckt.admin.ui.dto.response.RunningVehicleResponse;
 import kernel360.ckt.core.domain.entity.VehicleEntity;
+import kernel360.ckt.core.domain.enums.RentalStatus;
 import kernel360.ckt.core.domain.enums.VehicleStatus;
 import kernel360.ckt.core.repository.RentalRepository;
 import kernel360.ckt.core.repository.VehicleRepository;
@@ -13,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -57,10 +61,17 @@ public class VehicleService {
     }
 
     public ControlTowerSummaryResponse getControlTowerSummary() {
-        int total = (int) vehicleRepository.count();
-        long running = rentalRepository.countRentedVehicleIds();
+        long total = vehicleRepository.count();
+        long running = rentalRepository.countVehiclesByStatus(RentalStatus.RENTED);
         long stopped = total - running;
         return ControlTowerSummaryResponse.of((int) total, (int) running, (int) stopped);
+    }
+
+    public List<RunningVehicleResponse> getRunningVehicles() {
+        return rentalRepository.findVehiclesByStatus(RentalStatus.RENTED)
+            .stream()
+            .map(RunningVehicleResponse::from)
+            .toList();
     }
 
 }
