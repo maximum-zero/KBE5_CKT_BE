@@ -15,7 +15,7 @@ public class GatewayConfig {
 
     @Value("${cors.allowed-origins}")
     private String allowedOrigins;
-
+  
     @Bean
     public CorsWebFilter corsWebFilter() {
         CorsConfiguration config = new CorsConfiguration();
@@ -30,4 +30,3 @@ public class GatewayConfig {
         return new CorsWebFilter(source);
     }
 }
-

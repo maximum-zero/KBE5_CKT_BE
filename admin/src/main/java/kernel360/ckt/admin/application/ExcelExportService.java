@@ -1,7 +1,7 @@
 package kernel360.ckt.admin.application;
 
 import kernel360.ckt.admin.ui.dto.response.DailyVehicleLogResponse;
-import kernel360.ckt.admin.infra.repository.jpa.RouteJpaRepository;
+import kernel360.ckt.admin.infra.repository.RouteLogRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -17,7 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ExcelExportService {
 
-    private final RouteJpaRepository routeJpaRepository;
+    private final RouteLogRepository routeLogRepository;
 
     /**
      * “업무용승용차 운행기록부” 양식에 맞춘 엑셀을 생성하여 byte[]로 반환합니다.
@@ -34,7 +34,7 @@ public class ExcelExportService {
     ) {
         // 1) 먼저 일별 통계 데이터를 조회
         List<DailyVehicleLogResponse> dailyList =
-            routeJpaRepository.findDailyVehicleLogSummary(from, to, registrationNumber).stream()
+            routeLogRepository.findDailyVehicleLogSummary(from, to, registrationNumber).stream()
                 .map(p -> new DailyVehicleLogResponse(
                     java.sql.Date.valueOf(p.getDrivingDate()),
                     p.getTotalDistance(),
