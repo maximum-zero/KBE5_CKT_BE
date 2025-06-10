@@ -27,12 +27,12 @@ public record DrivingLogResponse(
         Long startOdometer = routes.stream()
             .map(RouteEntity::getStartOdometer)
             .min(Long::compareTo)
-            .get();
+            .orElseThrow(() -> new IllegalStateException("Route 목록이 비어있습니다."));
 
         Long endOdometer = routes.stream()
             .map(RouteEntity::getEndOdometer)
             .max(Long::compareTo)
-            .get();
+            .orElseThrow(() -> new IllegalStateException("Route 목록이 비어있습니다."));
 
         String customerName = Optional.ofNullable(drivingLogEntity.getRental())
             .map(RentalEntity::getCustomer)

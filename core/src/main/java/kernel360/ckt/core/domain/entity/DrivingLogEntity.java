@@ -44,12 +44,6 @@ public class DrivingLogEntity extends BaseTimeEntity {
     @Lob
     private String memo;
 
-    @Column
-    private LocalDateTime createAt;
-
-    @Column
-    private LocalDateTime updateAt;
-
     @Enumerated(EnumType.STRING)
     @Column
     private DrivingType type;
@@ -60,7 +54,6 @@ public class DrivingLogEntity extends BaseTimeEntity {
         this.vehicle = vehicle;
         this.status = status;
         this.type = DrivingType.NOT_REGISTERED;
-        this.createAt = LocalDateTime.now();
     }
 
     public static DrivingLogEntity create(RentalEntity rental, VehicleEntity vehicle) {
@@ -77,11 +70,9 @@ public class DrivingLogEntity extends BaseTimeEntity {
 
     public void setType(DrivingType type) {
         this.type = type;
-        this.updateAt = LocalDateTime.now();
     }
 
     public void setMemo(String memo) {
         this.memo = memo;
-        this.updateAt = LocalDateTime.now();
     }
 }
