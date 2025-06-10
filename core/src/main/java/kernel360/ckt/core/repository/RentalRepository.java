@@ -32,5 +32,9 @@ public interface RentalRepository {
 
     Optional<RentalEntity> findFirstByVehicleIdAndStatusAndPickupAt(Long vehicleId, RentalStatus status, LocalDateTime pickupAt);
 
-    long countRentedVehicleIds();
+    List<RentalEntity> findAllByStatus(RentalStatus status);
+
+    List<VehicleEntity> findVehiclesByStatus(RentalStatus status);
+
+    long countVehiclesByStatus(RentalStatus status);
 }
