@@ -56,6 +56,9 @@ public class GatewayConfig {
             .route("logs", r -> r.path("/api/v1/logs/**")
                 .uri("http://admin:8080"))
 
+            .route("driving-log", r -> r.path("/api/v1/logs/drive/**")
+                .uri("http://admin:8080"))
+
             .build();
     }
     @Bean

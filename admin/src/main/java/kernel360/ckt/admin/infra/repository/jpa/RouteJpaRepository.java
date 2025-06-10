@@ -1,9 +1,11 @@
 package kernel360.ckt.admin.infra.repository.jpa;
 
+import kernel360.ckt.core.domain.entity.RouteEntity;
+import kernel360.ckt.core.repository.RouteRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import kernel360.ckt.admin.infra.repository.projection.DailyVehicleLogProjection;
 import kernel360.ckt.admin.infra.repository.projection.VehicleLogSummaryProjection;
 import kernel360.ckt.admin.infra.repository.projection.WeeklyVehicleLogProjection;
-import kernel360.ckt.core.domain.entity.RouteEntity;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
@@ -11,7 +13,7 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface RouteJpaRepository extends Repository<RouteEntity, Long> {
+public interface RouteJpaRepository extends JpaRepository<RouteEntity, Long>, RouteRepository {
 
     // 차량 운행 통계
     @Query(
@@ -89,5 +91,4 @@ public interface RouteJpaRepository extends Repository<RouteEntity, Long> {
         @Param("endDate") LocalDateTime endDate,
         @Param("registrationNumber") String registrationNumber
     );
-
 }
