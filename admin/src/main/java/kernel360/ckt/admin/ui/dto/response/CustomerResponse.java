@@ -12,6 +12,7 @@ public record CustomerResponse (
     String detailAddress,
     String birthday,
     String status,
+    String statusName,
     String memo
 ){
     public static CustomerResponse from(CustomerEntity customerEntity) {
@@ -24,7 +25,8 @@ public record CustomerResponse (
             customerEntity.getAddress(),
             customerEntity.getDetailedAddress(),
             customerEntity.getBirthday(),
-            customerEntity.getStatus(),
+            customerEntity.getStatus().name(),
+            customerEntity.getStatus().getDescription(),
             customerEntity.getMemo()
         );
     }

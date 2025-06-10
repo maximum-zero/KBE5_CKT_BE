@@ -32,7 +32,7 @@ public class CustomerEntity extends BaseTimeEntity {
     private String memo;
 
     @Column(nullable = false)
-    private String status;
+    private CustomerStatus status;
 
     public CustomerEntity(String customerName,
                           String phoneNumber,
@@ -42,7 +42,7 @@ public class CustomerEntity extends BaseTimeEntity {
                           String detailedAddress,
                           String birthday,
                           String memo,
-                          String status) {
+                          CustomerStatus status) {
         this.customerName = customerName;
         this.phoneNumber = phoneNumber;
         this.licenseNumber = licenseNumber;
@@ -73,7 +73,7 @@ public class CustomerEntity extends BaseTimeEntity {
             detailedAddress,
             birthday,
             memo,
-            CustomerStatus.ACTIVE.name()
+            CustomerStatus.ACTIVE
         );
     }
 
@@ -81,7 +81,7 @@ public class CustomerEntity extends BaseTimeEntity {
                                 String phoneNumber,
                                 String licenseNumber,
                                 String zipCode,
-                                String status,
+                                CustomerStatus status,
                                 String address,
                                 String detailedAddress,
                                 String birthday,
