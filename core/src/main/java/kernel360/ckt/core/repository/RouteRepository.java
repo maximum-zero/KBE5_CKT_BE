@@ -11,5 +11,4 @@ public interface RouteRepository {
     RouteEntity save(RouteEntity route);
     List<RouteEntity> findByDrivingLogIn(List<DrivingLogEntity> drivingLogs);
     List<RouteEntity> findByDrivingLogId(Long drivingLogId);
-    Optional<RouteEntity> findFirstByDrivingLogAndStatusOrderByStartAtDesc(Long drivingLogId, RouteStatus routeStatus);
 }

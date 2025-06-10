@@ -30,7 +30,7 @@ public class DrivingLogController {
         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDateTime startDate,
         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDateTime endDate,
         @RequestParam(required = false) DrivingType type,
-        @PageableDefault(size = 10, sort = "createAt", direction = Sort.Direction.DESC) Pageable pageable
+        @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         DrivingLogListResponse response = drivingLogService.getDrivingLogList(vehicleNumber, userName, startDate, endDate, type, pageable);
         return CommonResponse.success(response);

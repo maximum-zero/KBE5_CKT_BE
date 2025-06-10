@@ -1,7 +1,6 @@
 package kernel360.ckt.admin.application;
 
-import kernel360.ckt.admin.infra.repository.jpa.RouteJpaRepository;
-import kernel360.ckt.admin.infra.repository.projection.DailyVehicleLogProjection;
+import kernel360.ckt.admin.infra.repository.RouteLogRepository;
 import kernel360.ckt.admin.infra.repository.projection.WeeklyVehicleLogProjection;
 import kernel360.ckt.admin.ui.dto.response.DailyVehicleLogResponse;
 import kernel360.ckt.admin.ui.dto.response.VehicleLogSummaryResponse;
@@ -19,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class LogSummaryService {
 
-    private final RouteJpaRepository routeJpaRepository;
+    private final RouteLogRepository routeLogRepository;
 
     public List<VehicleLogSummaryResponse> getVehicleLogSummary(
         LocalDateTime from,
@@ -28,7 +27,7 @@ public class LogSummaryService {
         String driverName
     ) {
         List<VehicleLogSummaryProjection> projections =
-            routeJpaRepository.findVehicleLogSummaryBetween(from, to, registrationNumber, driverName);
+            routeLogRepository.findVehicleLogSummaryBetween(from, to, registrationNumber, driverName);
 
         return projections.stream()
             .map(p -> new VehicleLogSummaryResponse(
@@ -47,7 +46,7 @@ public class LogSummaryService {
         LocalDateTime to,
         String registrationNumber
     ) {
-        List<WeeklyVehicleLogProjection> projections = routeJpaRepository.findWeeklyVehicleLogSummary(from, to, registrationNumber);
+        List<WeeklyVehicleLogProjection> projections = routeLogRepository.findWeeklyVehicleLogSummary(from, to, registrationNumber);
         return projections.stream()
             .map(p -> new WeeklyVehicleLogResponse(
                 p.getWeekNumber(),
@@ -68,7 +67,7 @@ public class LogSummaryService {
         LocalDateTime start = weekStartDate.atStartOfDay();
         LocalDateTime end   = weekEndDate.atTime(LocalTime.MAX);
 
-        return routeJpaRepository.findDailyVehicleLogSummary(start, end, registrationNumber).stream()
+        return routeLogRepository.findDailyVehicleLogSummary(start, end, registrationNumber).stream()
             .map(p -> new DailyVehicleLogResponse(
                 java.sql.Date.valueOf(p.getDrivingDate()),
                 p.getTotalDistance(),
