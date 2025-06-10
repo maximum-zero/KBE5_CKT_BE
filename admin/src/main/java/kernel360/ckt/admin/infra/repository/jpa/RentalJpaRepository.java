@@ -55,4 +55,12 @@ public interface RentalJpaRepository extends JpaRepository<RentalEntity, Long>, 
 
     @EntityGraph(attributePaths = {"company", "vehicle", "customer"})
     Optional<RentalEntity> findById(Long id);
+
+    @Query("""
+        SELECT COUNT(DISTINCT r.vehicle.id)
+        FROM RentalEntity r
+        WHERE r.status = 'RENTED'
+    """)
+    long countRentedVehicleIds();
+
 }

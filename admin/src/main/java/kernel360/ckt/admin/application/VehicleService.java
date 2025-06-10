@@ -4,8 +4,10 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import kernel360.ckt.admin.application.command.CreateVehicleCommand;
 import kernel360.ckt.admin.ui.dto.request.VehicleUpdateRequest;
+import kernel360.ckt.admin.ui.dto.response.ControlTowerSummaryResponse;
 import kernel360.ckt.core.domain.entity.VehicleEntity;
 import kernel360.ckt.core.domain.enums.VehicleStatus;
+import kernel360.ckt.core.repository.RentalRepository;
 import kernel360.ckt.core.repository.VehicleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class VehicleService {
     private final VehicleRepository vehicleRepository;
+    private final RentalRepository rentalRepository;
 
     public VehicleEntity create(CreateVehicleCommand command) {
         return vehicleRepository.save(command.toEntity());
@@ -52,4 +55,12 @@ public class VehicleService {
     public void delete(Long vehicleId) {
         vehicleRepository.deleteById(vehicleId);
     }
+
+    public ControlTowerSummaryResponse getControlTowerSummary() {
+        int total = (int) vehicleRepository.count();
+        long running = rentalRepository.countRentedVehicleIds();
+        long stopped = total - running;
+        return ControlTowerSummaryResponse.of((int) total, (int) running, (int) stopped);
+    }
+
 }
