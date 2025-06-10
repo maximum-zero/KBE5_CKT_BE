@@ -24,7 +24,7 @@ public interface VehicleJpaRepository extends JpaRepository<VehicleEntity, Long>
 
     @Query("""
         SELECT v FROM VehicleEntity v
-        WHERE (:keyword IS NULL OR :keyword = '' OR v.modelName LIKE %:keyword%)
+        WHERE (:keyword IS NULL OR :keyword = '' OR v.registrationNumber LIKE %:keyword%)
         AND NOT EXISTS (
             SELECT r FROM RentalEntity r
             WHERE r.vehicle = v

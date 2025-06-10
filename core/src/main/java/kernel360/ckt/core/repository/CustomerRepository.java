@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface CustomerRepository {
@@ -33,4 +34,7 @@ public interface CustomerRepository {
         @Param("keyword") String keyword,
         Pageable pageable
     );
+
+    List<CustomerEntity> findAll();
+    List<CustomerEntity> findByCustomerNameContaining(String customerName);
 }

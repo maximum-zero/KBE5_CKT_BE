@@ -68,8 +68,6 @@ public class VehicleController {
     @GetMapping("/search")
     CommonResponse<VehicleKeywordResponse> searchKeyword(VehicleKeywordRequest request) {
         final List<VehicleEntity> vehicles = vehicleService.searchKeyword(request.toCommand());
-        log.info("vehicles: {}", vehicles);
-        log.info("vehicles size: {}", vehicles.size());
         return CommonResponse.success(VehicleKeywordResponse.from(vehicles));
     }
 }

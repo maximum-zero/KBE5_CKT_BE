@@ -3,19 +3,25 @@ package kernel360.ckt.admin.ui;
 import kernel360.ckt.admin.application.CustomerService;
 import kernel360.ckt.admin.application.command.CreateCustomerCommand;
 import kernel360.ckt.admin.ui.dto.request.CustomerCreateRequest;
+import kernel360.ckt.admin.ui.dto.request.CustomerKeywordRequest;
 import kernel360.ckt.admin.ui.dto.request.CustomerUpdateRequest;
 import kernel360.ckt.admin.ui.dto.response.CustomerDetailResponse;
+import kernel360.ckt.admin.ui.dto.response.CustomerKeywordResponse;
 import kernel360.ckt.admin.ui.dto.response.CustomerListResponse;
 import kernel360.ckt.admin.ui.dto.response.CustomerResponse;
 import kernel360.ckt.core.common.response.CommonResponse;
 import kernel360.ckt.core.domain.entity.CustomerEntity;
 import kernel360.ckt.core.domain.entity.CustomerStatus;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
+@Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/customers")
 @RestController
@@ -63,5 +69,11 @@ public class CustomerController {
     public CommonResponse<CustomerDetailResponse> getCustomerByLicenseNumber(@PathVariable String licenseNumber) {
         var customerEntity = customerService.findByLicenseNumber(licenseNumber);
         return CommonResponse.success(CustomerDetailResponse.from(customerEntity));
+    }
+
+    @GetMapping("/search")
+    public CommonResponse<CustomerKeywordResponse> searchCustomer(CustomerKeywordRequest request) {
+        final List<CustomerEntity> customers = customerService.searchKeyword(request.toCommand());
+        return CommonResponse.success(CustomerKeywordResponse.from(customers));
     }
 }
