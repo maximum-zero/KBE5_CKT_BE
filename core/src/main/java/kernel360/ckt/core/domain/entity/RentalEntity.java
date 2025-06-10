@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "rental")
 @Entity
-public class RentalEntity {
+public class RentalEntity extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +26,7 @@ public class RentalEntity {
     private VehicleEntity vehicle;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_id")
+    @JoinColumn(name = "customer_id", nullable = false)
     private CustomerEntity customer;
 
     @Enumerated(EnumType.STRING)
@@ -39,26 +39,29 @@ public class RentalEntity {
     @Column
     private LocalDateTime returnAt;
 
-    @Column
-    private LocalDateTime createAt;
+    @Lob
+    private String memo;
 
-    @Column
-    private LocalDateTime updateAt;
-
-    private RentalEntity(VehicleEntity vehicle, LocalDateTime pickupAt, RentalStatus status) {
+    private RentalEntity(CompanyEntity company, VehicleEntity vehicle, CustomerEntity customer, LocalDateTime pickupAt, LocalDateTime returnAt, RentalStatus status, String memo) {
+        this.company = company;
         this.vehicle = vehicle;
+        this.customer = customer;
         this.status = status;
         this.pickupAt = pickupAt;
-        this.createAt = LocalDateTime.now();
-    }
-
-    public static RentalEntity create(VehicleEntity vehicle, LocalDateTime pickupAt) {
-        return new RentalEntity(vehicle, pickupAt, RentalStatus.RENTED);
-    }
-
-    public void returned(LocalDateTime returnAt) {
-        this.status = RentalStatus.RENTED;
         this.returnAt = returnAt;
+        this.memo = memo;
+    }
+
+    public static RentalEntity create(CompanyEntity company, VehicleEntity vehicle, CustomerEntity customer, LocalDateTime pickupAt, LocalDateTime returnAt, String memo) {
+        return new RentalEntity(company, vehicle, customer, pickupAt, returnAt, RentalStatus.PENDING, memo);
+    }
+
+    public void changeStatus(RentalStatus status) {
+        this.status.update(this, status);
+    }
+
+    public void updateStatus(RentalStatus status) {
+        this.status = status;
     }
 
 }

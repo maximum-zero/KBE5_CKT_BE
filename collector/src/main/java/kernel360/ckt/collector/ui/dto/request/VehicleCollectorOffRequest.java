@@ -1,6 +1,6 @@
 package kernel360.ckt.collector.ui.dto.request;
 
-import kernel360.ckt.collector.application.command.VehicleCollectorOffCommand;
+import kernel360.ckt.collector.application.service.command.VehicleCollectorOffCommand;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

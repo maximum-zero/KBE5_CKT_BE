@@ -1,9 +1,9 @@
 package kernel360.ckt.collector.ui;
 
-import kernel360.ckt.collector.application.VehicleCollectorService;
-import kernel360.ckt.collector.application.command.VehicleCollectorCycleCommand;
-import kernel360.ckt.collector.application.command.VehicleCollectorOffCommand;
-import kernel360.ckt.collector.application.command.VehicleCollectorOnCommand;
+import kernel360.ckt.collector.application.service.VehicleCollectorService;
+import kernel360.ckt.collector.application.service.command.VehicleCollectorCycleCommand;
+import kernel360.ckt.collector.application.service.command.VehicleCollectorOffCommand;
+import kernel360.ckt.collector.application.service.command.VehicleCollectorOnCommand;
 import kernel360.ckt.collector.ui.dto.request.VehicleCollectorCycleRequest;
 import kernel360.ckt.collector.ui.dto.request.VehicleCollectorOffRequest;
 import kernel360.ckt.collector.ui.dto.request.VehicleCollectorOnRequest;

@@ -1,19 +1,29 @@
 package kernel360.ckt.core.domain.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import kernel360.ckt.core.domain.enums.DrivingLogStatus;
 import kernel360.ckt.core.domain.enums.DrivingType;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "driving_log")
 @Entity
-public class DrivingLogEntity {
+public class DrivingLogEntity extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,6 +54,7 @@ public class DrivingLogEntity {
     @Column
     private DrivingType type;
 
+
     private DrivingLogEntity(RentalEntity rental, VehicleEntity vehicle, DrivingLogStatus status) {
         this.rental = rental;
         this.vehicle = vehicle;
@@ -62,7 +73,6 @@ public class DrivingLogEntity {
 
     public void completed() {
         this.status = DrivingLogStatus.COMPLETED;
-        this.updateAt = LocalDateTime.now();
     }
 
     public void setType(DrivingType type) {

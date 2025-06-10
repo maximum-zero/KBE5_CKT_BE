@@ -1,8 +1,8 @@
-package kernel360.ckt.collector.application;
+package kernel360.ckt.collector.application.service;
 
 import jakarta.persistence.EntityNotFoundException;
+import kernel360.ckt.collector.application.repository.VehicleRepository;
 import kernel360.ckt.core.domain.entity.VehicleEntity;
-import kernel360.ckt.core.repository.VehicleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

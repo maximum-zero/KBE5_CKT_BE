@@ -1,4 +1,4 @@
-package kernel360.ckt.collector.application.command;
+package kernel360.ckt.collector.application.service.command;
 
 import kernel360.ckt.core.domain.dto.CycleInformation;
 import lombok.AccessLevel;
