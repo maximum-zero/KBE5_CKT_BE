@@ -68,8 +68,7 @@ public class VehicleService {
     }
 
     public List<RunningVehicleResponse> getRunningVehicles() {
-        return rentalRepository.findVehiclesByStatus(RentalStatus.RENTED)
-            .stream()
+        return rentalRepository.findRentalsByStatus(RentalStatus.RENTED).stream()
             .map(RunningVehicleResponse::from)
             .toList();
     }

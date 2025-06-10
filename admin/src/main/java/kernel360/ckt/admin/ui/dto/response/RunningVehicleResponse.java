@@ -1,17 +1,21 @@
 package kernel360.ckt.admin.ui.dto.response;
 
+import kernel360.ckt.core.domain.entity.RentalEntity;
+
 public record RunningVehicleResponse(
     Long vehicleId,
     String registrationNumber,
     String manufacturer,
-    String modelName
+    String modelName,
+    String customerName
 ) {
-    public static RunningVehicleResponse from(kernel360.ckt.core.domain.entity.VehicleEntity v) {
+    public static RunningVehicleResponse from(RentalEntity rental) {
         return new RunningVehicleResponse(
-            v.getId(),
-            v.getRegistrationNumber(),
-            v.getManufacturer(),
-            v.getModelName()
+            rental.getVehicle().getId(),
+            rental.getVehicle().getRegistrationNumber(),
+            rental.getVehicle().getManufacturer(),
+            rental.getVehicle().getModelName(),
+            rental.getCustomer().getCustomerName()
         );
     }
 }

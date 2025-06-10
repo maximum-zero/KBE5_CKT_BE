@@ -56,14 +56,13 @@ public interface RentalJpaRepository extends JpaRepository<RentalEntity, Long>, 
     @EntityGraph(attributePaths = {"company", "vehicle", "customer"})
     Optional<RentalEntity> findById(Long id);
 
-    List<RentalEntity> findAllByStatus(RentalStatus status);
-
     @Query("""
-        SELECT DISTINCT r.vehicle
-        FROM RentalEntity r
+        SELECT r FROM RentalEntity r
+        JOIN FETCH r.customer
+        JOIN FETCH r.vehicle
         WHERE r.status = :status
     """)
-    List<VehicleEntity> findVehiclesByStatus(@Param("status") RentalStatus status);
+    List<RentalEntity> findRentalsByStatus(@Param("status") RentalStatus status);
 
     @Query("""
         SELECT COUNT(DISTINCT r.vehicle.id)
@@ -71,5 +70,4 @@ public interface RentalJpaRepository extends JpaRepository<RentalEntity, Long>, 
         WHERE r.status = :status
     """)
     long countVehiclesByStatus(@Param("status") RentalStatus status);
-
 }
