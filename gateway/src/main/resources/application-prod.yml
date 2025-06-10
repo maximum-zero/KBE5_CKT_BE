@@ -8,7 +8,7 @@ spring:
             - Path=/api/v1/auth/**
 
         - id: collector
-          uri: http://172.31.32.243:8090
+          uri: http://172.31.38.199:8090
           predicates:
             - Path=/api/v1/vehicles/collector/**
 
@@ -33,4 +33,4 @@ spring:
             - Path=/api/v1/logs/**
 
 cors:
-  allowed-origins: http://localhost:5173
+  allowed-origins: https://main.d1vdhd0oktvfuk.amplifyapp.com/
