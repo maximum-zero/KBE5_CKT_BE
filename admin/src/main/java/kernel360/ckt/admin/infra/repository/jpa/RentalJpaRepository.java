@@ -70,4 +70,17 @@ public interface RentalJpaRepository extends JpaRepository<RentalEntity, Long>, 
         WHERE r.status = :status
     """)
     long countVehiclesByStatus(@Param("status") RentalStatus status);
+
+    @Query(value = """
+    SELECT vtl.trace_data_json
+    FROM vehicle_trace_log vtl
+    JOIN route r ON vtl.route_id = r.id
+    JOIN driving_log dl ON r.driving_log_id = dl.id
+    JOIN rental rt ON dl.rental_id = rt.id
+    WHERE rt.vehicle_id = :vehicleId
+    ORDER BY vtl.occurred_at DESC
+    LIMIT 1
+""", nativeQuery = true)
+    Optional<String> findLatestTraceJsonByVehicleId(@Param("vehicleId") Long vehicleId);
+
 }

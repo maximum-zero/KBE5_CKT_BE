@@ -1,10 +1,13 @@
 package kernel360.ckt.admin.application;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import kernel360.ckt.admin.application.command.CreateVehicleCommand;
+import kernel360.ckt.admin.infra.repository.jpa.RentalJpaRepository;
 import kernel360.ckt.admin.ui.dto.request.VehicleUpdateRequest;
 import kernel360.ckt.admin.ui.dto.response.ControlTowerSummaryResponse;
+import kernel360.ckt.admin.ui.dto.response.GpsPointResponse;
 import kernel360.ckt.admin.ui.dto.response.RunningVehicleResponse;
 import kernel360.ckt.core.domain.entity.VehicleEntity;
 import kernel360.ckt.core.domain.enums.RentalStatus;
@@ -15,14 +18,19 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import com.fasterxml.jackson.databind.JsonNode;
+
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
 public class VehicleService {
     private final VehicleRepository vehicleRepository;
     private final RentalRepository rentalRepository;
+    private final RentalJpaRepository rentalJpaRepository;
+    private final ObjectMapper objectMapper;
 
     public VehicleEntity create(CreateVehicleCommand command) {
         return vehicleRepository.save(command.toEntity());
@@ -72,5 +80,26 @@ public class VehicleService {
             .map(RunningVehicleResponse::from)
             .toList();
     }
+
+    public Optional<GpsPointResponse> getLastTracePoint(Long vehicleId) {
+        return rentalJpaRepository.findLatestTraceJsonByVehicleId(vehicleId)
+            .flatMap(json -> {
+                try {
+                    JsonNode traceArray = objectMapper.readTree(json);
+                    if (traceArray.isEmpty()) return Optional.empty();
+
+                    JsonNode last = traceArray.get(traceArray.size() - 1);
+                    return Optional.of(new GpsPointResponse(
+                        last.get("lat").asText(),
+                        last.get("lon").asText(),
+                        last.get("ang").asText(),
+                        last.get("spd").asText()
+                    ));
+                } catch (Exception e) {
+                    return Optional.empty();
+                }
+            });
+    }
+
 
 }
