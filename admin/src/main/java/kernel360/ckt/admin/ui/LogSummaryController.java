@@ -65,19 +65,9 @@ public class LogSummaryController {
         @RequestParam("registrationNumber") String registrationNumber,
         HttpServletResponse response
     ) throws IOException {
-
         byte[] excelBytes = excelExportService.createExcel(from, to, registrationNumber, null);
 
-        // 파일명: “운행기록부_yyyyMMdd_HHmmss.xlsx”
-        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-        String fileName = "운행기록부_" + timestamp + ".xlsx";
-
-        // 한글 인코딩 처리
-        String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8).replaceAll("\\+", "%20");
-
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
-            "attachment; filename*=UTF-8''" + encodedFileName);
 
         response.getOutputStream().write(excelBytes);
         response.getOutputStream().flush();
