@@ -77,12 +77,16 @@ public class VehicleEntity {
             batteryVoltage, fuelType, transmissionType, status, memo);
     }
 
-    public void updateStatus(VehicleStatus status) {
-        this.status = status;
-        this.updateAt = LocalDateTime.now();
-    }
-
-    public void updateMemo(String memo) {
+    public void updateVehicle(String modelYear, String manufacturer, String modelName,
+        String batteryVoltage, FuelType fuelType, TransmissionType transmissionType,
+        String memo
+    ) {
+        this.modelYear = modelYear;
+        this.manufacturer = manufacturer;
+        this.modelName = modelName;
+        this.batteryVoltage = batteryVoltage;
+        this.fuelType = fuelType;
+        this.transmissionType = transmissionType;
         this.memo = memo;
         this.updateAt = LocalDateTime.now();
     }
