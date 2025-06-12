@@ -9,6 +9,8 @@ import kernel360.ckt.admin.ui.dto.request.VehicleUpdateRequest;
 import kernel360.ckt.admin.ui.dto.response.ControlTowerSummaryResponse;
 import kernel360.ckt.admin.ui.dto.response.GpsPointResponse;
 import kernel360.ckt.admin.ui.dto.response.RunningVehicleResponse;
+import kernel360.ckt.core.common.error.VehicleErrorCode;
+import kernel360.ckt.core.common.exception.CustomException;
 import kernel360.ckt.core.domain.entity.RentalEntity;
 import kernel360.ckt.core.domain.entity.VehicleEntity;
 import kernel360.ckt.core.domain.enums.RentalStatus;
@@ -34,6 +36,11 @@ public class VehicleService {
     private final ObjectMapper objectMapper;
 
     public VehicleEntity create(CreateVehicleCommand command) {
+        vehicleRepository.findByRegistrationNumber(command.getRegistrationNumber())
+            .ifPresent(vehicle -> {
+                throw new CustomException(VehicleErrorCode.DUPLICATE_REGISTRATION_NUMBER);
+            });
+
         return vehicleRepository.save(command.toEntity());
     }
 
