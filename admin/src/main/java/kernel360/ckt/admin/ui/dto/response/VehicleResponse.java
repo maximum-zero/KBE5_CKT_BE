@@ -1,6 +1,8 @@
 package kernel360.ckt.admin.ui.dto.response;
 
 import kernel360.ckt.core.domain.entity.VehicleEntity;
+import kernel360.ckt.core.domain.enums.FuelType;
+import kernel360.ckt.core.domain.enums.TransmissionType;
 import kernel360.ckt.core.domain.enums.VehicleStatus;
 
 public record VehicleResponse(
@@ -10,8 +12,10 @@ public record VehicleResponse(
     String manufacturer,
     String modelName,
     String batteryVoltage,
-    String fuelType,
-    String transmissionType,
+    FuelType fuelType,
+    String fuelTypeName,
+    TransmissionType transmissionType,
+    String transmissionTypeName,
     VehicleStatus status,
     String statusName,
     String memo
@@ -25,7 +29,9 @@ public record VehicleResponse(
             vehicleEntity.getModelName(),
             vehicleEntity.getBatteryVoltage(),
             vehicleEntity.getFuelType(),
+            vehicleEntity.getFuelType().getValue(),
             vehicleEntity.getTransmissionType(),
+            vehicleEntity.getTransmissionType().getValue(),
             vehicleEntity.getStatus(),
             vehicleEntity.getStatus().getDescription(),
             vehicleEntity.getMemo()

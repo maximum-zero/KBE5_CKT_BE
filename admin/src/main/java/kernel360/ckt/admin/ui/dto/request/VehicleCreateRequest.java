@@ -1,6 +1,8 @@
 package kernel360.ckt.admin.ui.dto.request;
 
 import kernel360.ckt.admin.application.command.CreateVehicleCommand;
+import kernel360.ckt.core.domain.enums.FuelType;
+import kernel360.ckt.core.domain.enums.TransmissionType;
 import kernel360.ckt.core.domain.enums.VehicleStatus;
 
 public record VehicleCreateRequest(
@@ -20,8 +22,8 @@ public record VehicleCreateRequest(
             this.manufacturer,
             this.modelName,
             this.batteryVoltage,
-            this.fuelType,
-            this.transmissionType,
+            FuelType.valueOf(this.fuelType),
+            TransmissionType.valueOf(this.transmissionType),
             VehicleStatus.AVAILABLE,
             this.memo
         );
