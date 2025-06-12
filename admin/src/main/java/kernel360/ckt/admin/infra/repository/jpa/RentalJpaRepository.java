@@ -88,6 +88,14 @@ public interface RentalJpaRepository extends JpaRepository<RentalEntity, Long>, 
     JOIN FETCH r.customer c
     JOIN FETCH r.vehicle v
     WHERE r.status = 'RENTED'
+    AND r.pickupAt = (
+        SELECT MAX(r2.pickupAt)
+        FROM RentalEntity r2
+        WHERE r2.vehicle = r.vehicle
+        AND r2.status = 'RENTED'
+    )
+    ORDER BY r.pickupAt DESC
+
 """)
     List<RentalEntity> findRentedRentals();
 }

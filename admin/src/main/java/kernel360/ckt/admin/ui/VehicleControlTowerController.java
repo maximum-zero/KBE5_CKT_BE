@@ -26,13 +26,6 @@ public class VehicleControlTowerController {
         return CommonResponse.success(vehicleService.getControlTowerSummary());
     }
 
-    @GetMapping("/vehicles/last-trace")
-    public CommonResponse<GpsPointResponse> getLastTrace(@RequestParam("vehicleId") Long vehicleId) {
-        return vehicleService.getLastTracePoint(vehicleId)
-            .map(CommonResponse::success)
-            .orElseGet(() -> CommonResponse.success(null));
-    }
-
     @GetMapping("/vehicles/location")
     public CommonResponse<List<RunningVehicleResponse>> getVehicleLocations() {
         return CommonResponse.success(vehicleService.getVehicleLocations());
