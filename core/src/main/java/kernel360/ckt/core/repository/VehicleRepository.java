@@ -13,5 +13,6 @@ public interface VehicleRepository {
     Page<VehicleEntity> findAll(Pageable pageable);
     Page<VehicleEntity> search(VehicleStatus status, String keyword, Pageable pageable);
     Optional<VehicleEntity> findById(Long vehicleId);
+    Optional<VehicleEntity> findByRegistrationNumber(String registrationNumber);
     long count();
 }
