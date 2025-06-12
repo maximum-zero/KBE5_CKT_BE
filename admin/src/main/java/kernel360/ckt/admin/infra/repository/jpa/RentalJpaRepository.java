@@ -83,4 +83,11 @@ public interface RentalJpaRepository extends JpaRepository<RentalEntity, Long>, 
 """, nativeQuery = true)
     Optional<String> findLatestTraceJsonByVehicleId(@Param("vehicleId") Long vehicleId);
 
+    @Query("""
+    SELECT r FROM RentalEntity r
+    JOIN FETCH r.customer c
+    JOIN FETCH r.vehicle v
+    WHERE r.status = 'RENTED'
+""")
+    List<RentalEntity> findRentedRentals();
 }
