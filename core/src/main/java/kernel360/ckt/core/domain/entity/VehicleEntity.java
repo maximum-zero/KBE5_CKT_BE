@@ -1,6 +1,8 @@
 package kernel360.ckt.core.domain.entity;
 
 import jakarta.persistence.*;
+import kernel360.ckt.core.domain.enums.FuelType;
+import kernel360.ckt.core.domain.enums.TransmissionType;
 import kernel360.ckt.core.domain.enums.VehicleStatus;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -32,11 +34,13 @@ public class VehicleEntity {
     @Column(length = 10)
     private String batteryVoltage;
 
-    @Column(length = 10)
-    private String fuelType;
+    @Enumerated(EnumType.STRING)
+    @Column
+    private FuelType fuelType;
 
-    @Column(length = 10)
-    private String transmissionType;
+    @Enumerated(EnumType.STRING)
+    @Column
+    private TransmissionType transmissionType;
 
     @Enumerated(EnumType.STRING)
     @Column
@@ -52,7 +56,7 @@ public class VehicleEntity {
     private LocalDateTime updateAt;
 
     private VehicleEntity(String registrationNumber, String modelYear, String manufacturer, String modelName,
-                          String batteryVoltage, String fuelType, String transmissionType,
+                          String batteryVoltage, FuelType fuelType, TransmissionType transmissionType,
                           VehicleStatus status, String memo) {
         this.registrationNumber = registrationNumber;
         this.modelYear = modelYear;
@@ -67,7 +71,7 @@ public class VehicleEntity {
     }
 
     public static VehicleEntity create(String registrationNumber, String modelYear, String manufacturer, String modelName,
-                                       String batteryVoltage, String fuelType, String transmissionType,
+                                       String batteryVoltage, FuelType fuelType, TransmissionType transmissionType,
                                        VehicleStatus status, String memo) {
         return new VehicleEntity(registrationNumber, modelYear, manufacturer, modelName,
             batteryVoltage, fuelType, transmissionType, status, memo);
