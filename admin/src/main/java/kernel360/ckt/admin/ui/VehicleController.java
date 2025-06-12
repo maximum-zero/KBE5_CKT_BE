@@ -2,6 +2,7 @@ package kernel360.ckt.admin.ui;
 
 import kernel360.ckt.admin.application.VehicleService;
 import kernel360.ckt.admin.application.command.CreateVehicleCommand;
+import kernel360.ckt.admin.application.command.UpdateVehicleCommand;
 import kernel360.ckt.admin.ui.dto.request.VehicleCreateRequest;
 import kernel360.ckt.admin.ui.dto.request.VehicleUpdateRequest;
 import kernel360.ckt.admin.ui.dto.response.*;
@@ -32,7 +33,8 @@ public class VehicleController {
         @PathVariable Long id,
         @RequestBody VehicleUpdateRequest request
     ) {
-        final VehicleEntity updated = vehicleService.update(id, request);
+        final UpdateVehicleCommand command = request.toCommand();
+        final VehicleEntity updated = vehicleService.update(id, command);
         return CommonResponse.success(VehicleUpdateResponse.from(updated));
     }
 

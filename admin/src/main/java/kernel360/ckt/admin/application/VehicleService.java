@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import kernel360.ckt.admin.application.command.CreateVehicleCommand;
+import kernel360.ckt.admin.application.command.UpdateVehicleCommand;
 import kernel360.ckt.admin.infra.repository.jpa.RentalJpaRepository;
 import kernel360.ckt.admin.ui.dto.request.VehicleUpdateRequest;
 import kernel360.ckt.admin.ui.dto.response.ControlTowerSummaryResponse;
@@ -45,18 +46,21 @@ public class VehicleService {
     }
 
     @Transactional
-    public VehicleEntity update(Long id, VehicleUpdateRequest request) {
+    public VehicleEntity update(Long id, UpdateVehicleCommand command) {
         VehicleEntity vehicle = vehicleRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("Vehicle not found with id: " + id));
+            .orElseThrow(() -> new CustomException(VehicleErrorCode.VEHICLE_NOT_FOUND));
 
-        if (request.status() != null) {
-            vehicle.updateStatus(request.status());
-        }
-        if (request.memo() != null) {
-            vehicle.updateMemo(request.memo());
-        }
+        vehicle.updateVehicle(
+            command.getModelYear(),
+            command.getManufacturer(),
+            command.getManufacturer(),
+            command.getBatteryVoltage(),
+            command.getFuelType(),
+            command.getTransmissionType(),
+            command.getMemo()
+        );
 
-        return vehicle;
+        return vehicleRepository.save(vehicle);
     }
 
     public Page<VehicleEntity> findAll(Pageable pageable) {
