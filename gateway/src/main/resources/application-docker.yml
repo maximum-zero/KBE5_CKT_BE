@@ -27,10 +27,19 @@ spring:
           predicates:
             - Path=/api/v1/vehicles/**
 
+        - id: rentals
+          uri: http://admin:8081
+          predicates:
+            - Path=/api/v1/rentals/**
+
         - id: logs
           uri: http://admin:8081
           predicates:
             - Path=/api/v1/logs/**
 
+        - id: tracking
+          uri: http://admin:8081
+          predicates:
+            - Path=/api/v1/tracking/**
 cors:
   allowed-origins: http://localhost:5173

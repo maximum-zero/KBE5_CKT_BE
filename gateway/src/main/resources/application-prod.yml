@@ -27,10 +27,20 @@ spring:
           predicates:
             - Path=/api/v1/vehicles/**
 
+        - id: rentals
+          uri: http://172.31.35.211:8081
+          predicates:
+            - Path=/api/v1/rentals/**
+
         - id: logs
           uri: http://172.31.35.211:8081
           predicates:
             - Path=/api/v1/logs/**
 
+        - id: tracking
+          uri: http://172.31.35.211:8081
+          predicates:
+            - Path=/api/v1/tracking/**
+
 cors:
-  allowed-origins: https://main.d1vdhd0oktvfuk.amplifyapp.com/
+  allowed-origins: https://ckt.services
