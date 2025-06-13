@@ -31,6 +31,7 @@ public class CustomerEntity extends BaseTimeEntity {
 //    @Column(columnDefinition = "Text")
     private String memo;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private CustomerStatus status;
 
