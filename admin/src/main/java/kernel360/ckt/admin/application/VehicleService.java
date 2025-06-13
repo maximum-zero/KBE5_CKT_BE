@@ -53,7 +53,7 @@ public class VehicleService {
         vehicle.updateVehicle(
             command.getModelYear(),
             command.getManufacturer(),
-            command.getManufacturer(),
+            command.getModelName(),
             command.getBatteryVoltage(),
             command.getFuelType(),
             command.getTransmissionType(),
