@@ -15,8 +15,8 @@ import kernel360.ckt.core.domain.entity.RentalEntity;
 import kernel360.ckt.core.domain.entity.VehicleEntity;
 import kernel360.ckt.core.domain.enums.RentalStatus;
 import kernel360.ckt.core.domain.enums.VehicleStatus;
-import kernel360.ckt.admin.infra.RentalRepository;
-import kernel360.ckt.admin.infra.VehicleRepository;
+import kernel360.ckt.admin.application.port.RentalRepository;
+import kernel360.ckt.admin.application.port.VehicleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -62,12 +62,8 @@ public class VehicleService {
         return vehicleRepository.save(vehicle);
     }
 
-    public Page<VehicleEntity> findAll(Pageable pageable) {
-        return vehicleRepository.findAll(pageable);
-    }
-
     public Page<VehicleEntity> searchVehicles(VehicleStatus status, String keyword, Pageable pageable) {
-        return vehicleRepository.search(status, keyword, pageable);
+        return vehicleRepository.findAll(status, keyword, pageable);
     }
 
     public VehicleEntity findById(Long vehicleId) {
