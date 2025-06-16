@@ -8,7 +8,7 @@ import kernel360.ckt.admin.ui.dto.response.DrivingLogListResponse;
 import kernel360.ckt.core.domain.entity.DrivingLogEntity;
 import kernel360.ckt.core.domain.entity.RouteEntity;
 import kernel360.ckt.core.domain.enums.DrivingType;
-import kernel360.ckt.admin.infra.DrivingLogRepository;
+import kernel360.ckt.admin.application.port.DrivingLogRepository;
 import kernel360.ckt.admin.infra.RouteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -37,7 +37,7 @@ public class DrivingLogService {
         Pageable pageable
     ) {
 
-        Page<DrivingLogEntity> drivingLogPage = drivingLogRepository.searchDrivingLogs(
+        Page<DrivingLogEntity> drivingLogPage = drivingLogRepository.findAll(
             vehicleNumber,
             userName,
             startDate,
