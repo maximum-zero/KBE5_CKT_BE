@@ -5,7 +5,7 @@ import kernel360.ckt.admin.application.service.command.CreateCustomerCommand;
 import kernel360.ckt.admin.ui.dto.request.CustomerUpdateRequest;
 import kernel360.ckt.core.domain.entity.CustomerEntity;
 import kernel360.ckt.core.domain.enums.CustomerStatus;
-import kernel360.ckt.admin.infra.CustomerRepository;
+import kernel360.ckt.admin.application.port.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -52,7 +52,7 @@ public class CustomerService {
     }
 
     public Page<CustomerEntity> searchCustomers(CustomerStatus status, String keyword, Pageable pageable) {
-        return customerRepository.search(status, keyword, pageable);
+        return customerRepository.findAll(status, keyword, pageable);
     }
 
     public CustomerEntity findByLicenseNumber(String licenseNumber) {
