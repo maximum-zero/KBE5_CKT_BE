@@ -1,13 +1,13 @@
 package kernel360.ckt.admin.application;
 
-import kernel360.ckt.admin.infra.repository.RouteLogRepository;
-import kernel360.ckt.admin.infra.repository.projection.WeeklyVehicleLogProjection;
+import kernel360.ckt.admin.infra.basic.RouteLogRepository;
+import kernel360.ckt.admin.domain.projection.WeeklyVehicleLogProjection;
 import kernel360.ckt.admin.ui.dto.response.DailyVehicleLogResponse;
 import kernel360.ckt.admin.ui.dto.response.VehicleLogSummaryResponse;
 import kernel360.ckt.admin.ui.dto.response.WeeklyVehicleLogResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import kernel360.ckt.admin.infra.repository.projection.VehicleLogSummaryProjection;
+import kernel360.ckt.admin.domain.projection.VehicleLogSummaryProjection;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

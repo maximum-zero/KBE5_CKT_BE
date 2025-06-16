@@ -1,7 +1,7 @@
 package kernel360.ckt.admin.application;
 
 import kernel360.ckt.admin.ui.dto.response.DailyVehicleLogResponse;
-import kernel360.ckt.admin.infra.repository.RouteLogRepository;
+import kernel360.ckt.admin.infra.basic.RouteLogRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;

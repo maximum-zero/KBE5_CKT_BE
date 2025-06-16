@@ -1,4 +1,4 @@
-package kernel360.ckt.core.repository;
+package kernel360.ckt.admin.infra;
 
 import kernel360.ckt.core.domain.entity.DrivingLogEntity;
 import kernel360.ckt.core.domain.entity.RentalEntity;

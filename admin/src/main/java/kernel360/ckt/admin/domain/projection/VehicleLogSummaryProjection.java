@@ -1,4 +1,4 @@
-package kernel360.ckt.admin.infra.repository.projection;
+package kernel360.ckt.admin.domain.projection;
 
 public interface VehicleLogSummaryProjection {
     String getRegistrationNumber();

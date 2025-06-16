@@ -5,7 +5,7 @@ import kernel360.ckt.admin.application.command.CreateCustomerCommand;
 import kernel360.ckt.admin.ui.dto.request.CustomerUpdateRequest;
 import kernel360.ckt.core.domain.entity.CustomerEntity;
 import kernel360.ckt.core.domain.enums.CustomerStatus;
-import kernel360.ckt.core.repository.CustomerRepository;
+import kernel360.ckt.admin.infra.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
