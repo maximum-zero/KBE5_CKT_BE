@@ -1,8 +1,8 @@
 package kernel360.ckt.admin.ui;
 
 import jakarta.validation.Valid;
-import kernel360.ckt.admin.application.RentalService;
-import kernel360.ckt.admin.application.command.CreateRentalCommand;
+import kernel360.ckt.admin.application.service.RentalService;
+import kernel360.ckt.admin.application.service.command.CreateRentalCommand;
 import kernel360.ckt.admin.ui.dto.request.RentalCreateRequest;
 import kernel360.ckt.admin.ui.dto.request.RentalListRequest;
 import kernel360.ckt.admin.ui.dto.request.RentalStatusUpdateRequest;

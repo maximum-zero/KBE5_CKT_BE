@@ -1,4 +1,4 @@
-package kernel360.ckt.admin.application;
+package kernel360.ckt.admin.application.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;

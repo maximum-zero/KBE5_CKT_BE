@@ -1,10 +1,10 @@
-package kernel360.ckt.admin.application;
+package kernel360.ckt.admin.application.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import kernel360.ckt.admin.application.command.CreateVehicleCommand;
-import kernel360.ckt.admin.application.command.UpdateVehicleCommand;
+import kernel360.ckt.admin.application.service.command.CreateVehicleCommand;
+import kernel360.ckt.admin.application.service.command.UpdateVehicleCommand;
 import kernel360.ckt.admin.infra.jpa.RentalJpaRepository;
 import kernel360.ckt.admin.ui.dto.response.ControlTowerSummaryResponse;
 import kernel360.ckt.admin.ui.dto.response.GpsPointResponse;

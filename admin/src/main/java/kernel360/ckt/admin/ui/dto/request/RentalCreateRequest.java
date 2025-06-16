@@ -3,7 +3,7 @@ package kernel360.ckt.admin.ui.dto.request;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import kernel360.ckt.admin.application.command.CreateRentalCommand;
+import kernel360.ckt.admin.application.service.command.CreateRentalCommand;
 
 public record RentalCreateRequest(
     @NotNull(message = "차량은 필수입니다.")

@@ -1,6 +1,6 @@
 package kernel360.ckt.admin.ui.dto.request;
 
-import kernel360.ckt.admin.application.command.UpdateVehicleCommand;
+import kernel360.ckt.admin.application.service.command.UpdateVehicleCommand;
 import kernel360.ckt.core.domain.enums.FuelType;
 import kernel360.ckt.core.domain.enums.TransmissionType;
 import kernel360.ckt.core.domain.enums.VehicleStatus;

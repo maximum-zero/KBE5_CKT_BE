@@ -1,6 +1,6 @@
 package kernel360.ckt.admin.ui.dto.request;
 
-import kernel360.ckt.admin.application.command.CreateCompanyCommand;
+import kernel360.ckt.admin.application.service.command.CreateCompanyCommand;
 
 public record CompanyCreateRequest(
     String email,

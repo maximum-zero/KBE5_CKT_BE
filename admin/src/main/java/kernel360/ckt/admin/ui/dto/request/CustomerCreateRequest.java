@@ -1,6 +1,6 @@
 package kernel360.ckt.admin.ui.dto.request;
 
-import kernel360.ckt.admin.application.command.CreateCustomerCommand;
+import kernel360.ckt.admin.application.service.command.CreateCustomerCommand;
 
 public record CustomerCreateRequest(
     String customerName,

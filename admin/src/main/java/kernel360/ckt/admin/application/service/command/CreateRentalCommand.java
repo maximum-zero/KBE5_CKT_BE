@@ -1,4 +1,4 @@
-package kernel360.ckt.admin.application.command;
+package kernel360.ckt.admin.application.service.command;
 
 import java.time.LocalDateTime;
 import lombok.AccessLevel;

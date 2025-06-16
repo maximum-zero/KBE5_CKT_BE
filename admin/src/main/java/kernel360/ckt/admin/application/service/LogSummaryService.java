@@ -1,4 +1,4 @@
-package kernel360.ckt.admin.application;
+package kernel360.ckt.admin.application.service;
 
 import kernel360.ckt.admin.infra.basic.RouteLogRepository;
 import kernel360.ckt.admin.domain.projection.WeeklyVehicleLogProjection;

@@ -1,7 +1,7 @@
 package kernel360.ckt.admin.ui;
 
-import kernel360.ckt.admin.application.CustomerService;
-import kernel360.ckt.admin.application.command.CreateCustomerCommand;
+import kernel360.ckt.admin.application.service.CustomerService;
+import kernel360.ckt.admin.application.service.command.CreateCustomerCommand;
 import kernel360.ckt.admin.ui.dto.request.CustomerCreateRequest;
 import kernel360.ckt.admin.ui.dto.request.CustomerUpdateRequest;
 import kernel360.ckt.admin.ui.dto.response.CustomerDetailResponse;
