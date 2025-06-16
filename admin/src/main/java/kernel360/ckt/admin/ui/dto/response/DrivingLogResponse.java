@@ -21,6 +21,7 @@ public record DrivingLogResponse(
     Long totalDistance,
     String customerName,
     DrivingType drivingType,
+    String statusName,
     String memo
 ) {
     public static DrivingLogResponse of(DrivingLogEntity drivingLogEntity, List<RouteEntity> routes) {
@@ -50,6 +51,7 @@ public record DrivingLogResponse(
             endOdometer-startOdometer,
             customerName,
             drivingLogEntity.getType(),
+            drivingLogEntity.getType().getDescription(),
             drivingLogEntity.getMemo()
         );
     }

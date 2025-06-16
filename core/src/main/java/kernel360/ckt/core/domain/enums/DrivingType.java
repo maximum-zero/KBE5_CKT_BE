@@ -6,12 +6,15 @@ import lombok.Getter;
 public enum DrivingType {
     FOR_BUSINESS_USE("업무용"),
     FOR_COMMUTING("출퇴근용"),
-    NOT_REGISTERED("미등록")
-    ;
+    NOT_REGISTERED("미등록");
 
-    private final String value;
+    private final String description;
 
-    DrivingType(String value) {
-        this.value = value;
+    DrivingType(String description) {
+        this.description = description;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }
