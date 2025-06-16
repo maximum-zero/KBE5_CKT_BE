@@ -6,17 +6,14 @@ import java.util.Optional;
 import kernel360.ckt.core.domain.entity.RentalEntity;
 import kernel360.ckt.core.domain.entity.VehicleEntity;
 import kernel360.ckt.core.domain.enums.RentalStatus;
-import kernel360.ckt.admin.application.port.RentalRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public interface RentalJpaRepository extends JpaRepository<RentalEntity, Long>, RentalRepository {
+public interface RentalJpaRepository extends JpaRepository<RentalEntity, Long> {
     @Query("""
         SELECT r FROM RentalEntity r
         WHERE r.vehicle = :vehicle
