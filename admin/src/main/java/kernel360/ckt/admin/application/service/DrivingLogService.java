@@ -9,7 +9,7 @@ import kernel360.ckt.core.domain.entity.DrivingLogEntity;
 import kernel360.ckt.core.domain.entity.RouteEntity;
 import kernel360.ckt.core.domain.enums.DrivingType;
 import kernel360.ckt.admin.application.port.DrivingLogRepository;
-import kernel360.ckt.admin.infra.RouteRepository;
+import kernel360.ckt.admin.application.port.RouteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
