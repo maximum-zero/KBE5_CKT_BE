@@ -1,4 +1,4 @@
-package kernel360.ckt.admin.application;
+package kernel360.ckt.admin.application.service;
 
 import kernel360.ckt.admin.ui.dto.response.DailyVehicleLogResponse;
 import kernel360.ckt.admin.infra.basic.RouteLogRepository;

@@ -1,7 +1,7 @@
 package kernel360.ckt.admin.ui.dto.request;
 
 import java.time.LocalDateTime;
-import kernel360.ckt.admin.application.command.RentalListCommand;
+import kernel360.ckt.admin.application.service.command.RentalListCommand;
 import kernel360.ckt.core.domain.enums.RentalStatus;
 import org.springframework.format.annotation.DateTimeFormat;
 

@@ -1,6 +1,6 @@
 package kernel360.ckt.admin.ui;
 
-import kernel360.ckt.admin.application.DrivingLogService;
+import kernel360.ckt.admin.application.service.DrivingLogService;
 import kernel360.ckt.admin.ui.dto.request.DrivingLogUpdateRequest;
 import kernel360.ckt.admin.ui.dto.response.DrivingLogDetailResponse;
 import kernel360.ckt.admin.ui.dto.response.DrivingLogListResponse;

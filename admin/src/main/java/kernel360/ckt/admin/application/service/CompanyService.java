@@ -1,7 +1,7 @@
-package kernel360.ckt.admin.application;
+package kernel360.ckt.admin.application.service;
 
-import kernel360.ckt.admin.application.command.CreateCompanyCommand;
-import kernel360.ckt.admin.application.command.UpdateCompanyCommand;
+import kernel360.ckt.admin.application.service.command.CreateCompanyCommand;
+import kernel360.ckt.admin.application.service.command.UpdateCompanyCommand;
 import kernel360.ckt.core.common.error.CompanyErrorCode;
 import kernel360.ckt.core.common.exception.CustomException;
 import kernel360.ckt.core.domain.entity.CompanyEntity;

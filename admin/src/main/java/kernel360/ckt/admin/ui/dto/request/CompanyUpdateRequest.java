@@ -1,6 +1,6 @@
 package kernel360.ckt.admin.ui.dto.request;
 
-import kernel360.ckt.admin.application.command.UpdateCompanyCommand;
+import kernel360.ckt.admin.application.service.command.UpdateCompanyCommand;
 
 public record CompanyUpdateRequest(
     String name,

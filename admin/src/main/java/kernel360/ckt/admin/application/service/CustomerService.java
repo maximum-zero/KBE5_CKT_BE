@@ -1,7 +1,7 @@
-package kernel360.ckt.admin.application;
+package kernel360.ckt.admin.application.service;
 
 import jakarta.persistence.EntityNotFoundException;
-import kernel360.ckt.admin.application.command.CreateCustomerCommand;
+import kernel360.ckt.admin.application.service.command.CreateCustomerCommand;
 import kernel360.ckt.admin.ui.dto.request.CustomerUpdateRequest;
 import kernel360.ckt.core.domain.entity.CustomerEntity;
 import kernel360.ckt.core.domain.enums.CustomerStatus;

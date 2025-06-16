@@ -1,5 +1,6 @@
-package kernel360.ckt.admin.application.command;
+package kernel360.ckt.admin.application.service.command;
 
+import kernel360.ckt.core.domain.entity.VehicleEntity;
 import kernel360.ckt.core.domain.enums.FuelType;
 import kernel360.ckt.core.domain.enums.TransmissionType;
 import kernel360.ckt.core.domain.enums.VehicleStatus;
@@ -8,7 +9,8 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class UpdateVehicleCommand {
+public class CreateVehicleCommand {
+    private final String registrationNumber;
     private final String modelYear;
     private final String manufacturer;
     private final String modelName;
@@ -17,4 +19,18 @@ public class UpdateVehicleCommand {
     private final TransmissionType transmissionType;
     private final VehicleStatus status;
     private final String memo;
+
+    public VehicleEntity toEntity() {
+        return VehicleEntity.create(
+            this.registrationNumber,
+            this.modelYear,
+            this.manufacturer,
+            this.modelName,
+            this.batteryVoltage,
+            this.fuelType,
+            this.transmissionType,
+            this.status,
+            this.memo
+        );
+    }
 }

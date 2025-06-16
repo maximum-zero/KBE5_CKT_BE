@@ -1,11 +1,11 @@
 package kernel360.ckt.admin.ui;
 
-import kernel360.ckt.admin.application.command.CreateCompanyCommand;
-import kernel360.ckt.admin.application.command.UpdateCompanyCommand;
+import kernel360.ckt.admin.application.service.command.CreateCompanyCommand;
+import kernel360.ckt.admin.application.service.command.UpdateCompanyCommand;
 import kernel360.ckt.admin.ui.dto.request.CompanyCreateRequest;
 import kernel360.ckt.admin.ui.dto.request.CompanyUpdateRequest;
 import kernel360.ckt.admin.ui.dto.response.CompanyCreateResponse;
-import kernel360.ckt.admin.application.CompanyService;
+import kernel360.ckt.admin.application.service.CompanyService;
 import kernel360.ckt.admin.ui.dto.response.CompanyListResponse;
 import kernel360.ckt.admin.ui.dto.response.CompanyMeResponse;
 import kernel360.ckt.admin.ui.dto.response.CompanyResponse;
