@@ -1,8 +1,8 @@
-package kernel360.ckt.admin.infra.repository;
+package kernel360.ckt.admin.infra.basic;
 
-import kernel360.ckt.admin.infra.repository.projection.DailyVehicleLogProjection;
-import kernel360.ckt.admin.infra.repository.projection.VehicleLogSummaryProjection;
-import kernel360.ckt.admin.infra.repository.projection.WeeklyVehicleLogProjection;
+import kernel360.ckt.admin.domain.projection.DailyVehicleLogProjection;
+import kernel360.ckt.admin.domain.projection.VehicleLogSummaryProjection;
+import kernel360.ckt.admin.domain.projection.WeeklyVehicleLogProjection;
 import kernel360.ckt.core.domain.entity.RouteEntity;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;

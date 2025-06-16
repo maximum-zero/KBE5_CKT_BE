@@ -1,4 +1,4 @@
-package kernel360.ckt.core.repository;
+package kernel360.ckt.admin.infra;
 
 import java.time.LocalDateTime;
 import java.util.List;

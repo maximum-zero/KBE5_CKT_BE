@@ -1,8 +1,8 @@
-package kernel360.ckt.admin.infra.repository.jpa;
+package kernel360.ckt.admin.infra.jpa;
 
 import kernel360.ckt.core.domain.entity.DrivingLogEntity;
 import kernel360.ckt.core.domain.enums.DrivingType;
-import kernel360.ckt.core.repository.DrivingLogRepository;
+import kernel360.ckt.admin.infra.DrivingLogRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;

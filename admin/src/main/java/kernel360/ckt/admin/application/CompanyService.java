@@ -5,7 +5,7 @@ import kernel360.ckt.admin.application.command.UpdateCompanyCommand;
 import kernel360.ckt.core.common.error.CompanyErrorCode;
 import kernel360.ckt.core.common.exception.CustomException;
 import kernel360.ckt.core.domain.entity.CompanyEntity;
-import kernel360.ckt.core.repository.CompanyRepository;
+import kernel360.ckt.admin.infra.CompanyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
