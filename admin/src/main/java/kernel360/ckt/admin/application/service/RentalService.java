@@ -12,11 +12,11 @@ import kernel360.ckt.core.domain.entity.DrivingLogEntity;
 import kernel360.ckt.core.domain.entity.RentalEntity;
 import kernel360.ckt.core.domain.entity.VehicleEntity;
 import kernel360.ckt.core.domain.enums.RentalStatus;
-import kernel360.ckt.admin.infra.CompanyRepository;
-import kernel360.ckt.admin.infra.CustomerRepository;
-import kernel360.ckt.admin.infra.DrivingLogRepository;
-import kernel360.ckt.admin.infra.RentalRepository;
-import kernel360.ckt.admin.infra.VehicleRepository;
+import kernel360.ckt.admin.application.port.CompanyRepository;
+import kernel360.ckt.admin.application.port.CustomerRepository;
+import kernel360.ckt.admin.application.port.DrivingLogRepository;
+import kernel360.ckt.admin.application.port.RentalRepository;
+import kernel360.ckt.admin.application.port.VehicleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -71,7 +71,7 @@ public class RentalService {
      * @return 검색 조건에 해당하는 RentalEntity의 페이징된 목록
      */
     public Page<RentalEntity> searchRentals(RentalListCommand command, Pageable pageable) {
-        return rentalRepository.search(
+        return rentalRepository.findAll(
             command.getCompanyId(),
             command.getStatus(),
             command.getKeyword(),
