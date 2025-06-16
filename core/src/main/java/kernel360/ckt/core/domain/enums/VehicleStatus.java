@@ -5,13 +5,13 @@ public enum VehicleStatus {
     RENTED("대여중"),
     INACTIVE("비활성화");
 
-    private final String description;
+    private final String value;
 
-    VehicleStatus(String description) {
-        this.description = description;
+    VehicleStatus(String value) {
+        this.value = value;
     }
 
-    public String getDescription() {
-        return description;
+    public String getValue() {
+        return value;
     }
 }

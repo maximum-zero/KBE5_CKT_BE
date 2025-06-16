@@ -8,13 +8,13 @@ public enum DrivingType {
     FOR_COMMUTING("출퇴근용"),
     NOT_REGISTERED("미등록");
 
-    private final String description;
+    private final String value;
 
-    DrivingType(String description) {
-        this.description = description;
+    DrivingType(String value) {
+        this.value = value;
     }
 
     public String getDescription() {
-        return description;
+        return value;
     }
 }

@@ -33,7 +33,7 @@ public record VehicleResponse(
             vehicleEntity.getTransmissionType(),
             vehicleEntity.getTransmissionType().getValue(),
             vehicleEntity.getStatus(),
-            vehicleEntity.getStatus().getDescription(),
+            vehicleEntity.getStatus().getValue(),
             vehicleEntity.getMemo()
         );
     }

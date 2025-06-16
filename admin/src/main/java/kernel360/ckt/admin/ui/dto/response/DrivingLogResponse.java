@@ -51,7 +51,7 @@ public record DrivingLogResponse(
             endOdometer-startOdometer,
             customerName,
             drivingLogEntity.getType(),
-            drivingLogEntity.getType().getDescription(),
+            drivingLogEntity.getType().getValue(),
             drivingLogEntity.getMemo()
         );
     }
