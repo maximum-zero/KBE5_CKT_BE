@@ -1,5 +1,6 @@
 package kernel360.ckt.auth.ui;
 
+import jakarta.validation.Valid;
 import kernel360.ckt.auth.application.service.AuthService;
 import kernel360.ckt.auth.ui.dto.request.LoginRequest;
 import kernel360.ckt.auth.ui.dto.request.ReissueRequest;
@@ -16,7 +17,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<TokenResponse> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<TokenResponse> login(@RequestBody @Valid LoginRequest request) {
         return ResponseEntity.ok(authService.login(request.toCommand()));
     }
 
