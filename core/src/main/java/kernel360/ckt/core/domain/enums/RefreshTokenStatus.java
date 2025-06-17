@@ -1,4 +1,4 @@
-package kernel360.ckt.auth.domain;
+package kernel360.ckt.core.domain.enums;
 
 import lombok.Getter;
 

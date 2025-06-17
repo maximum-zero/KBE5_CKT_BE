@@ -1,7 +1,7 @@
 package kernel360.ckt.auth.infra;
 
 import jakarta.persistence.*;
-import kernel360.ckt.auth.domain.RefreshTokenStatus;
+import kernel360.ckt.core.domain.enums.RefreshTokenStatus;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
