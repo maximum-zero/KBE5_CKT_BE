@@ -3,6 +3,9 @@ package kernel360.ckt.auth.application.service;
 import kernel360.ckt.auth.application.service.command.LoginCommand;
 import kernel360.ckt.auth.application.service.command.ReissueCommand;
 import kernel360.ckt.auth.config.JwtTokenProvider;
+import kernel360.ckt.core.common.error.AuthErrorCode;
+import kernel360.ckt.core.common.error.TokenErrorCode;
+import kernel360.ckt.core.common.exception.CustomException;
 import kernel360.ckt.core.domain.enums.RefreshTokenStatus;
 import kernel360.ckt.auth.infra.CompanyReadJpaRepository;
 import kernel360.ckt.core.domain.entity.RefreshTokenEntity;
@@ -10,7 +13,6 @@ import kernel360.ckt.auth.infra.RefreshTokenJpaRepository;
 import kernel360.ckt.auth.ui.dto.response.TokenResponse;
 import kernel360.ckt.core.domain.entity.CompanyEntity;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,10 +30,10 @@ public class AuthService {
 
     public TokenResponse login(LoginCommand command) {
         CompanyEntity company = companyRepository.findByEmail(command.getEmail())
-            .orElseThrow(() -> new BadCredentialsException("존재하지 않는 사용자입니다."));
+            .orElseThrow(() -> new CustomException(AuthErrorCode.INVALID_LOGIN_CREDENTIALS));
 
         if (!passwordEncoder.matches(command.getPassword(), company.getPassword())) {
-            throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
+            throw new CustomException(AuthErrorCode.INVALID_LOGIN_CREDENTIALS);
         }
 
         Date now = new Date();
@@ -58,14 +60,14 @@ public class AuthService {
 
     public TokenResponse reissue(ReissueCommand command) {
         RefreshTokenEntity tokenEntity = refreshTokenRepository.findByToken(command.getRefreshToken())
-            .orElseThrow(() -> new IllegalArgumentException("리프레시 토큰이 유효하지 않습니다."));
+            .orElseThrow(() -> new CustomException(TokenErrorCode.INVALID_REFRESH_TOKEN));
 
         if (tokenEntity.isExpired()) {
-            throw new IllegalArgumentException("리프레시 토큰이 만료되었습니다.");
+            throw new CustomException(TokenErrorCode.EXPIRED_REFRESH_TOKEN);
         }
 
         CompanyEntity company = companyRepository.findById(tokenEntity.getCompanyId())
-            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+            .orElseThrow(() -> new CustomException(AuthErrorCode.INVALID_LOGIN_CREDENTIALS));
 
         Date now = new Date();
         LocalDateTime issuedAt = LocalDateTime.now();
@@ -84,7 +86,7 @@ public class AuthService {
         String refreshToken = bearerToken.replace("Bearer ", "").trim();
 
         RefreshTokenEntity tokenEntity = refreshTokenRepository.findByToken(refreshToken)
-            .orElseThrow(() -> new IllegalArgumentException("리프레시 토큰이 유효하지 않습니다."));
+            .orElseThrow(() -> new CustomException(TokenErrorCode.EXPIRED_REFRESH_TOKEN));
 
         tokenEntity.expireToken();
         refreshTokenRepository.save(tokenEntity);
