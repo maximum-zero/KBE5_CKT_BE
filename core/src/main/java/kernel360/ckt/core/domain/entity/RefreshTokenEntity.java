@@ -1,4 +1,4 @@
-package kernel360.ckt.auth.infra;
+package kernel360.ckt.core.domain.entity;
 
 import jakarta.persistence.*;
 import kernel360.ckt.core.domain.enums.RefreshTokenStatus;

@@ -5,7 +5,7 @@ import kernel360.ckt.auth.application.service.command.ReissueCommand;
 import kernel360.ckt.auth.config.JwtTokenProvider;
 import kernel360.ckt.core.domain.enums.RefreshTokenStatus;
 import kernel360.ckt.auth.infra.CompanyReadJpaRepository;
-import kernel360.ckt.auth.infra.RefreshTokenEntity;
+import kernel360.ckt.core.domain.entity.RefreshTokenEntity;
 import kernel360.ckt.auth.infra.RefreshTokenJpaRepository;
 import kernel360.ckt.auth.ui.dto.response.TokenResponse;
 import kernel360.ckt.core.domain.entity.CompanyEntity;

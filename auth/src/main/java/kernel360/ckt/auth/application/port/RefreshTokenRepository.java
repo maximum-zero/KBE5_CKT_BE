@@ -1,6 +1,6 @@
 package kernel360.ckt.auth.application.port;
 
-import kernel360.ckt.auth.infra.RefreshTokenEntity;
+import kernel360.ckt.core.domain.entity.RefreshTokenEntity;
 
 import java.util.Optional;
 
