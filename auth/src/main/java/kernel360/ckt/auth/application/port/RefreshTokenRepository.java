@@ -1,4 +1,4 @@
-package kernel360.ckt.auth.domain;
+package kernel360.ckt.auth.application.port;
 
 import kernel360.ckt.auth.infra.RefreshTokenEntity;
 

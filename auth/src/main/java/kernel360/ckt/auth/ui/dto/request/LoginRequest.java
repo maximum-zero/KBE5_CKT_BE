@@ -1,6 +1,6 @@
 package kernel360.ckt.auth.ui.dto.request;
 
-import kernel360.ckt.auth.application.command.LoginCommand;
+import kernel360.ckt.auth.application.service.command.LoginCommand;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 

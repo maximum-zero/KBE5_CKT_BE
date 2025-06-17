@@ -1,4 +1,4 @@
-package kernel360.ckt.auth.application.command;
+package kernel360.ckt.auth.application.service.command;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

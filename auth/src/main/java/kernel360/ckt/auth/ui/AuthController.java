@@ -1,6 +1,6 @@
 package kernel360.ckt.auth.ui;
 
-import kernel360.ckt.auth.application.AuthService;
+import kernel360.ckt.auth.application.service.AuthService;
 import kernel360.ckt.auth.ui.dto.request.LoginRequest;
 import kernel360.ckt.auth.ui.dto.request.ReissueRequest;
 import kernel360.ckt.auth.ui.dto.response.TokenResponse;

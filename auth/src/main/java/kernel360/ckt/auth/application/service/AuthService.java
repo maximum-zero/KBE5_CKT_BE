@@ -1,7 +1,7 @@
-package kernel360.ckt.auth.application;
+package kernel360.ckt.auth.application.service;
 
-import kernel360.ckt.auth.application.command.LoginCommand;
-import kernel360.ckt.auth.application.command.ReissueCommand;
+import kernel360.ckt.auth.application.service.command.LoginCommand;
+import kernel360.ckt.auth.application.service.command.ReissueCommand;
 import kernel360.ckt.auth.config.JwtTokenProvider;
 import kernel360.ckt.core.domain.enums.RefreshTokenStatus;
 import kernel360.ckt.auth.infra.CompanyReadJpaRepository;

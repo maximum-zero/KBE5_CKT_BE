@@ -1,6 +1,6 @@
 package kernel360.ckt.auth.ui.dto.request;
 
-import kernel360.ckt.auth.application.command.ReissueCommand;
+import kernel360.ckt.auth.application.service.command.ReissueCommand;
 import lombok.Getter;
 
 @Getter
