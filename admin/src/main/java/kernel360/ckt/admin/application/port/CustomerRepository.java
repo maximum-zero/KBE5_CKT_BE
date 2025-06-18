@@ -5,6 +5,7 @@ import kernel360.ckt.core.domain.enums.CustomerStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -53,4 +54,12 @@ public interface CustomerRepository {
      * @param id 삭제할 고객 ID
      */
     void deleteById(Long id);
+
+    /**
+     * Keyword에 맞는 고객을 조회합니다.
+     * @param customerNameKeyword
+     * @param phoneNumberKeyword
+     * @return
+     */
+    List<CustomerEntity> findByCustomerNameContainingOrPhoneNumberContaining(String customerNameKeyword, String phoneNumberKeyword);
 }
