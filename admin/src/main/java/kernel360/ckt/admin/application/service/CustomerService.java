@@ -2,6 +2,7 @@ package kernel360.ckt.admin.application.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import kernel360.ckt.admin.application.service.command.CreateCustomerCommand;
+import kernel360.ckt.admin.application.service.command.CustomerKeywordCommand;
 import kernel360.ckt.admin.ui.dto.request.CustomerUpdateRequest;
 import kernel360.ckt.core.domain.entity.CustomerEntity;
 import kernel360.ckt.core.domain.enums.CustomerStatus;
@@ -10,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -58,6 +61,10 @@ public class CustomerService {
     public CustomerEntity findByLicenseNumber(String licenseNumber) {
         return customerRepository.findByLicenseNumber(licenseNumber)
             .orElseThrow(() -> new EntityNotFoundException(licenseNumber + "에 해당하는 고객이 존재하지 않습니다."));
+    }
+
+    public List<CustomerEntity> searchKeyword(CustomerKeywordCommand command) {
+        return customerRepository.findByCustomerNameContainingOrPhoneNumberContaining(command.getKeyword(), command.getKeyword());
     }
 
 }

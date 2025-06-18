@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -40,4 +41,10 @@ public class CustomerRepositoryAdapter implements CustomerRepository {
     public void deleteById(Long id) {
         customerJpaRepository.deleteById(id);
     }
+
+    @Override
+    public List<CustomerEntity> findByCustomerNameContainingOrPhoneNumberContaining(String customerNameKeyword, String phoneNumberKeyword) {
+        return customerJpaRepository.findByCustomerNameContainingOrPhoneNumberContaining(customerNameKeyword, phoneNumberKeyword);
+    }
+
 }
