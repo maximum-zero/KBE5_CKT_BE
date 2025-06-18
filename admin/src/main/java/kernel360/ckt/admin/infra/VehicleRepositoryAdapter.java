@@ -9,6 +9,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -44,5 +46,10 @@ public class VehicleRepositoryAdapter implements VehicleRepository {
     @Override
     public void deleteById(Long vehicleId) {
         vehicleJpaRepository.deleteById(vehicleId);
+    }
+
+    @Override
+    public List<VehicleEntity> searchAvailableVehiclesByKeyword(String keyword, LocalDateTime pickupAt, LocalDateTime returnAt) {
+        return vehicleJpaRepository.searchAvailableVehiclesByKeyword(keyword, pickupAt, returnAt);
     }
 }

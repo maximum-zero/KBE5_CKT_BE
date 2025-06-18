@@ -1,10 +1,14 @@
 package kernel360.ckt.admin.application.port;
 
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.NotNull;
 import kernel360.ckt.core.domain.entity.VehicleEntity;
 import kernel360.ckt.core.domain.enums.VehicleStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -54,4 +58,12 @@ public interface VehicleRepository {
      * @param vehicleId 삭제할 차량 ID
      */
     void deleteById(Long vehicleId);
+
+    /**
+     * 예약가능한 차량을 조회합니다.
+     * @param keyword 차량 번호 or 모델명
+     * @param pickupAt 픽업 시간
+     * @param returnAt 반납 시간
+     */
+    List<VehicleEntity> searchAvailableVehiclesByKeyword(String keyword, LocalDateTime pickupAt, LocalDateTime returnAt);
 }

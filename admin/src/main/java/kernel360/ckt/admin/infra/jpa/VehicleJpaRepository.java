@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface VehicleJpaRepository extends JpaRepository<VehicleEntity, Long> {
@@ -19,4 +21,22 @@ public interface VehicleJpaRepository extends JpaRepository<VehicleEntity, Long>
     Page<VehicleEntity> findAll(@Param("status") VehicleStatus status, @Param("keyword") String keyword, Pageable pageable);
 
     Optional<VehicleEntity> findByRegistrationNumber(String registrationNumber);
+
+    @Query("""
+        SELECT v
+        FROM VehicleEntity v
+        LEFT JOIN RentalEntity r ON v.id = r.vehicle.id
+            AND r.status = 'RENTED'
+            AND r.pickupAt <= :returnAt
+            AND r.returnAt >= :pickupAt
+        WHERE
+            (LOWER(v.registrationNumber) LIKE LOWER(CONCAT('%', :keyword, '%')) OR
+             LOWER(v.modelName) LIKE LOWER(CONCAT('%', :keyword, '%')))
+        AND r.id IS NULL
+    """)
+    List<VehicleEntity> searchAvailableVehiclesByKeyword(
+        @Param("keyword") String keyword,
+        @Param("pickupAt") LocalDateTime pickupAt,
+        @Param("returnAt") LocalDateTime returnAt
+    );
 }
