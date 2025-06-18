@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import kernel360.ckt.admin.application.service.command.CreateVehicleCommand;
+import kernel360.ckt.admin.application.service.command.VehicleKeywordCommand;
 import kernel360.ckt.admin.application.service.command.UpdateVehicleCommand;
 import kernel360.ckt.admin.infra.jpa.RentalJpaRepository;
 import kernel360.ckt.admin.ui.dto.response.ControlTowerSummaryResponse;
@@ -73,6 +74,10 @@ public class VehicleService {
 
     public void delete(Long vehicleId) {
         vehicleRepository.deleteById(vehicleId);
+    }
+
+    public List<VehicleEntity> searchKeyword(VehicleKeywordCommand command) {
+        return vehicleRepository.searchAvailableVehiclesByKeyword(command.getKeyword(), command.getPickupAt(), command.getReturnAt());
     }
 
     public ControlTowerSummaryResponse getControlTowerSummary() {

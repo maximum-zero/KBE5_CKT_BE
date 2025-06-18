@@ -4,6 +4,7 @@ import kernel360.ckt.admin.application.service.VehicleService;
 import kernel360.ckt.admin.application.service.command.CreateVehicleCommand;
 import kernel360.ckt.admin.application.service.command.UpdateVehicleCommand;
 import kernel360.ckt.admin.ui.dto.request.VehicleCreateRequest;
+import kernel360.ckt.admin.ui.dto.request.VehicleKeywordRequest;
 import kernel360.ckt.admin.ui.dto.request.VehicleUpdateRequest;
 import kernel360.ckt.admin.ui.dto.response.*;
 import kernel360.ckt.core.common.response.CommonResponse;
@@ -14,6 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/vehicles")
@@ -60,5 +63,11 @@ public class VehicleController {
     CommonResponse<Void> deleteVehicle(@PathVariable Long id) {
         vehicleService.delete(id);
         return CommonResponse.success(null);
+    }
+
+    @GetMapping("/search")
+    public CommonResponse<VehicleKeywordListResponse> searchKeyword(VehicleKeywordRequest request) {
+        final List<VehicleEntity> vehicles = vehicleService.searchKeyword(request.toCommand());
+        return CommonResponse.success(VehicleKeywordListResponse.from(vehicles));
     }
 }
