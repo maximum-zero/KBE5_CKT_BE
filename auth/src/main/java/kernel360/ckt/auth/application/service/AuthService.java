@@ -1,4 +1,5 @@
 package kernel360.ckt.auth.application.service;
+import kernel360.ckt.core.common.util.MaskingUtil;
 
 import kernel360.ckt.auth.application.service.command.LoginCommand;
 import kernel360.ckt.auth.application.service.command.ReissueCommand;
@@ -31,15 +32,13 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
 
     public TokenResponse login(LoginCommand command) {
-        log.info("[로그인 시도] 이메일: {}", maskEmail(command.getEmail()));
+        log.info("[로그인 시도] 이메일: {}", MaskingUtil.maskEmail(command.getEmail()));
         CompanyEntity company = companyRepository.findByEmail(command.getEmail())
             .orElseThrow(() -> {
-                log.info("[로그인 실패] 존재하지 않는 사용자: {}", maskEmail(command.getEmail()));
                 return new CustomException(AuthErrorCode.INVALID_LOGIN_CREDENTIALS);
             });
 
         if (!passwordEncoder.matches(command.getPassword(), company.getPassword())) {
-            log.info("[로그인 실패] 비밀번호 불일치: 회사 ID={}", company.getId());
             throw new CustomException(AuthErrorCode.INVALID_LOGIN_CREDENTIALS);
         }
 
@@ -120,8 +119,4 @@ public class AuthService {
         return jwtTokenProvider.extractCompanyId(token);
     }
 
-    private String maskEmail(String email) {
-        if (email == null || !email.contains("@")) return "익명";
-        return email.replaceAll("^(.{2}).*(@.*)$", "$1****$2");
-    }
 }
