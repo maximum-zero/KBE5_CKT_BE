@@ -15,12 +15,6 @@ public record RentalListRequest(
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     LocalDateTime endAt
 ) {
-    public RentalListRequest {
-        if (startAt != null && endAt != null && startAt.isAfter(endAt)) {
-            throw new IllegalArgumentException("검색 시작 시간은 종료 시간보다 이후일 수 없습니다.");
-        }
-    }
-
     public RentalListCommand toCommand(Long companyId) {
         return RentalListCommand.create(
             companyId,
