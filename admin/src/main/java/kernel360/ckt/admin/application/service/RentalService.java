@@ -5,8 +5,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 import kernel360.ckt.admin.application.service.command.CreateRentalCommand;
+import kernel360.ckt.admin.application.service.command.RentalRetrieveCommand;
 import kernel360.ckt.admin.application.service.command.RentalListCommand;
 import kernel360.ckt.admin.application.port.DrivingLogRepository;
+import kernel360.ckt.admin.application.service.command.RentalUpdateStatusCommand;
 import kernel360.ckt.core.domain.entity.CompanyEntity;
 import kernel360.ckt.core.domain.entity.CustomerEntity;
 import kernel360.ckt.core.domain.entity.DrivingLogEntity;
@@ -70,13 +72,13 @@ public class RentalService {
      * @param pageable 페이징 및 정렬 정보를 담은 객체
      * @return 검색 조건에 해당하는 RentalEntity의 페이징된 목록
      */
-    public Page<RentalEntity> searchRentals(RentalListCommand command, Pageable pageable) {
+    public Page<RentalEntity> retrieveRentals(RentalListCommand command, Pageable pageable) {
         return rentalRepository.findAll(
-            command.getCompanyId(),
-            command.getStatus(),
-            command.getKeyword(),
-            command.getStartAt(),
-            command.getEndAt(),
+            command.companyId(),
+            command.status(),
+            command.keyword(),
+            command.startAt(),
+            command.endAt(),
             pageable
         );
     }
@@ -85,34 +87,33 @@ public class RentalService {
      * ID를 사용하여 단일 렌탈 엔티티를 조회합니다.
      * 해당 ID의 렌탈이 존재하지 않을 경우 {@link NoSuchElementException}을 발생시킵니다.
      *
-     * @param id 조회할 렌탈의 ID
+     * @param command 조회할 렌탈의 ID와 회사 ID를 포함하는 {@link RentalRetrieveCommand} 객체
      * @return 해당 ID를 가진 렌탈 엔티티
      * @throws NoSuchElementException 해당 ID의 렌탈이 존재하지 않을 경우
      */
-    public RentalEntity findById(Long id) {
-        return rentalRepository.findById(id)
-            .orElseThrow(() -> new NoSuchElementException("예약 정보를 찾을 수 없습니다: " + id));
+    public RentalEntity retrieveRental(RentalRetrieveCommand command) {
+        return rentalRepository.findById(command.id())
+            .orElseThrow(() -> new NoSuchElementException("예약 정보를 찾을 수 없습니다: "));
     }
 
     /**
      * 렌탈(예약)의 상태를 변경합니다.
      * 상태 변경 시 비즈니스 규칙을 준수하며, 필요 시 운행일지 상태를 업데이트합니다.
      *
-     * @param id     변경할 렌탈의 ID
-     * @param status 변경하고자 하는 새로운 렌탈 상태
+     * @param command 조회할 렌탈의 ID와 회사 ID를 포함하는 {@link RentalUpdateStatusCommand} 객체
      * @return 상태가 업데이트된 RentalEntity 객체
      * @throws NoSuchElementException 렌탈, 운행 일지를 찾을 수 없는 경우
      * @throws IllegalStateException 유효하지 않은 상태 전환이 요청될 경우 (예: RENTED -> PENDING)
      */
     @Transactional
-    public RentalEntity updateRentalStatus(Long id, RentalStatus status) {
-        final RentalEntity rental = rentalRepository.findById(id)
-            .orElseThrow(() -> new NoSuchElementException("예약 정보를 찾을 수 없습니다: " + id));
+    public RentalEntity updateRentalStatus(RentalUpdateStatusCommand command) {
+        final RentalEntity rental = rentalRepository.findById(command.id())
+            .orElseThrow(() -> new NoSuchElementException("예약 정보를 찾을 수 없습니다: " + command.id()));
 
-        rental.changeStatus(status);
+        rental.changeStatus(command.status());
         if (rental.getStatus() == RentalStatus.RETURNED) {
             final DrivingLogEntity drivingLog = drivingLogRepository.findByRental(rental)
-                .orElseThrow(() -> new NoSuchElementException("운행 일지를 찾을 수 없습니다: " + id));
+                .orElseThrow(() -> new NoSuchElementException("운행 일지를 찾을 수 없습니다: " + command.id()));
 
             drivingLog.completed();
             drivingLogRepository.save(drivingLog);
