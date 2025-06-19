@@ -5,6 +5,7 @@ import kernel360.ckt.core.common.response.ErrorResponse;
 import kernel360.ckt.gateway.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.annotation.Order;
@@ -34,6 +35,7 @@ public class JwtAuthenticationFilter implements GlobalFilter {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         String path = exchange.getRequest().getPath().value();
+        log.info("[JwtAuthFilter] 요청 경로: {}", path);
 
         // 1) whitelist 경로는 인증 스킵
         if (whitelistPaths.stream().anyMatch(path::startsWith)) {
@@ -49,11 +51,13 @@ public class JwtAuthenticationFilter implements GlobalFilter {
         String token = authHeader.substring(7);
         // 3) 토큰 검증
         if (!jwtTokenProvider.validationToken(token)) {
+            log.warn("[JwtAuthFilter] 유효하지 않거나 만료된 토큰");
             return unauthorized(exchange, 401, "Invalid or expired token");
         }
 
         // 4) 유효하면 X-User-Id 헤더 추가 후 체인 이어가기
         String userId = jwtTokenProvider.getUserId(token);
+        log.info("[JwtAuthFilter] 인증 성공 - 사용자 ID: {}", userId);
         ServerWebExchange mutated = exchange.mutate()
             .request(exchange.getRequest().mutate()
                 .header("X-User-Id", userId)

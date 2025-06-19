@@ -27,6 +27,8 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
     ports:
       - "8081:8081"
+    volumes:
+      - ./logs:/logs
     networks:
       - ckt_network  # 네트워크 이름 변경
 
@@ -36,10 +38,13 @@ services:
     ports:
       - "8080:8080"
     environment:
-      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+      SPRING_PROFILES_ACTIVE: docker # ${SPRING_PROFILES_ACTIVE} # docker
+      SPRING_REACTOR_CONTEXT_PROPAGATION: AUTO
       JWT_SECRET: ${JWT_SECRET}
     depends_on:
       - admin
+    volumes:
+      - ./logs:/logs
     networks:
       - ckt_network
 
@@ -56,6 +61,8 @@ services:
       JWT_SECRET: ${JWT_SECRET}
     ports:
       - "8082:8082"
+    volumes:
+      - ./logs:/logs
     networks:
       - ckt_network
 
@@ -71,6 +78,8 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
     ports:
       - "8090:8090"
+    volumes:
+      - ./logs:/logs
     networks:
       - ckt_network
 

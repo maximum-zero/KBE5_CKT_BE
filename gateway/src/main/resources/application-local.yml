@@ -42,5 +42,8 @@ spring:
           predicates:
             - Path=/api/v1/tracking/**
 
+  reactor:
+    context-propagation: AUTO
+
 cors:
   allowed-origins: http://localhost:5173
