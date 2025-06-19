@@ -17,6 +17,10 @@ public class ErrorResponse {
         return new ErrorResponse(String.valueOf(errorCode.getStatus()), errorCode.getMessage());
     }
 
+    public static ErrorResponse from(String code, String message) {
+        return new ErrorResponse(code, message);
+    }
+
     public static ErrorResponse from(int code, String message) {
         return new ErrorResponse(String.valueOf(code), message);
     }
