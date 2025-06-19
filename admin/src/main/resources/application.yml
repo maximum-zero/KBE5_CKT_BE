@@ -16,3 +16,13 @@ spring:
       naming.physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategySnakeCaseImpl
       default_batch_fetch_size: 1000
       globally_quoted_identifiers: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, prometheus
+  metrics:
+    export:
+      prometheus:
+        enabled: true
