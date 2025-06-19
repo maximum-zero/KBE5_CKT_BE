@@ -1,0 +1,23 @@
+global:
+  scrape_interval: 5s # 기본 수집 주기
+
+scrape_configs:
+  - job_name: 'admin'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['admin:8081']
+
+  - job_name: 'gateway'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['gateway:8080']
+
+  - job_name: 'auth'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['auth:8082']
+
+  - job_name: 'collector'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['collector:8090']
