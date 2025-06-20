@@ -102,8 +102,7 @@ public class RentalService {
 
     /**
      * 예약을 변경합니다.
-     * PENDING (대기 중) 상태: 회사, 차량, 고객, 픽업/반납 시간, 메모 등 모든 정보 변경 가능합니다.
-     * PENDING 외의 상태: 메모만 변경 가능합니다. 다른 필드 변경 시도 시 예외가 발생합니다
+     * 대기중 (PENDING) 상태에서만 정보를 변경할 수 있습니다.
      *
      * @param command 예약 변경에 필요한 데이터를 담고 있는 {@link RentalUpdateCommand} 객체
      *
@@ -119,51 +118,70 @@ public class RentalService {
         log.info("예약 정보 조회 - {}", rental);
 
         log.debug("예약 상태 - {}", rental.getStatus());
-        if (rental.getStatus() == RentalStatus.PENDING) {
-            final LocalDateTime updatedPickupAt = command.pickupAt() != null ? command.pickupAt() : rental.getPickupAt();
-            final LocalDateTime updatedReturnAt = command.returnAt() != null ? command.returnAt() : rental.getReturnAt();
-            CompanyEntity updatedCompany = rental.getCompany();
-            VehicleEntity updatedVehicle = rental.getVehicle();
-            CustomerEntity updatedCustomer = rental.getCustomer();
-
-            boolean checkedAvailability = false;
-            if (command.companyId() != null && !command.companyId().equals(rental.getCompany().getId())) {
-                updatedCompany = findCompanyById(command.companyId());
-                log.info("회사 정보 변경 - 회사 ID: {}", updatedCompany.getId());
-            }
-
-            if (command.vehicleId() != null && !command.vehicleId().equals(rental.getVehicle().getId())) {
-                updatedVehicle = findVehicleById(command.vehicleId());
-                log.info("차량 정보 변경 - 차량 ID: {}", updatedVehicle.getId());
-                checkedAvailability = true;
-            }
-
-            if (command.customerId() != null && !command.customerId().equals(rental.getCustomer().getId())) {
-                updatedCustomer = findCustomerById(command.customerId());
-                log.info("고객 정보 변경 - 고객 ID: {}", updatedCustomer.getId());
-            }
-
-            if (!updatedPickupAt.equals(rental.getPickupAt()) || !updatedReturnAt.equals(rental.getReturnAt())) {
-                log.info("예약 기간 변경 - 픽업시간: {} ~ 반납시간: {}", updatedPickupAt, updatedReturnAt);
-                checkedAvailability = true;
-            }
-
-            if (checkedAvailability) {
-                ensureVehicleIsAvailable(updatedVehicle, updatedPickupAt, updatedReturnAt, rental.getId());
-                log.info("예약 가능한 차량 재검증 - 차량 ID: {}, 기간(픽업시간: {} ~ 반납시간: {})", updatedVehicle.getId(), updatedPickupAt, updatedReturnAt);
-            }
-
-            rental.update(updatedCompany, updatedVehicle, updatedCustomer, updatedPickupAt, updatedReturnAt, command.memo());
-            log.info("예약 정보 변경 (대기 상태) - 예약 ID: {}, 변경된 예약: {}", rental.getId(), rental);
-        } else {
-            if (command.companyId() != null || command.vehicleId() != null || command.customerId() != null ||
-                command.pickupAt() != null || command.returnAt() != null) {
-                throw new CustomException(RentalErrorCode.RENTAL_UPDATE_NOT_ALLOWED, rental.getStatus().name());
-            }
-
-            rental.updateMemo(command.memo());
-            log.info("예약 정보 변경 (대기 외 상태) - 예약 ID: {}, 변경된 예약: {}", rental.getId(), rental);
+        if (rental.getStatus() != RentalStatus.PENDING) {
+            throw new CustomException(RentalErrorCode.RENTAL_UPDATE_NOT_ALLOWED, rental.getStatus().name());
         }
+
+        final LocalDateTime updatedPickupAt = command.pickupAt() != null ? command.pickupAt() : rental.getPickupAt();
+        final LocalDateTime updatedReturnAt = command.returnAt() != null ? command.returnAt() : rental.getReturnAt();
+        CompanyEntity updatedCompany = rental.getCompany();
+        VehicleEntity updatedVehicle = rental.getVehicle();
+        CustomerEntity updatedCustomer = rental.getCustomer();
+
+        boolean checkedAvailability = false;
+        if (command.companyId() != null && !command.companyId().equals(rental.getCompany().getId())) {
+            updatedCompany = findCompanyById(command.companyId());
+            log.info("회사 정보 변경 - 회사 ID: {}", updatedCompany.getId());
+        }
+
+        if (command.vehicleId() != null && !command.vehicleId().equals(rental.getVehicle().getId())) {
+            updatedVehicle = findVehicleById(command.vehicleId());
+            log.info("차량 정보 변경 - 차량 ID: {}", updatedVehicle.getId());
+            checkedAvailability = true;
+        }
+
+        if (command.customerId() != null && !command.customerId().equals(rental.getCustomer().getId())) {
+            updatedCustomer = findCustomerById(command.customerId());
+            log.info("고객 정보 변경 - 고객 ID: {}", updatedCustomer.getId());
+        }
+
+        if (!updatedPickupAt.equals(rental.getPickupAt()) || !updatedReturnAt.equals(rental.getReturnAt())) {
+            log.info("예약 기간 변경 - 픽업시간: {} ~ 반납시간: {}", updatedPickupAt, updatedReturnAt);
+            checkedAvailability = true;
+        }
+
+        if (checkedAvailability) {
+            ensureVehicleIsAvailable(updatedVehicle, updatedPickupAt, updatedReturnAt, rental.getId());
+            log.info("예약 가능한 차량 재검증 - 차량 ID: {}, 기간(픽업시간: {} ~ 반납시간: {})", updatedVehicle.getId(), updatedPickupAt, updatedReturnAt);
+        }
+
+        rental.update(updatedCompany, updatedVehicle, updatedCustomer, updatedPickupAt, updatedReturnAt, command.memo());
+        log.info("예약 정보 변경 - 예약 ID: {}, 변경된 예약: {}", rental.getId(), rental);
+
+        final RentalEntity updatedRental = rentalRepository.save(rental);
+        log.info("예약 정보 변경 완료 - 예약 ID: {}", updatedRental.getId());
+
+        return updatedRental;
+    }
+
+    /**
+     * 예약의 메모를 변경합니다.
+     *
+     * @param command 예약의 메모 변경에 필요한 데이터를 담고 있는 {@link RentalUpdateMemoCommand} 객체
+     *
+     * @return 변경된 {@link RentalEntity} 객체
+     * @throws CustomException 회사, 차량, 또는 고객 정보를 찾을 수 없거나, 차량이 해당 시간에 이용 불가능한 경우 발생
+     */
+    @Transactional
+    public RentalEntity updateRentalMemo(RentalUpdateMemoCommand command) {
+        log.info("예약의 메모 변경 요청 - {}", command);
+
+        final RentalEntity rental = rentalRepository.findById(command.id())
+            .orElseThrow(() -> new CustomException(RentalErrorCode.RENTAL_NOT_FOUND, command.id()));
+        log.info("변경할 예약 정보 조회 - {}", rental);
+
+        rental.updateMemo(command.memo());
+        log.info("변경된 예약의 객체 - {}", rental);
 
         final RentalEntity updatedRental = rentalRepository.save(rental);
         log.info("예약 정보 변경 완료 - 예약 ID: {}", updatedRental.getId());
