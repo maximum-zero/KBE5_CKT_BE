@@ -59,11 +59,12 @@ public interface RentalRepository {
      * @param returnAt 반납 시간
      * @return 조건에 부합하는 렌탈 목록
      */
-    List<RentalEntity> findOverlappingRentalsByVehicleAndStatuses(
+    List<RentalEntity> findOverlappingRentalsByVehicleAndStatusesExcludingRental(
         VehicleEntity vehicle,
         List<RentalStatus> statuses,
         LocalDateTime pickupAt,
-        LocalDateTime returnAt
+        LocalDateTime returnAt,
+        Long excludeRentalId
     );
 
     /**

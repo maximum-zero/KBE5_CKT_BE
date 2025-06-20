@@ -57,7 +57,7 @@ public class RentalService {
         final CustomerEntity customer = findCustomerById(command.customerId());
         log.info("고객 정보 조회 - {}", customer.getId());
 
-        ensureVehicleIsAvailable(vehicle, command.pickupAt(), command.returnAt());
+        ensureVehicleIsAvailable(vehicle, command.pickupAt(), command.returnAt(), null);
         log.info("예약 가능한 차량 검증 - 차량 ID: {}, 기간({}) ~ ({})", vehicle.getId(), command.pickupAt(), command.returnAt());
 
         final RentalEntity rental = command.toRentalEntity(company, vehicle, customer);
@@ -149,7 +149,7 @@ public class RentalService {
             }
 
             if (checkedAvailability) {
-                ensureVehicleIsAvailable(updatedVehicle, updatedPickupAt, updatedReturnAt);
+                ensureVehicleIsAvailable(updatedVehicle, updatedPickupAt, updatedReturnAt, rental.getId());
                 log.info("예약 가능한 차량 재검증 - 차량 ID: {}, 기간(픽업시간: {} ~ 반납시간: {})", updatedVehicle.getId(), updatedPickupAt, updatedReturnAt);
             }
 
@@ -245,22 +245,27 @@ public class RentalService {
     }
 
     /**
-     * 특정 차량이 주어진 픽업 및 반납 시간 동안 예약 가능한지 확인합니다.
-     * 차량이 이미 '대기 중(PENDING)' 또는 '대여 중(RENTED)' 상태로 겹치는 예약이 있다면 {@link CustomException}을 발생시킵니다.
+     * 특정 차량이 주어진 픽업 및 반납 시간 동안 다른 예약과 겹치지 않고 예약 가능한지 확인합니다.
      *
-     * @param vehicle  확인할 {@link VehicleEntity} 객체
+     * @param vehicle 확인할 {@link VehicleEntity} 객체
      * @param pickupAt 대여 시작 시간
      * @param returnAt 반납 예정 시간
+     * @param excludeRentalId 검사에서 제외할 현재 예약의 ID
      * @throws CustomException 차량이 이미 해당 시간에 예약되어 있어 이용할 수 없는 경우 발생
      */
-    private void ensureVehicleIsAvailable(VehicleEntity vehicle, LocalDateTime pickupAt, LocalDateTime returnAt) {
-        // '대기 중' 또는 '대여 중' 상태인 예약 목록을 정의하여 해당 상태의 겹치는 예약을 검사합니다.
-        final List<RentalStatus> availableStatuses = Arrays.asList(RentalStatus.PENDING, RentalStatus.RENTED);
+    private void ensureVehicleIsAvailable(VehicleEntity vehicle, LocalDateTime pickupAt, LocalDateTime returnAt, Long excludeRentalId) {
+        final List<RentalStatus> activeStatuses = Arrays.asList(RentalStatus.PENDING, RentalStatus.RENTED);
 
-        // 주어진 차량, 상태 목록, 픽업/반납 시간을 기준으로 겹치는 예약 정보를 조회합니다.
-        final List<RentalEntity> overlappingRentals = rentalRepository.findOverlappingRentalsByVehicleAndStatuses(
-            vehicle, availableStatuses, pickupAt, returnAt
-        );
+        List<RentalEntity> overlappingRentals;
+        if (excludeRentalId != null) {
+            overlappingRentals = rentalRepository.findOverlappingRentalsByVehicleAndStatusesExcludingRental(
+                vehicle, activeStatuses, pickupAt, returnAt, excludeRentalId
+            );
+        } else {
+            overlappingRentals = rentalRepository.findOverlappingRentalsByVehicleAndStatusesExcludingRental(
+                vehicle, activeStatuses, pickupAt, returnAt, null
+            );
+        }
 
         if (!overlappingRentals.isEmpty()) {
             throw new CustomException(RentalErrorCode.RENTAL_VEHICLE_UNAVAILABLE);
