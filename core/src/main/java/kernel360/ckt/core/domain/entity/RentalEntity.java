@@ -56,6 +56,19 @@ public class RentalEntity extends BaseTimeEntity {
         return new RentalEntity(company, vehicle, customer, pickupAt, returnAt, RentalStatus.PENDING, memo);
     }
 
+    public void update(CompanyEntity company, VehicleEntity vehicle, CustomerEntity customer, LocalDateTime pickupAt, LocalDateTime returnAt, String memo) {
+        this.company = company;
+        this.vehicle = vehicle;
+        this.customer = customer;
+        this.pickupAt = pickupAt;
+        this.returnAt = returnAt;
+        this.memo = memo;
+    }
+
+    public void updateMemo(String memo) {
+        this.memo = memo;
+    }
+
     public void changeStatus(RentalStatus status) {
         this.status.update(this, status);
     }
@@ -64,4 +77,24 @@ public class RentalEntity extends BaseTimeEntity {
         this.status = status;
     }
 
+    @Override
+    public String toString() {
+        final Long companyId = (company != null) ? company.getId() : null;
+        final Long vehicleId = vehicle.getId();
+        final Long customerId = customer.getId();
+
+        return "Rental(" +
+            "id=" + id +
+            ", companyId=" + companyId +
+            ", vehicleId=" + vehicleId +
+            ", customerId=" + customerId +
+            ", status=" + status +
+            ", statusName=" + status.getValue() +
+            ", pickupAt=" + pickupAt +
+            ", returnAt=" + returnAt +
+            ", memo='" + (memo != null ? memo.replace("\n", "\\n") : "-") + "'" + // 줄바꿈 문자 처리
+            ", createdAt=" + getCreatedAt() +
+            ", updatedAt=" + getUpdatedAt() +
+            ')';
+    }
 }
