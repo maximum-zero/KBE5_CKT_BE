@@ -3,10 +3,7 @@ package kernel360.ckt.admin.ui;
 import jakarta.validation.Valid;
 import kernel360.ckt.admin.application.service.RentalService;
 import kernel360.ckt.admin.application.service.command.RentalRetrieveCommand;
-import kernel360.ckt.admin.ui.dto.request.RentalCreateRequest;
-import kernel360.ckt.admin.ui.dto.request.RentalListRequest;
-import kernel360.ckt.admin.ui.dto.request.RentalStatusUpdateRequest;
-import kernel360.ckt.admin.ui.dto.request.RentalUpdateRequest;
+import kernel360.ckt.admin.ui.dto.request.*;
 import kernel360.ckt.admin.ui.dto.response.RentalCreateResponse;
 import kernel360.ckt.admin.ui.dto.response.RentalListResponse;
 import kernel360.ckt.admin.ui.dto.response.RentalResponse;
@@ -109,6 +106,26 @@ public class RentalController {
     ) {
         log.info("예약 정보 변경 요청 - ID : {}, 회사 ID: {}, 요청 - {}", id, companyId, request);
         final RentalEntity rental = rentalService.updateRental(request.toCommand(id, companyId));
+        return CommonResponse.success(RentalResponse.from(rental));
+    }
+
+    /**
+     * 예약 정보 - 메모 변경 API
+     *
+     * @param companyId 요청 헤더에서 추출한 회사 ID
+     * @param id        변경할 예약의 고유 ID
+     * @param request   변경할 예약 메모 정보 - 메모 {@link RentalMemoUpdateRequest} DTO
+     *
+     * @return 변경된 예약의 기본 정보 {@link RentalResponse}
+     */
+    @PutMapping("/{id}/memo")
+    public CommonResponse<RentalResponse> updateRentalMemo(
+        @RequestHeader(X_USER_ID_HEADER) Long companyId,
+        @PathVariable Long id,
+        @Valid @RequestBody RentalMemoUpdateRequest request
+    ) {
+        log.info("예약 정보 변경 요청 - ID : {}, 회사 ID: {}, 요청 - {}", id, companyId, request);
+        final RentalEntity rental = rentalService.updateRentalMemo(request.toCommand(id, companyId));
         return CommonResponse.success(RentalResponse.from(rental));
     }
 
