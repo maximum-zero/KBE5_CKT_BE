@@ -3,11 +3,9 @@ package kernel360.ckt.admin.application.service;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import kernel360.ckt.admin.application.service.command.CreateRentalCommand;
-import kernel360.ckt.admin.application.service.command.RentalRetrieveCommand;
-import kernel360.ckt.admin.application.service.command.RentalListCommand;
+
+import kernel360.ckt.admin.application.service.command.*;
 import kernel360.ckt.admin.application.port.DrivingLogRepository;
-import kernel360.ckt.admin.application.service.command.RentalUpdateStatusCommand;
 import kernel360.ckt.core.common.error.*;
 import kernel360.ckt.core.common.exception.CustomException;
 import kernel360.ckt.core.domain.entity.CompanyEntity;
@@ -41,7 +39,7 @@ public class RentalService {
     /**
      * 새로운 예약을 생성합니다.
      *
-     * @param command 렌탈 생성에 필요한 데이터를 담고 있는 {@link CreateRentalCommand} 객체
+     * @param command 예약 생성에 필요한 데이터를 담고 있는 {@link CreateRentalCommand} 객체
      *
      * @return 생성된 {@link RentalEntity} 객체
      * @throws CustomException 회사, 차량, 또는 고객 정보를 찾을 수 없거나, 차량이 해당 시간에 이용 불가능한 경우 발생
@@ -90,10 +88,10 @@ public class RentalService {
     /**
      * 예약의 상세 정보를 조회 API.
      *
-     * @param command 조회할 렌탈의 정보 {@link RentalRetrieveCommand} 객체
+     * @param command 조회할 예약의 정보 {@link RentalRetrieveCommand} 객체
      *
      * @return 조회된 예약 {@link RentalEntity} 객체
-     * @throws CustomException 해당 ID의 렌탈 정보를 찾을 수 없는 경우 발생
+     * @throws CustomException 해당 ID의 예약 정보를 찾을 수 없는 경우 발생
      */
     public RentalEntity retrieveRental(RentalRetrieveCommand command) {
         log.debug("예약 상세 요청 - {}", command);
@@ -102,6 +100,76 @@ public class RentalService {
             .orElseThrow(() -> new CustomException(RentalErrorCode.RENTAL_NOT_FOUND, command.id()));
     }
 
+    /**
+     * 예약을 변경합니다.
+     * PENDING (대기 중) 상태: 회사, 차량, 고객, 픽업/반납 시간, 메모 등 모든 정보 변경 가능합니다.
+     * PENDING 외의 상태: 메모만 변경 가능합니다. 다른 필드 변경 시도 시 예외가 발생합니다
+     *
+     * @param command 예약 변경에 필요한 데이터를 담고 있는 {@link RentalUpdateCommand} 객체
+     *
+     * @return 변경된 {@link RentalEntity} 객체
+     * @throws CustomException 회사, 차량, 또는 고객 정보를 찾을 수 없거나, 차량이 해당 시간에 이용 불가능한 경우 발생
+     */
+    @Transactional
+    public RentalEntity updateRental(RentalUpdateCommand command) {
+        log.info("예약 정보 변경 요청 - {}", command);
+
+        final RentalEntity rental = rentalRepository.findById(command.id())
+            .orElseThrow(() -> new CustomException(RentalErrorCode.RENTAL_NOT_FOUND, command.id()));
+        log.info("예약 정보 조회 - {}", rental);
+
+        log.debug("예약 상태 - {}", rental.getStatus());
+        if (rental.getStatus() == RentalStatus.PENDING) {
+            final LocalDateTime updatedPickupAt = command.pickupAt() != null ? command.pickupAt() : rental.getPickupAt();
+            final LocalDateTime updatedReturnAt = command.returnAt() != null ? command.returnAt() : rental.getReturnAt();
+            CompanyEntity updatedCompany = rental.getCompany();
+            VehicleEntity updatedVehicle = rental.getVehicle();
+            CustomerEntity updatedCustomer = rental.getCustomer();
+
+            boolean checkedAvailability = false;
+            if (command.companyId() != null && !command.companyId().equals(rental.getCompany().getId())) {
+                updatedCompany = findCompanyById(command.companyId());
+                log.info("회사 정보 변경 - 회사 ID: {}", updatedCompany.getId());
+            }
+
+            if (command.vehicleId() != null && !command.vehicleId().equals(rental.getVehicle().getId())) {
+                updatedVehicle = findVehicleById(command.vehicleId());
+                log.info("차량 정보 변경 - 차량 ID: {}", updatedVehicle.getId());
+                checkedAvailability = true;
+            }
+
+            if (command.customerId() != null && !command.customerId().equals(rental.getCustomer().getId())) {
+                updatedCustomer = findCustomerById(command.customerId());
+                log.info("고객 정보 변경 - 고객 ID: {}", updatedCustomer.getId());
+            }
+
+            if (!updatedPickupAt.equals(rental.getPickupAt()) || !updatedReturnAt.equals(rental.getReturnAt())) {
+                log.info("예약 기간 변경 - 픽업시간: {} ~ 반납시간: {}", updatedPickupAt, updatedReturnAt);
+                checkedAvailability = true;
+            }
+
+            if (checkedAvailability) {
+                ensureVehicleIsAvailable(updatedVehicle, updatedPickupAt, updatedReturnAt);
+                log.info("예약 가능한 차량 재검증 - 차량 ID: {}, 기간(픽업시간: {} ~ 반납시간: {})", updatedVehicle.getId(), updatedPickupAt, updatedReturnAt);
+            }
+
+            rental.update(updatedCompany, updatedVehicle, updatedCustomer, updatedPickupAt, updatedReturnAt, command.memo());
+            log.info("예약 정보 변경 (대기 상태) - 예약 ID: {}, 변경된 예약: {}", rental.getId(), rental);
+        } else {
+            if (command.companyId() != null || command.vehicleId() != null || command.customerId() != null ||
+                command.pickupAt() != null || command.returnAt() != null) {
+                throw new CustomException(RentalErrorCode.RENTAL_UPDATE_NOT_ALLOWED, rental.getStatus().name());
+            }
+
+            rental.updateMemo(command.memo());
+            log.info("예약 정보 변경 (대기 외 상태) - 예약 ID: {}, 변경된 예약: {}", rental.getId(), rental);
+        }
+
+        final RentalEntity updatedRental = rentalRepository.save(rental);
+        log.info("예약 정보 변경 완료 - 예약 ID: {}", updatedRental.getId());
+
+        return updatedRental;
+    }
 
     /**
      * 예약의 상태를 업데이트합니다.
@@ -109,7 +177,7 @@ public class RentalService {
      * @param command 예약 상태를 변경할 {@link RentalUpdateStatusCommand} 객체
      *
      * @return 상태가 업데이트된 예약 {@link RentalEntity} 객체
-     * @throws CustomException 해당 ID의 렌탈 정보를 찾을 수 없는 경우 발생
+     * @throws CustomException 해당 ID의 예약 정보를 찾을 수 없는 경우 발생
      */
     @Transactional
     public RentalEntity updateRentalStatus(RentalUpdateStatusCommand command) {
@@ -186,10 +254,10 @@ public class RentalService {
      * @throws CustomException 차량이 이미 해당 시간에 예약되어 있어 이용할 수 없는 경우 발생
      */
     private void ensureVehicleIsAvailable(VehicleEntity vehicle, LocalDateTime pickupAt, LocalDateTime returnAt) {
-        // '대기 중' 또는 '대여 중' 상태인 렌탈 목록을 정의하여 해당 상태의 겹치는 예약을 검사합니다.
+        // '대기 중' 또는 '대여 중' 상태인 예약 목록을 정의하여 해당 상태의 겹치는 예약을 검사합니다.
         final List<RentalStatus> availableStatuses = Arrays.asList(RentalStatus.PENDING, RentalStatus.RENTED);
 
-        // 주어진 차량, 상태 목록, 픽업/반납 시간을 기준으로 겹치는 렌탈 정보를 조회합니다.
+        // 주어진 차량, 상태 목록, 픽업/반납 시간을 기준으로 겹치는 예약 정보를 조회합니다.
         final List<RentalEntity> overlappingRentals = rentalRepository.findOverlappingRentalsByVehicleAndStatuses(
             vehicle, availableStatuses, pickupAt, returnAt
         );
