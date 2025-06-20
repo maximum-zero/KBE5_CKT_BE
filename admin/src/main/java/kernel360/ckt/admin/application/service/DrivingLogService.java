@@ -5,12 +5,15 @@ import jakarta.transaction.Transactional;
 import kernel360.ckt.admin.ui.dto.request.DrivingLogUpdateRequest;
 import kernel360.ckt.admin.ui.dto.response.DrivingLogDetailResponse;
 import kernel360.ckt.admin.ui.dto.response.DrivingLogListResponse;
+import kernel360.ckt.core.common.error.DrivingLogErrorCode;
+import kernel360.ckt.core.common.exception.CustomException;
 import kernel360.ckt.core.domain.entity.DrivingLogEntity;
 import kernel360.ckt.core.domain.entity.RouteEntity;
 import kernel360.ckt.core.domain.enums.DrivingType;
 import kernel360.ckt.admin.application.port.DrivingLogRepository;
 import kernel360.ckt.admin.application.port.RouteRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -24,6 +27,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 @Transactional
+@Slf4j
 public class DrivingLogService {
     private final DrivingLogRepository drivingLogRepository;
     private final RouteRepository routeRepository;
@@ -46,6 +50,8 @@ public class DrivingLogService {
             pageable
         );
 
+        log.info("운행 일지 조회 완료 - 운행일지 조회 건수: {}", drivingLogPage.getTotalElements());
+
         List<RouteEntity> allRoutes = routeRepository.findByDrivingLogIn(drivingLogPage.getContent());
 
         Map<Long, List<RouteEntity>> routeMap = allRoutes.stream()
@@ -56,24 +62,28 @@ public class DrivingLogService {
 
     public DrivingLogDetailResponse getDrivingLogDetail(Long id) {
         DrivingLogEntity drivingLogEntity = drivingLogRepository.findById(id)
-            .orElseThrow(() -> new NoSuchElementException("DrivingLog not found with id: " + id));
+            .orElseThrow(() -> new CustomException(DrivingLogErrorCode.DRIVING_LOG_NOT_FOUND));
 
         List<RouteEntity> routes = routeRepository.findByDrivingLogId(id);
+        log.info("운행 기록에 대한 경로 {}건 조회 완료 - drivingLogId: {}", routes.size(), id);
 
         return DrivingLogDetailResponse.from(drivingLogEntity, routes);
     }
 
     public DrivingLogEntity update(Long id, DrivingLogUpdateRequest request) {
         DrivingLogEntity drivingLog = drivingLogRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("운행 기록을 찾을 수 없습니다."));
+            .orElseThrow(() -> new CustomException(DrivingLogErrorCode.DRIVING_LOG_NOT_FOUND));
 
         if (request.type() != null) {
+            log.info("운행 기록 타입 변경 - drivingLogId: {}, newType: {}", id, request.type());
             drivingLog.setType(request.type());
         }
 
         if (request.memo() != null) {
+            log.info("운행 기록 메모 변경 - drivingLogId: {}, newMemo: {}", id, request.memo());
             drivingLog.setMemo(request.memo());
         }
+        log.info("운행 기록 수정 완료 - drivingLogId: {}", id);
         return drivingLog;
     }
 }
