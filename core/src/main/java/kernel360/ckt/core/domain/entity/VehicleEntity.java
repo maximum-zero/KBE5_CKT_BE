@@ -8,13 +8,11 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "vehicle")
 @Entity
-public class VehicleEntity {
+public class VehicleEntity extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -49,12 +47,6 @@ public class VehicleEntity {
     @Lob
     private String memo;
 
-    @Column(nullable = false)
-    private LocalDateTime createAt;
-
-    @Column
-    private LocalDateTime updateAt;
-
     private VehicleEntity(String registrationNumber, String modelYear, String manufacturer, String modelName,
                           String batteryVoltage, FuelType fuelType, TransmissionType transmissionType,
                           VehicleStatus status, String memo) {
@@ -67,7 +59,6 @@ public class VehicleEntity {
         this.transmissionType = transmissionType;
         this.status = status;
         this.memo = memo;
-        this.createAt = LocalDateTime.now();
     }
 
     public static VehicleEntity create(String registrationNumber, String modelYear, String manufacturer, String modelName,
@@ -88,6 +79,5 @@ public class VehicleEntity {
         this.fuelType = fuelType;
         this.transmissionType = transmissionType;
         this.memo = memo;
-        this.updateAt = LocalDateTime.now();
     }
 }
