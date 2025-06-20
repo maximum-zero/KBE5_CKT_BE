@@ -49,13 +49,13 @@ public class RentalService {
         log.info("예약 생성 요청 - {}", command);
 
         final CompanyEntity company = findCompanyById(command.companyId());
-        log.info("회사 정보 조회 - {}", company);
+        log.info("회사 정보 조회 - {}", company.getId());
 
         final VehicleEntity vehicle = findVehicleById(command.vehicleId());
-        log.info("차량 정보 조회 - {}", vehicle);
+        log.info("차량 정보 조회 - {}", vehicle.getId());
 
         final CustomerEntity customer = findCustomerById(command.customerId());
-        log.info("고객 정보 조회 - {}", customer);
+        log.info("고객 정보 조회 - {}", customer.getId());
 
         ensureVehicleIsAvailable(vehicle, command.pickupAt(), command.returnAt());
         log.info("예약 가능한 차량 검증 - 차량 ID: {}, 기간({}) ~ ({})", vehicle.getId(), command.pickupAt(), command.returnAt());
@@ -193,10 +193,10 @@ public class RentalService {
         if (rental.getStatus() == RentalStatus.RETURNED) {
             final DrivingLogEntity drivingLog = drivingLogRepository.findByRental(rental)
                 .orElseThrow(() -> new CustomException(DrivingLogErrorCode.DRIVING_LOG_NOT_FOUND, command.id()));
-            log.info("운행일지 정보 조회 - {}", drivingLog);
+            log.info("운행일지 정보 조회 - {}", drivingLog.getId());
 
             drivingLog.completed();
-            log.info("운행일지 상태 변경 - 변경된 운행 일지 : {}", drivingLog);
+            log.info("운행일지 상태 변경 - 변경된 운행 일지 : ID {}, 상태: {}", drivingLog.getId(), drivingLog.getStatus());
 
             final DrivingLogEntity savedDrivingLog = drivingLogRepository.save(drivingLog);
             log.info("운행일지 상태 변경 완료 - 운행일지 ID: {}", savedDrivingLog.getId());
