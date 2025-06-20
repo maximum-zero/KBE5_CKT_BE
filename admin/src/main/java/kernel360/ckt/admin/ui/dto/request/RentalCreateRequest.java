@@ -22,12 +22,6 @@ public record RentalCreateRequest(
 
     String memo
 ) {
-    public RentalCreateRequest {
-        if (pickupAt != null && returnAt != null && pickupAt.isAfter(returnAt)) {
-            throw new IllegalArgumentException("반납 시간은 픽업 시간보다 이후여야 합니다.");
-        }
-    }
-
     public CreateRentalCommand toCommand(Long companyId) {
         return CreateRentalCommand.create(
             companyId,

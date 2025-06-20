@@ -1,14 +1,39 @@
 package kernel360.ckt.admin.ui.dto.request;
 
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
+import kernel360.ckt.admin.application.service.command.RentalUpdateCommand;
 import kernel360.ckt.admin.application.service.command.RentalUpdateStatusCommand;
 import kernel360.ckt.core.domain.enums.RentalStatus;
 
-public record RentalStatusUpdateRequest(
-    @NotNull(message = "변경할 상태는 필수입니다.")
-    RentalStatus status
+import java.time.LocalDateTime;
+
+public record RentalUpdateRequest(
+    @NotNull(message = "차량은 필수입니다.")
+    Long vehicleId,
+
+    @NotNull(message = "고객은 필수입니다.")
+    Long customerId,
+
+    @NotNull(message = "픽업 시간은 필수입니다.")
+    @FutureOrPresent(message = "픽업 시간은 현재보다 미래여야 합니다.")
+    LocalDateTime pickupAt,
+
+    @NotNull(message = "반납 시간은 필수입니다.")
+    @FutureOrPresent(message = "반납 시간은 현재보다 미래여야 합니다.")
+    LocalDateTime returnAt,
+
+    String memo
 ) {
-    public RentalUpdateStatusCommand toCommand(Long id, Long companyId) {
-        return RentalUpdateStatusCommand.create(id, companyId, this.status);
+    public RentalUpdateCommand toCommand(Long id, Long companyId) {
+        return RentalUpdateCommand.create(
+            id,
+            companyId,
+            vehicleId,
+            customerId,
+            pickupAt,
+            returnAt,
+            memo
+        );
     }
 }
