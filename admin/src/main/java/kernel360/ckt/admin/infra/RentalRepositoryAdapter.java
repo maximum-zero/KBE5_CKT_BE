@@ -35,8 +35,8 @@ public class RentalRepositoryAdapter implements RentalRepository {
     }
 
     @Override
-    public List<RentalEntity> findOverlappingRentalsByVehicleAndStatuses(VehicleEntity vehicle, List<RentalStatus> statuses, LocalDateTime pickupAt, LocalDateTime returnAt) {
-        return rentalJpaRepository.findOverlappingRentalsByVehicleAndStatuses(vehicle, statuses, pickupAt, returnAt);
+    public List<RentalEntity> findOverlappingRentalsByVehicleAndStatusesExcludingRental(VehicleEntity vehicle, List<RentalStatus> statuses, LocalDateTime pickupAt, LocalDateTime returnAt, Long excludeRentalId) {
+        return rentalJpaRepository.findOverlappingRentalsByVehicleAndStatusesExcludingRental(vehicle, statuses, pickupAt, returnAt, excludeRentalId);
     }
 
     @Override

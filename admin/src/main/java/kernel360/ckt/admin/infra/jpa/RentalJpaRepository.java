@@ -20,12 +20,14 @@ public interface RentalJpaRepository extends JpaRepository<RentalEntity, Long> {
         AND r.status IN :statuses
         AND r.pickupAt < :returnAt
         AND r.returnAt > :pickupAt
+        AND (r.id != :excludeRentalId OR :excludeRentalId IS NULL)
     """)
-    List<RentalEntity> findOverlappingRentalsByVehicleAndStatuses(
+    List<RentalEntity> findOverlappingRentalsByVehicleAndStatusesExcludingRental(
         @Param("vehicle") VehicleEntity vehicle,
         @Param("statuses") List<RentalStatus> statuses,
         @Param("pickupAt") LocalDateTime pickupAt,
-        @Param("returnAt") LocalDateTime returnAt
+        @Param("returnAt") LocalDateTime returnAt,
+        @Param("excludeRentalId") Long excludeRentalId
     );
 
     @Query("""
