@@ -210,14 +210,18 @@ public class RentalService {
 
         if (rental.getStatus() == RentalStatus.RETURNED) {
             final DrivingLogEntity drivingLog = drivingLogRepository.findByRental(rental)
-                .orElseThrow(() -> new CustomException(DrivingLogErrorCode.DRIVING_LOG_NOT_FOUND, command.id()));
-            log.info("운행일지 정보 조회 - {}", drivingLog.getId());
+                .orElse(null);
 
-            drivingLog.completed();
-            log.info("운행일지 상태 변경 - 변경된 운행 일지 : ID {}, 상태: {}", drivingLog.getId(), drivingLog.getStatus());
+            // 운행일지가 있으면 처리
+            if (drivingLog != null && drivingLog.getId() != null) {
+                log.info("해당 예약에 해당하는 운행일지가 존재 - {}", drivingLog.getId());
 
-            final DrivingLogEntity savedDrivingLog = drivingLogRepository.save(drivingLog);
-            log.info("운행일지 상태 변경 완료 - 운행일지 ID: {}", savedDrivingLog.getId());
+                drivingLog.completed();
+                log.info("운행일지 상태 변경 - 변경된 운행 일지 : ID {}, 상태: {}", drivingLog.getId(), drivingLog.getStatus());
+
+                final DrivingLogEntity savedDrivingLog = drivingLogRepository.save(drivingLog);
+                log.info("운행일지 상태 변경 완료 - 운행일지 ID: {}", savedDrivingLog.getId());
+            }
         }
 
         final RentalEntity savedRental = rentalRepository.save(rental);
