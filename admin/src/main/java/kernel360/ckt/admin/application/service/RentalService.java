@@ -46,22 +46,22 @@ public class RentalService {
      */
     @Transactional
     public RentalEntity createRental(CreateRentalCommand command) {
-        log.info("예약 생성 요청 - {}", command);
+        log.info("예약 생성 요청 - 요청값 : {}", command);
 
         final CompanyEntity company = findCompanyById(command.companyId());
-        log.info("회사 정보 조회 - {}", company.getId());
+        log.info("회사 정보 조회 - 회사 ID : {}", company.getId());
 
         final VehicleEntity vehicle = findVehicleById(command.vehicleId());
-        log.info("차량 정보 조회 - {}", vehicle.getId());
+        log.info("차량 정보 조회 - 차량 ID : {}", vehicle.getId());
 
         final CustomerEntity customer = findCustomerById(command.customerId());
-        log.info("고객 정보 조회 - {}", customer.getId());
+        log.info("고객 정보 조회 - 고객 ID : {}", customer.getId());
 
         ensureVehicleIsAvailable(vehicle, command.pickupAt(), command.returnAt(), null);
         log.info("예약 가능한 차량 검증 - 차량 ID: {}, 기간({}) ~ ({})", vehicle.getId(), command.pickupAt(), command.returnAt());
 
         final RentalEntity rental = command.toRentalEntity(company, vehicle, customer);
-        log.debug("예약 객체 생성 - 예약 ID: {}", rental.getId());
+        log.debug("예약 객체 생성 - 예약 : {}", rental);
 
         final RentalEntity savedRental = rentalRepository.save(rental);
         log.info("예약 완료 - 예약 ID: {}", savedRental.getId());
@@ -94,7 +94,7 @@ public class RentalService {
      * @throws CustomException 해당 ID의 예약 정보를 찾을 수 없는 경우 발생
      */
     public RentalEntity retrieveRental(RentalRetrieveCommand command) {
-        log.debug("예약 상세 요청 - {}", command);
+        log.debug("예약 상세 요청 - 요청값 : {}", command);
 
         return rentalRepository.findById(command.id())
             .orElseThrow(() -> new CustomException(RentalErrorCode.RENTAL_NOT_FOUND, command.id()));
@@ -111,13 +111,13 @@ public class RentalService {
      */
     @Transactional
     public RentalEntity updateRental(RentalUpdateCommand command) {
-        log.info("예약 정보 변경 요청 - {}", command);
+        log.info("예약 정보 변경 요청 - 요청값 : {}", command);
 
         final RentalEntity rental = rentalRepository.findById(command.id())
             .orElseThrow(() -> new CustomException(RentalErrorCode.RENTAL_NOT_FOUND, command.id()));
-        log.info("예약 정보 조회 - {}", rental);
+        log.info("예약 정보 조회 - 예약 : {}", rental);
 
-        log.debug("예약 상태 - {}", rental.getStatus());
+        log.debug("정보 변경할 예약의 상태 : {}", rental.getStatus());
         if (rental.getStatus() != RentalStatus.PENDING) {
             throw new CustomException(RentalErrorCode.RENTAL_UPDATE_NOT_ALLOWED, rental.getStatus().name());
         }
@@ -174,14 +174,14 @@ public class RentalService {
      */
     @Transactional
     public RentalEntity updateRentalMemo(RentalUpdateMemoCommand command) {
-        log.info("예약의 메모 변경 요청 - {}", command);
+        log.info("예약의 메모 변경 요청 - 요청값 : {}", command);
 
         final RentalEntity rental = rentalRepository.findById(command.id())
             .orElseThrow(() -> new CustomException(RentalErrorCode.RENTAL_NOT_FOUND, command.id()));
-        log.info("변경할 예약 정보 조회 - {}", rental);
+        log.info("변경할 예약 정보 조회 - 예약 : {}", rental);
 
         rental.updateMemo(command.memo());
-        log.info("변경된 예약의 객체 - {}", rental);
+        log.info("변경된 예약의 객체 - 예약 : {}", rental);
 
         final RentalEntity updatedRental = rentalRepository.save(rental);
         log.info("예약 정보 변경 완료 - 예약 ID: {}", updatedRental.getId());
@@ -199,11 +199,11 @@ public class RentalService {
      */
     @Transactional
     public RentalEntity updateRentalStatus(RentalUpdateStatusCommand command) {
-        log.info("예약 상태 변경 요청 - {}", command);
+        log.info("예약 상태 변경 요청 - 요청값 : {}", command);
 
         final RentalEntity rental = rentalRepository.findById(command.id())
             .orElseThrow(() -> new CustomException(RentalErrorCode.RENTAL_NOT_FOUND, command.id()));
-        log.info("예약 정보 조회 - {}", rental);
+        log.info("예약 정보 조회 - 예약 : {}", rental);
 
         rental.changeStatus(command.status());
         log.info("예약 상태 변경 - 변경할 상태 : {}, 변경된 예약 : {}", command.status(), rental);
@@ -214,7 +214,7 @@ public class RentalService {
 
             // 운행일지가 있으면 처리
             if (drivingLog != null && drivingLog.getId() != null) {
-                log.info("해당 예약에 해당하는 운행일지가 존재 - {}", drivingLog.getId());
+                log.info("해당 예약에 해당하는 운행일지가 존재 - 운행일지 ID : {}", drivingLog.getId());
 
                 drivingLog.completed();
                 log.info("운행일지 상태 변경 - 변경된 운행 일지 : ID {}, 상태: {}", drivingLog.getId(), drivingLog.getStatus());
