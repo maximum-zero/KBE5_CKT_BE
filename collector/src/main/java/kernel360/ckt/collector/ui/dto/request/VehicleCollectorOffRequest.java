@@ -20,17 +20,19 @@ public record VehicleCollectorOffRequest(
     String spd,
     String sum
 ) {
+    private static final double GPS_COORDINATE_DIVISOR = 1000000.0;
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyMMddHHmmss");
 
     public VehicleCollectorOffCommand toCommand() {
-        final LocalDateTime parsedOnTime = LocalDateTime.parse(onTime, DATE_FORMATTER);
-        final LocalDateTime parsedOffTime = LocalDateTime.parse(offTime, DATE_FORMATTER);
-        final double parsedLat = Double.parseDouble(lat) / 1000000;
-        final double parsedLon = Double.parseDouble(lon) / 1000000;
+        final long parsedMdn = Long.parseLong(mdn);
+        final double parsedLat = Double.parseDouble(lat) / GPS_COORDINATE_DIVISOR;
+        final double parsedLon = Double.parseDouble(lon) / GPS_COORDINATE_DIVISOR;
         final long parsedAng = Long.parseLong(ang);
         final long parsedSpd = Long.parseLong(spd);
         final long parsedSum = Long.parseLong(sum);
+        final LocalDateTime parsedOnTime = LocalDateTime.parse(onTime, DATE_FORMATTER);
+        final LocalDateTime parsedOffTime = LocalDateTime.parse(offTime, DATE_FORMATTER);
 
-        return VehicleCollectorOffCommand.create(Long.parseLong(mdn), gcd, parsedLat, parsedLon, parsedAng, parsedSpd, parsedSum, parsedOnTime, parsedOffTime);
+        return VehicleCollectorOffCommand.create(parsedMdn, gcd, parsedLat, parsedLon, parsedAng, parsedSpd, parsedSum, parsedOnTime, parsedOffTime);
     }
 }
