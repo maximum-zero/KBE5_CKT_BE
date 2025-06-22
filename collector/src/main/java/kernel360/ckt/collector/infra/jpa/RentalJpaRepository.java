@@ -1,15 +1,14 @@
-package kernel360.ckt.collector.infra.repository.jpa;
+package kernel360.ckt.collector.infra.jpa;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
-import kernel360.ckt.collector.application.repository.RentalRepository;
 import kernel360.ckt.core.domain.entity.RentalEntity;
 import kernel360.ckt.core.domain.enums.RentalStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface RentalJpaRepository extends JpaRepository<RentalEntity, Long>, RentalRepository {
+public interface RentalJpaRepository extends JpaRepository<RentalEntity, Long> {
     @Query("""
         SELECT r FROM RentalEntity r
         JOIN FETCH r.vehicle v
