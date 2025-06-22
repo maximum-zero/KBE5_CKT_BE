@@ -6,10 +6,9 @@ spring:
     name: auth
 
   datasource:
-    url: jdbc:mysql://${DB_URL}:${DB_PORT}/${DB_DATABASE}
+    url: jdbc:postgresql://${DB_URL}:${DB_PORT}/${DB_DATABASE}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
-    driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     show-sql: false
