@@ -1,17 +1,19 @@
 version: "3.8"
 services:
   db:
-    image: mysql:8.0
+    build:
+      context: .
+      dockerfile: Dockerfile
     environment:
-      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
-      MYSQL_DATABASE: ${DB_DATABASE}
-      MYSQL_USER: ${DB_USERNAME}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
     ports:
-      - "3356:3306"
+      - "3356:5432"
     volumes:
-      - db_data:/var/lib/mysql
+      - /var/lib/postgresql/data
+      - ./initdb.d:/docker-entrypoint-initdb.d
     networks:
       - ckt_network  # 네트워크 이름 변경
 
@@ -22,7 +24,7 @@ services:
       - db
     environment:
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
-      SPRING_DATASOURCE_URL: jdbc:mysql://${DB_URL}:3306/${DB_DATABASE}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://${DB_URL}:5432/${DB_DATABASE}
       SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
     ports:
@@ -55,7 +57,7 @@ services:
       - db
     environment:
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
-      SPRING_DATASOURCE_URL: jdbc:mysql://${DB_URL}:3306/${DB_DATABASE}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://${DB_URL}:5432/${DB_DATABASE}
       SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
       JWT_SECRET: ${JWT_SECRET}
@@ -73,7 +75,7 @@ services:
       - db
     environment:
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
-      SPRING_DATASOURCE_URL: jdbc:mysql://${DB_URL}:3306/${DB_DATABASE}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://${DB_URL}:5432/${DB_DATABASE}
       SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
     ports:
