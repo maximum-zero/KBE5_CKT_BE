@@ -15,6 +15,21 @@ services:
     networks:
       - ckt_network  # 네트워크 이름 변경
 
+  timescaledb:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - timescaledb_data:/var/lib/postgresql/data
+    networks:
+      - ckt_network
+
   admin:
     build:
       context: ./admin
@@ -85,6 +100,7 @@ services:
 
 volumes:
   db_data:
+  timescaledb_data:
 
 networks:
   ckt_network:   # 네트워크 이름 변경
