@@ -22,11 +22,7 @@ public interface RouteLogRepository extends Repository<RouteEntity, Long> {
             COUNT(DISTINCT DATE(r.start_at)) AS drivingDays,
             SUM(r.total_distance) AS totalDistance,
             AVG(r.total_distance) AS averageDistance,
-            CONCAT(
-                LPAD(FLOOR(AVG(TIMESTAMPDIFF(SECOND, r.start_at, r.end_at)) / 3600), 2, '0'), ':',
-                LPAD(FLOOR(MOD(AVG(TIMESTAMPDIFF(SECOND, r.start_at, r.end_at)), 3600) / 60), 2, '0'), ':',
-                LPAD(MOD(AVG(TIMESTAMPDIFF(SECOND, r.start_at, r.end_at)), 60), 2, '0')
-            ) AS averageDrivingTime
+            AVG(EXTRACT(EPOCH FROM (r.end_at - r.start_at))) AS averageDrivingTime
         FROM route r
         LEFT JOIN driving_log dl ON r.driving_log_id = dl.id
         LEFT JOIN rental rent ON dl.rental_id = rent.id
@@ -35,7 +31,7 @@ public interface RouteLogRepository extends Repository<RouteEntity, Long> {
         LEFT JOIN customer cu ON rent.customer_id = cu.id
         WHERE r.start_at BETWEEN :startDate AND :endDate
           AND (:registrationNumber IS NULL OR :registrationNumber = '' OR v.registration_number = :registrationNumber)
-          AND (:driverName IS NULL OR :driverName = '' OR cu.customer_name LIKE CONCAT('%', :driverName, '%'))
+          AND (:driverName IS NULL OR :driverName = '' OR LOWER(cu.customer_name) LIKE LOWER('%' || :driverName || '%'))
         GROUP BY v.registration_number, c.name
         """,
         nativeQuery = true

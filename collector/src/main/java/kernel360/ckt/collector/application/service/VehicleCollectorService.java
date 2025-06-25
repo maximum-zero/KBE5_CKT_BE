@@ -2,6 +2,9 @@ package kernel360.ckt.collector.application.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import kernel360.ckt.collector.application.port.DrivingLogRepository;
 import kernel360.ckt.collector.application.port.RentalRepository;
@@ -11,6 +14,7 @@ import kernel360.ckt.collector.application.service.command.VehicleCollectorCycle
 import kernel360.ckt.collector.application.service.command.VehicleCollectorOffCommand;
 import kernel360.ckt.collector.application.service.command.VehicleCollectorOnCommand;
 import kernel360.ckt.collector.ui.dto.response.VehicleCollectorResponse;
+import kernel360.ckt.core.domain.dto.CycleInformation;
 import kernel360.ckt.core.domain.entity.DrivingLogEntity;
 import kernel360.ckt.core.domain.entity.RentalEntity;
 import kernel360.ckt.core.domain.entity.RouteEntity;
@@ -20,8 +24,10 @@ import kernel360.ckt.core.domain.enums.DrivingLogStatus;
 import kernel360.ckt.core.domain.enums.RentalStatus;
 import kernel360.ckt.core.domain.enums.RouteStatus;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class VehicleCollectorService {
@@ -38,10 +44,10 @@ public class VehicleCollectorService {
      */
     @Transactional
     public VehicleCollectorResponse sendVehicleOn(VehicleCollectorOnCommand command) {
-        final VehicleEntity vehicle = vehicleService.findById(command.getVehicleId());
+        final VehicleEntity vehicle = vehicleService.findById(command.vehicleId());
 
         // 예약 여부를 확인합니다.
-        final RentalEntity rental = rentalRepository.findActiveRental(vehicle.getId(), command.getOnTime(), RentalStatus.RENTED)
+        final RentalEntity rental = rentalRepository.findActiveRental(vehicle.getId(), command.onTime(), RentalStatus.RENTED)
             .orElseThrow(() -> new EntityNotFoundException("예약된 차량이 아닙니다."));
 
         // 진행 중인 운행일지가 존재하는지 찾습니다.
@@ -61,7 +67,7 @@ public class VehicleCollectorService {
         // 새로운 경로 시작
         routeRepository.save(command.toRouteEntity(drivingLog));
 
-        return VehicleCollectorResponse.from(command.getVehicleId());
+        return VehicleCollectorResponse.from(command.vehicleId());
     }
 
     /**
@@ -70,7 +76,7 @@ public class VehicleCollectorService {
      */
     @Transactional
     public VehicleCollectorResponse sendVehicleOff(VehicleCollectorOffCommand command) {
-        final VehicleEntity vehicle = vehicleService.findById(command.getVehicleId());
+        final VehicleEntity vehicle = vehicleService.findById(command.vehicleId());
 
         // 진행 중인 운행일지를 찾습니다.
         final DrivingLogEntity drivingLog = findActiveDrivingLog(vehicle);
@@ -79,10 +85,10 @@ public class VehicleCollectorService {
         final RouteEntity route = findActiveRoute(drivingLog);
 
         // 경로를 완료 상태로 업데이트하고 저장
-        route.completed(command.getLat(), command.getLon(), command.getTotalDistance(), command.getOffTime());
+        route.completed(command.lat(), command.lon(), command.sum(), command.offTime());
         routeRepository.save(route);
 
-        return VehicleCollectorResponse.from(command.getVehicleId());
+        return VehicleCollectorResponse.from(command.vehicleId());
     }
 
     /**
@@ -91,7 +97,7 @@ public class VehicleCollectorService {
      */
     @Transactional
     public VehicleCollectorResponse saveVehicleCycle(VehicleCollectorCycleCommand command) {
-        final VehicleEntity vehicle = vehicleService.findById(command.getVehicleId());
+        final VehicleEntity vehicle = vehicleService.findById(command.vehicleId());
 
         // 진행 중인 운행일지를 찾습니다.
         final DrivingLogEntity drivingLog = findActiveDrivingLog(vehicle);
@@ -99,11 +105,26 @@ public class VehicleCollectorService {
         // 해당 운행일지에 연결된 활성 경로를 찾습니다.
         final RouteEntity route = findActiveRoute(drivingLog);
 
-        // 새로운 차량 추적 로그를 생성하고 저장
-        VehicleTraceLogEntity vehicleTraceLog = VehicleTraceLogEntity.create(route, command.getCList(), command.getOnTime());
-        vehicleTraceLogRepository.save(vehicleTraceLog);
+        // 차량 주기 정보 객체 생성
+        final List<VehicleTraceLogEntity> logs = new ArrayList<>();
+        for (CycleInformation cycleInformation : command.cList()) {
+            VehicleTraceLogEntity log = VehicleTraceLogEntity.create(
+                route,
+                cycleInformation.lat(),
+                cycleInformation.lon(),
+                cycleInformation.ang(),
+                cycleInformation.spd(),
+                cycleInformation.sum(),
+                cycleInformation.bat(),
+                cycleInformation.intervalAt()
+            );
+            logs.add(log);
+        }
 
-        return VehicleCollectorResponse.from(command.getVehicleId());
+        // 차량 주기 정보를 저장
+        vehicleTraceLogRepository.saveAll(logs);
+
+        return VehicleCollectorResponse.from(command.vehicleId());
     }
 
     /**

@@ -21,8 +21,8 @@ public interface DrivingLogJpaRepository extends JpaRepository<DrivingLogEntity,
         LEFT JOIN r.customer c
         WHERE (:vehicleNumber IS NULL OR v.registrationNumber LIKE %:vehicleNumber%)
         AND (:userName IS NULL OR c.customerName LIKE %:userName%)
-        AND (:startDate IS NULL OR r.pickupAt >= :startDate)
-        AND (:endDate IS NULL OR r.returnAt <= :endDate)
+        AND (CAST(:startDate AS java.sql.Timestamp) IS NULL OR r.pickupAt > :startDate)
+        AND (CAST(:endDate AS java.sql.Timestamp) IS NULL OR r.returnAt < :endDate)
         AND (:type IS NULL OR d.type = :type)
     """)
     Page<DrivingLogEntity> findAll(

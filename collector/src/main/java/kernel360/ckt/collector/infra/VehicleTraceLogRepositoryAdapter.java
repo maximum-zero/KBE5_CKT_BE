@@ -6,13 +6,15 @@ import kernel360.ckt.core.domain.entity.VehicleTraceLogEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Repository
 public class VehicleTraceLogRepositoryAdapter implements VehicleTraceLogRepository {
     private final VehicleTraceLogJpaRepository vehicleTraceLogJpaRepository;
 
     @Override
-    public VehicleTraceLogEntity save(VehicleTraceLogEntity vehicleTraceLog) {
-        return vehicleTraceLogJpaRepository.save(vehicleTraceLog);
+    public List<VehicleTraceLogEntity> saveAll(List<VehicleTraceLogEntity> vehicleTraceLogs) {
+        return vehicleTraceLogJpaRepository.saveAll(vehicleTraceLogs);
     }
 }

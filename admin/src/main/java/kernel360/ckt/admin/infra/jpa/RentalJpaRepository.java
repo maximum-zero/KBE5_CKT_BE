@@ -39,8 +39,8 @@ public interface RentalJpaRepository extends JpaRepository<RentalEntity, Long> {
             OR LOWER(r.customer.customerName) LIKE LOWER(CONCAT('%', :keyword, '%'))
             OR LOWER(r.vehicle.registrationNumber) LIKE LOWER(CONCAT('%', :keyword, '%'))
         )
-        AND (:startAt IS NULL OR r.pickupAt > :startAt)
-        AND (:endAt IS NULL OR r.returnAt < :endAt)
+        AND (CAST(:startAt AS java.sql.Timestamp) IS NULL OR r.pickupAt > :startAt)
+        AND (CAST(:endAt AS java.sql.Timestamp) IS NULL OR r.returnAt < :endAt)
         ORDER BY r.pickupAt DESC
     """)
     Page<RentalEntity> findAll(

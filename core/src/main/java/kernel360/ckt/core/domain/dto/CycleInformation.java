@@ -1,12 +1,14 @@
 package kernel360.ckt.core.domain.dto;
 
+import java.time.LocalDateTime;
+
 public record CycleInformation(
-    String gcd,
-    String lat,
-    String lon,
-    String ang,
-    String spd,
-    String sum,
-    String bat,
-    String sec
+    GCD gcd,
+    double lat,
+    double lon,
+    int ang,
+    int spd,
+    long sum,
+    int bat,
+    LocalDateTime intervalAt
 ) {}
