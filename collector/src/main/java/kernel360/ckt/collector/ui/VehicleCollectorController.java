@@ -1,5 +1,6 @@
 package kernel360.ckt.collector.ui;
 
+import jakarta.validation.Valid;
 import kernel360.ckt.collector.application.service.VehicleCollectorService;
 import kernel360.ckt.collector.application.service.command.VehicleCollectorCycleCommand;
 import kernel360.ckt.collector.application.service.command.VehicleCollectorOffCommand;
@@ -38,7 +39,7 @@ public class VehicleCollectorController {
      * @return 차량 시동 ON 처리 결과 {@link VehicleCollectorResponse}
      */
     @PostMapping("/on")
-    CommonResponse<VehicleCollectorResponse> sendVehicleOn(@RequestBody VehicleCollectorOnRequest request) {
+    CommonResponse<VehicleCollectorResponse> sendVehicleOn(@Valid @RequestBody VehicleCollectorOnRequest request) {
         log.info("차량 시동 ON 요청 - {}", request);
         final VehicleCollectorOnCommand command = request.toCommand();
         return CommonResponse.success(vehicleCollectorService.sendVehicleOn(command));
@@ -51,7 +52,7 @@ public class VehicleCollectorController {
      * @return 차량 시동 OFF 처리 결과 {@link VehicleCollectorResponse}
      */
     @PostMapping("/off")
-    CommonResponse<VehicleCollectorResponse> sendVehicleOff(@RequestBody VehicleCollectorOffRequest request) {
+    CommonResponse<VehicleCollectorResponse> sendVehicleOff(@Valid @RequestBody VehicleCollectorOffRequest request) {
         log.info("차량 시동 OFF 요청 - {}", request);
         final VehicleCollectorOffCommand command = request.toCommand();
         return CommonResponse.success(vehicleCollectorService.sendVehicleOff(command));
@@ -64,7 +65,7 @@ public class VehicleCollectorController {
      * @return 차량 주기적 위치 정보 저장 결과 {@link VehicleCollectorResponse}
      */
     @PostMapping("/cycle")
-    CommonResponse<VehicleCollectorResponse> saveVehicleCycle(@RequestBody VehicleCollectorCycleRequest request) {
+    CommonResponse<VehicleCollectorResponse> saveVehicleCycle(@Valid @RequestBody VehicleCollectorCycleRequest request) {
         log.info("차량 주기적 위치 정보 저장 요청 - {}", request);
         final VehicleCollectorCycleCommand cycleCommand = request.toCommand();
         return CommonResponse.success(vehicleCollectorService.saveVehicleCycle(cycleCommand));
