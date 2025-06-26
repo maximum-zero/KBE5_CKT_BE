@@ -1,32 +1,35 @@
 package kernel360.ckt.collector.application.service;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import java.util.Optional;
-import kernel360.ckt.collector.application.port.DrivingLogRepository;
-import kernel360.ckt.collector.application.port.RentalRepository;
-import kernel360.ckt.collector.application.port.RouteRepository;
-import kernel360.ckt.collector.application.port.VehicleTraceLogRepository;
+
+import kernel360.ckt.collector.application.port.*;
 import kernel360.ckt.collector.application.service.command.VehicleCollectorCycleCommand;
 import kernel360.ckt.collector.application.service.command.VehicleCollectorOffCommand;
 import kernel360.ckt.collector.application.service.command.VehicleCollectorOnCommand;
 import kernel360.ckt.collector.ui.dto.response.VehicleCollectorResponse;
-import kernel360.ckt.core.domain.entity.DrivingLogEntity;
-import kernel360.ckt.core.domain.entity.RentalEntity;
-import kernel360.ckt.core.domain.entity.RouteEntity;
-import kernel360.ckt.core.domain.entity.VehicleEntity;
-import kernel360.ckt.core.domain.entity.VehicleTraceLogEntity;
+import kernel360.ckt.core.common.error.VehicleEventErrorCode;
+import kernel360.ckt.core.common.exception.CustomException;
+import kernel360.ckt.core.domain.entity.*;
 import kernel360.ckt.core.domain.enums.DrivingLogStatus;
 import kernel360.ckt.core.domain.enums.RentalStatus;
 import kernel360.ckt.core.domain.enums.RouteStatus;
+import kernel360.ckt.core.domain.enums.VehicleEventType;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
+
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class VehicleCollectorService {
 
     private final VehicleService vehicleService;
+    private final VehicleEventRepository vehicleEventRepository;
     private final RentalRepository rentalRepository;
     private final DrivingLogRepository drivingLogRepository;
     private final RouteRepository routeRepository;
@@ -38,51 +41,101 @@ public class VehicleCollectorService {
      */
     @Transactional
     public VehicleCollectorResponse sendVehicleOn(VehicleCollectorOnCommand command) {
-        final VehicleEntity vehicle = vehicleService.findById(command.getVehicleId());
+        log.info("시동 ON - 요청값 : {}", command);
 
-        // 예약 여부를 확인합니다.
-        final RentalEntity rental = rentalRepository.findActiveRental(vehicle.getId(), command.getOnTime(), RentalStatus.RENTED)
-            .orElseThrow(() -> new EntityNotFoundException("예약된 차량이 아닙니다."));
+        // 차량 조회
+        final VehicleEntity vehicle = vehicleService.findById(command.mdn());
 
-        // 진행 중인 운행일지가 존재하는지 찾습니다.
-        Optional<DrivingLogEntity> existingDrivingLog = drivingLogRepository.findFirstByRentalAndStatus(rental, DrivingLogStatus.IN_PROGRESS);
+        // 차량 이벤트 조회 - 이미 ON이 되어 있으면 예외 발생
+        final Optional<VehicleEventEntity> lastVehicleEvent = vehicleEventRepository.findFirstByVehicleIdOrderByCreatedAtDesc(vehicle.getId());
+        if (lastVehicleEvent.isPresent() && lastVehicleEvent.get().getType().isON()) {
+            throw new CustomException(VehicleEventErrorCode.ALREADY_RUNNING);
+        }
 
-        final DrivingLogEntity drivingLog;
-        if (existingDrivingLog.isPresent()) {
-            // 기존 운행일지가 있다면 재사용 (하나의 렌탈 당 하나의 운행일지 유지)
-            drivingLog = existingDrivingLog.get();
+        // 예약 여부 확인
+        final RentalEntity rental = rentalRepository.findActiveRental(vehicle.getId(), command.onTime(), RentalStatus.RENTED)
+            .orElse(null);
+
+        // 운행 일지 시작
+        DrivingLogEntity drivingLog;
+        if (rental != null) {
+            // 예약이 있는 경우: 해당 렌탈과 연관된 진행 중인 운행 일지 재사용 시도
+            final Optional<DrivingLogEntity> existingInProgressLogForRental =
+                drivingLogRepository.findFirstByRentalAndStatus(rental, DrivingLogStatus.IN_PROGRESS);
+
+            if (existingInProgressLogForRental.isPresent()) {
+                drivingLog = existingInProgressLogForRental.get();
+                log.info("기존 운행일지 유지 - 운행일지 ID : {}", drivingLog.getId());
+            } else {
+                drivingLog = createAndSaveNewDrivingLog(command, vehicle, rental);
+            }
         } else {
-            // 기존 운행일지가 없다면 새로 생성하여 IN_PROGRESS 상태로 저장
-            final DrivingLogEntity newDrivingLog = command.toDrivingLogEntity(rental, vehicle);
-            newDrivingLog.inProgress();
-            drivingLog = drivingLogRepository.save(newDrivingLog);
+            drivingLog = createAndSaveNewDrivingLog(command, vehicle, null);
         }
 
         // 새로운 경로 시작
-        routeRepository.save(command.toRouteEntity(drivingLog));
+        final RouteEntity route = routeRepository.save(command.toRouteEntity(drivingLog));
+        log.info("새로운 경로 생성 - 경로 ID : {}", route.getId());
 
-        return VehicleCollectorResponse.from(command.getVehicleId());
+        // 차량 이벤트 저장
+        final Long rentalIdForEvent = Optional.ofNullable(rental).map(RentalEntity::getId).orElse(null);
+        final VehicleEventEntity vehicleEvent = VehicleEventEntity.create(command.mdn(), VehicleEventType.ON, rentalIdForEvent);
+        vehicleEventRepository.save(vehicleEvent);
+        log.info("차량 이벤트 ON - 차량 이벤트 ID : {}", vehicleEvent.getId());
+
+        return VehicleCollectorResponse.from(command.mdn());
     }
 
     /**
      * 차량 운행을 종료합니다.
-     * 진행 중인 운행일지와 활성 경로를 찾아 경로를 완료 처리합니다. (운행일지 자체는 완료하지 않음)
+     * 진행 중인 운행일지와 활성 경로를 찾아 경로를 완료 처리합니다.
+     * 예약이 존재하지 않는 운행일지의 경우 즉시 완료되며, 예약이 완료된 운행일지의 경우에는 예약 완료에서 처리가 됩니다.
      */
     @Transactional
     public VehicleCollectorResponse sendVehicleOff(VehicleCollectorOffCommand command) {
-        final VehicleEntity vehicle = vehicleService.findById(command.getVehicleId());
+        log.info("시동 OFF - 요청값 : {}", command);
+
+        // 차량 조회
+        final VehicleEntity vehicle = vehicleService.findById(command.mdn());
+
+        // 차량 이벤트 조회 - 이미 OFF이 되어 있으면 예외 발생
+        final Optional<VehicleEventEntity> lastVehicleEvent = vehicleEventRepository.findFirstByVehicleIdOrderByCreatedAtDesc(vehicle.getId());
+        if (lastVehicleEvent.isEmpty() || lastVehicleEvent.get().getType().isOFF()) {
+            throw new CustomException(VehicleEventErrorCode.NOT_RUNNING);
+        }
 
         // 진행 중인 운행일지를 찾습니다.
         final DrivingLogEntity drivingLog = findActiveDrivingLog(vehicle);
+        log.info("진행 중인 운행일지 - 운행일지 ID : {}", drivingLog.getId());
 
         // 해당 운행일지에 연결된 활성 경로를 찾습니다.
         final RouteEntity route = findActiveRoute(drivingLog);
+        log.info("진행 중인 경로 - 경로 ID : {}", route.getId());
 
         // 경로를 완료 상태로 업데이트하고 저장
-        route.completed(command.getLat(), command.getLon(), command.getTotalDistance(), command.getOffTime());
+        route.completed(command.lat(), command.lon(), command.totalDistance(), command.offTime());
         routeRepository.save(route);
+        log.info("경로 완료 - 경로 ID : {}", route.getId());
 
-        return VehicleCollectorResponse.from(command.getVehicleId());
+        final RentalEntity relatedRental = drivingLog.getRental();
+
+        if (relatedRental == null) {
+            // 예약이 없는 운행일지라면, 시동 OFF 시 즉시 완료 처리
+            drivingLog.completed();
+            drivingLogRepository.save(drivingLog);
+            log.info("완료된 운행일지 - 운행일지 ID : {}", drivingLog.getId());
+        }
+
+        // 차량 이벤트 OFF 저장
+        final Long rentalIdForEvent = (relatedRental != null) ? relatedRental.getId() : null;
+
+        final VehicleEventEntity vehicleEvent = VehicleEventEntity.create(
+            command.mdn(), VehicleEventType.OFF, rentalIdForEvent
+        );
+        vehicleEventRepository.save(vehicleEvent);
+        log.info("차량 이벤트 OFF - 차량 이벤트 ID : {}", vehicleEvent.getId());
+
+        return VehicleCollectorResponse.from(command.mdn());
     }
 
     /**
@@ -91,19 +144,43 @@ public class VehicleCollectorService {
      */
     @Transactional
     public VehicleCollectorResponse saveVehicleCycle(VehicleCollectorCycleCommand command) {
-        final VehicleEntity vehicle = vehicleService.findById(command.getVehicleId());
+        log.info("차량 주기 정보 - 요청값 : {}", command.mdn());
+
+        final VehicleEntity vehicle = vehicleService.findById(command.mdn());
 
         // 진행 중인 운행일지를 찾습니다.
         final DrivingLogEntity drivingLog = findActiveDrivingLog(vehicle);
+        log.info("진행 중인 운행일지 - 운행일지 ID : {}", drivingLog.getId());
 
         // 해당 운행일지에 연결된 활성 경로를 찾습니다.
         final RouteEntity route = findActiveRoute(drivingLog);
+        log.info("진행 중인 경로 - 경로 ID : {}", route.getId());
 
         // 새로운 차량 추적 로그를 생성하고 저장
-        VehicleTraceLogEntity vehicleTraceLog = VehicleTraceLogEntity.create(route, command.getCList(), command.getOnTime());
+        final VehicleTraceLogEntity vehicleTraceLog = VehicleTraceLogEntity.create(route, command.cList(), command.onTime());
         vehicleTraceLogRepository.save(vehicleTraceLog);
+        log.info("완료된 주기정보 - 주기정보 ID : {}", vehicleTraceLog.getId());
 
-        return VehicleCollectorResponse.from(command.getVehicleId());
+        return VehicleCollectorResponse.from(command.mdn());
+    }
+
+    /**
+     * 새로운 DrivingLogEntity 를 생성하고 IN_PROGRESS 상태로 저장합니다.
+     * @param command Vehicle ON 요청 커맨드
+     * @param vehicle 해당 차량 엔티티
+     * @param rental DrivingLog 에 연결될 Rental 엔티티 (없으면 null)
+     * @return 새로 생성되어 저장된 DrivingLogEntity
+     */
+    private DrivingLogEntity createAndSaveNewDrivingLog(
+        VehicleCollectorOnCommand command,
+        VehicleEntity vehicle,
+        @Nullable RentalEntity rental
+    ) {
+        DrivingLogEntity newDrivingLog = command.toDrivingLogEntity(rental, vehicle);
+        newDrivingLog.inProgress();
+        newDrivingLog = drivingLogRepository.save(newDrivingLog);
+        log.info("새로운 운행일지 생성 및 저장 완료 - ID {}", newDrivingLog.getId());
+        return newDrivingLog;
     }
 
     /**
