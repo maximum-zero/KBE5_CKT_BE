@@ -55,7 +55,7 @@ public class RentalController {
         @RequestHeader(X_USER_ID_HEADER) Long companyId,
         @Valid @RequestBody RentalCreateRequest request
     ) {
-        log.info("예약 생성 요청 {}", request);
+        log.info("예약 생성 요청 - {}", request);
         final RentalEntity rental = rentalService.createRental(request.toCommand(companyId));
         return CommonResponse.success(RentalCreateResponse.from(rental));
     }
