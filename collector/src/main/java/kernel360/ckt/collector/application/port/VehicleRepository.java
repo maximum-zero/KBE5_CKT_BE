@@ -18,4 +18,12 @@ public interface VehicleRepository {
      * @return 존재할 경우 차량 엔티티, 존재하지 않을 경우 빈 Optional 객체
      */
     Optional<VehicleEntity> findById(Long vehicleId);
+
+    /**
+     * 차량을 저장합니다.
+     *
+     * @param vehicle 저장할 차량
+     * @return 저장된 차량 도메인
+     */
+    VehicleEntity save(VehicleEntity vehicle);
 }
