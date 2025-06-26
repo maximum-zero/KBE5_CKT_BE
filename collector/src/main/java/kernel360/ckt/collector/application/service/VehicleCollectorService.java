@@ -10,6 +10,7 @@ import kernel360.ckt.collector.application.service.command.VehicleCollectorCycle
 import kernel360.ckt.collector.application.service.command.VehicleCollectorOffCommand;
 import kernel360.ckt.collector.application.service.command.VehicleCollectorOnCommand;
 import kernel360.ckt.collector.ui.dto.response.VehicleCollectorResponse;
+import kernel360.ckt.core.common.error.VehicleErrorCode;
 import kernel360.ckt.core.common.error.VehicleEventErrorCode;
 import kernel360.ckt.core.common.exception.CustomException;
 import kernel360.ckt.core.domain.entity.*;
@@ -21,14 +22,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
-
 @Slf4j
 @RequiredArgsConstructor
 @Service
 public class VehicleCollectorService {
 
-    private final VehicleService vehicleService;
+    private final VehicleRepository vehicleRepository;
     private final VehicleEventRepository vehicleEventRepository;
     private final RentalRepository rentalRepository;
     private final DrivingLogRepository drivingLogRepository;
@@ -44,7 +43,7 @@ public class VehicleCollectorService {
         log.info("시동 ON - 요청값 : {}", command);
 
         // 차량 조회
-        final VehicleEntity vehicle = vehicleService.findById(command.mdn());
+        final VehicleEntity vehicle = findVehicle(command.mdn());
 
         // 차량 이벤트 조회 - 이미 ON이 되어 있으면 예외 발생
         final Optional<VehicleEventEntity> lastVehicleEvent = vehicleEventRepository.findFirstByVehicleIdOrderByCreatedAtDesc(vehicle.getId());
@@ -52,8 +51,13 @@ public class VehicleCollectorService {
             throw new CustomException(VehicleEventErrorCode.ALREADY_RUNNING);
         }
 
+        // 차량 위치 및 총 주행거리 업데이트
+        vehicle.updateLocation(command.lat(), command.lon(), command.totalDistance());
+        final VehicleEntity updatedVehicle = vehicleRepository.save(vehicle);
+        log.info("차량 위치 및 총 주행거리 업데이트 - 위치 : {}, {}, 총 주행거리 : {}", updatedVehicle.getLat(), updatedVehicle.getLon(), updatedVehicle.getOdometer());
+
         // 예약 여부 확인
-        final RentalEntity rental = rentalRepository.findActiveRental(vehicle.getId(), command.onTime(), RentalStatus.RENTED)
+        final RentalEntity rental = rentalRepository.findActiveRental(updatedVehicle.getId(), command.onTime(), RentalStatus.RENTED)
             .orElse(null);
 
         // 운행 일지 시작
@@ -67,10 +71,10 @@ public class VehicleCollectorService {
                 drivingLog = existingInProgressLogForRental.get();
                 log.info("기존 운행일지 유지 - 운행일지 ID : {}", drivingLog.getId());
             } else {
-                drivingLog = createAndSaveNewDrivingLog(command, vehicle, rental);
+                drivingLog = createAndSaveNewDrivingLog(command, updatedVehicle, rental);
             }
         } else {
-            drivingLog = createAndSaveNewDrivingLog(command, vehicle, null);
+            drivingLog = createAndSaveNewDrivingLog(command, updatedVehicle, null);
         }
 
         // 새로운 경로 시작
@@ -96,7 +100,7 @@ public class VehicleCollectorService {
         log.info("시동 OFF - 요청값 : {}", command);
 
         // 차량 조회
-        final VehicleEntity vehicle = vehicleService.findById(command.mdn());
+        final VehicleEntity vehicle = findVehicle(command.mdn());
 
         // 차량 이벤트 조회 - 이미 OFF이 되어 있으면 예외 발생
         final Optional<VehicleEventEntity> lastVehicleEvent = vehicleEventRepository.findFirstByVehicleIdOrderByCreatedAtDesc(vehicle.getId());
@@ -111,6 +115,11 @@ public class VehicleCollectorService {
         // 해당 운행일지에 연결된 활성 경로를 찾습니다.
         final RouteEntity route = findActiveRoute(drivingLog);
         log.info("진행 중인 경로 - 경로 ID : {}", route.getId());
+
+        // 차량 위치 및 총 주행거리 업데이트
+        vehicle.updateLocation(command.lat(), command.lon(), command.totalDistance());
+        final VehicleEntity updatedVehicle = vehicleRepository.save(vehicle);
+        log.info("차량 위치 및 총 주행거리 업데이트 - 위치 : {}, {}, 총 주행거리 : {}", updatedVehicle.getLat(), updatedVehicle.getLon(), updatedVehicle.getOdometer());
 
         // 경로를 완료 상태로 업데이트하고 저장
         route.completed(command.lat(), command.lon(), command.totalDistance(), command.offTime());
@@ -146,7 +155,7 @@ public class VehicleCollectorService {
     public VehicleCollectorResponse saveVehicleCycle(VehicleCollectorCycleCommand command) {
         log.info("차량 주기 정보 - 요청값 : {}", command.mdn());
 
-        final VehicleEntity vehicle = vehicleService.findById(command.mdn());
+        final VehicleEntity vehicle = findVehicle(command.mdn());
 
         // 진행 중인 운행일지를 찾습니다.
         final DrivingLogEntity drivingLog = findActiveDrivingLog(vehicle);
@@ -162,6 +171,17 @@ public class VehicleCollectorService {
         log.info("완료된 주기정보 - 주기정보 ID : {}", vehicleTraceLog.getId());
 
         return VehicleCollectorResponse.from(command.mdn());
+    }
+
+    /**
+     * 차량의 ID로 차량을 조회합니다.
+     *
+     * @param vehicleId
+     * @return
+     */
+    private VehicleEntity findVehicle(Long vehicleId) {
+        return vehicleRepository.findById(vehicleId)
+            .orElseThrow(() -> new CustomException(VehicleErrorCode.VEHICLE_NOT_FOUND, vehicleId));
     }
 
     /**

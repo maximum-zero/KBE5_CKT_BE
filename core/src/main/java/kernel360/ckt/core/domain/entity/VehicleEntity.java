@@ -44,6 +44,15 @@ public class VehicleEntity extends BaseTimeEntity {
     @Column
     private VehicleStatus status;
 
+    @Column(columnDefinition = "DOUBLE PRECISION DEFAULT 0.0")
+    private Double lat;
+
+    @Column(columnDefinition = "DOUBLE PRECISION DEFAULT 0.0")
+    private Double lon;
+
+    @Column(columnDefinition = "BIGINT DEFAULT 0")
+    private Long odometer;
+
     @Lob
     private String memo;
 
@@ -79,5 +88,16 @@ public class VehicleEntity extends BaseTimeEntity {
         this.fuelType = fuelType;
         this.transmissionType = transmissionType;
         this.memo = memo;
+    }
+
+    public void initLocation() {
+        this.lat = 37.4955498697675;
+        this.lon = 127.029293901519;
+    }
+
+    public void updateLocation(Double lat, Double lon, Long odometer) {
+        this.lat = lat;
+        this.lon = lon;
+        this.odometer = this.odometer + odometer;
     }
 }

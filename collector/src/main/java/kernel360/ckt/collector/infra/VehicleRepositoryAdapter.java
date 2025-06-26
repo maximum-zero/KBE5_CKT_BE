@@ -16,4 +16,11 @@ public class VehicleRepositoryAdapter implements VehicleRepository {
     public Optional<VehicleEntity> findById(Long vehicleId) {
         return vehicleJpaRepository.findById(vehicleId);
     }
+
+    @Override
+    public VehicleEntity save(VehicleEntity vehicle) {
+        return vehicleJpaRepository.save(vehicle);
+    }
+
+
 }
