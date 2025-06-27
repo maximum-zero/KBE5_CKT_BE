@@ -3,13 +3,13 @@ package kernel360.ckt.core.domain.enums;
 import lombok.Getter;
 
 @Getter
-public enum CustomerStatus {
-    ACTIVE("활성"),
-    WITHDRAWN("비활성");
+public enum CustomerType {
+    INDIVIDUAL("개인"),
+    CORPORATE("법인");
 
     private final String value;
 
-    CustomerStatus(String value) {
+    CustomerType(String value) {
         this.value = value;
     }
 }

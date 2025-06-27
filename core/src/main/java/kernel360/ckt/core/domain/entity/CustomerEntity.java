@@ -2,6 +2,7 @@ package kernel360.ckt.core.domain.entity;
 
 import jakarta.persistence.*;
 import kernel360.ckt.core.domain.enums.CustomerStatus;
+import kernel360.ckt.core.domain.enums.CustomerType;
 import lombok.*;
 
 @Getter
@@ -13,6 +14,13 @@ public class CustomerEntity extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private CustomerType customerType;
+
+    @Column(nullable = false, unique = true)
+    private String email;
 
     @Column(nullable = false)
     private String customerName;
@@ -27,23 +35,22 @@ public class CustomerEntity extends BaseTimeEntity {
     private String detailedAddress;
     private String birthday;
 
-    @Lob
-//    @Column(columnDefinition = "Text")
-    private String memo;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private CustomerStatus status;
 
-    public CustomerEntity(String customerName,
+    public CustomerEntity(CustomerType customerType,
+                          String email,
+                          String customerName,
                           String phoneNumber,
                           String licenseNumber,
                           String zipCode,
                           String address,
                           String detailedAddress,
                           String birthday,
-                          String memo,
                           CustomerStatus status) {
+        this.customerType = customerType;
+        this.email = email;
         this.customerName = customerName;
         this.phoneNumber = phoneNumber;
         this.licenseNumber = licenseNumber;
@@ -51,21 +58,24 @@ public class CustomerEntity extends BaseTimeEntity {
         this.address = address;
         this.detailedAddress = detailedAddress;
         this.birthday = birthday;
-        this.memo = memo;
         this.status = status;
     }
 
     public static CustomerEntity create(
+        CustomerType customerType,
+        String email,
         String customerName,
         String phoneNumber,
         String licenseNumber,
         String zipCode,
+        CustomerStatus status,
         String address,
         String detailedAddress,
-        String birthday,
-        String memo
+        String birthday
     ) {
         return new CustomerEntity(
+            customerType,
+            email,
             customerName,
             phoneNumber,
             licenseNumber,
@@ -73,29 +83,34 @@ public class CustomerEntity extends BaseTimeEntity {
             address,
             detailedAddress,
             birthday,
-            memo,
-            CustomerStatus.ACTIVE
+            status
         );
     }
 
-    public void updateBasicInfo(String customerName,
+    public void updateBasicInfo(CustomerType customerType,
+                                String email,
+                                String customerName,
                                 String phoneNumber,
                                 String licenseNumber,
                                 String zipCode,
                                 CustomerStatus status,
                                 String address,
                                 String detailedAddress,
-                                String birthday,
-                                String memo) {
-                                                this.customerName = customerName;
-                                                this.phoneNumber = phoneNumber;
-                                                this.licenseNumber = licenseNumber;
-                                                this.zipCode = zipCode;
-                                                this.status = status;
-                                                this.address = address;
-                                                this.detailedAddress = detailedAddress;
-                                                this.birthday = birthday;
-                                                this.memo = memo;
-                                            }
+                                String birthday) {
+        this.customerType = customerType;
+        this.email = email;
+        this.customerName = customerName;
+        this.phoneNumber = phoneNumber;
+        this.licenseNumber = licenseNumber;
+        this.zipCode = zipCode;
+        this.status = status;
+        this.address = address;
+        this.detailedAddress = detailedAddress;
+        this.birthday = birthday;
+    }
+
+    public void updateStatus(CustomerStatus status) {
+        this.status = status;
+    }
 
 }

@@ -4,6 +4,7 @@ import kernel360.ckt.admin.application.port.CustomerRepository;
 import kernel360.ckt.admin.infra.jpa.CustomerJpaRepository;
 import kernel360.ckt.core.domain.entity.CustomerEntity;
 import kernel360.ckt.core.domain.enums.CustomerStatus;
+import kernel360.ckt.core.domain.enums.CustomerType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -40,6 +41,21 @@ public class CustomerRepositoryAdapter implements CustomerRepository {
     @Override
     public void deleteById(Long id) {
         customerJpaRepository.deleteById(id);
+    }
+
+    @Override
+    public boolean existsById(Long id) {
+        return customerJpaRepository.existsById(id);
+    }
+
+    @Override
+    public long countTotal() {
+        return customerJpaRepository.count();
+    }
+
+    @Override
+    public long countByType(CustomerType type) {
+        return customerJpaRepository.countByCustomerType(type);
     }
 
     @Override

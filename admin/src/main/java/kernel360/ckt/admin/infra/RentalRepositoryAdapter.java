@@ -48,4 +48,7 @@ public class RentalRepositoryAdapter implements RentalRepository {
     public long countVehiclesByStatus(RentalStatus status) {
         return rentalJpaRepository.countVehiclesByStatus(status);
     }
+
+    @Override
+    public long countRentedCustomers() { return rentalJpaRepository.countRentedCustomers(); }
 }

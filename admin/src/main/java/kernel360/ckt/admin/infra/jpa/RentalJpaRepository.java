@@ -99,4 +99,7 @@ public interface RentalJpaRepository extends JpaRepository<RentalEntity, Long> {
 
 """)
     List<RentalEntity> findRentedRentals();
+
+    @Query("SELECT COUNT(DISTINCT r.customer.id) FROM RentalEntity r WHERE r.status = 'RENTED'")
+    long countRentedCustomers();
 }

@@ -2,6 +2,7 @@ package kernel360.ckt.admin.application.port;
 
 import kernel360.ckt.core.domain.entity.CustomerEntity;
 import kernel360.ckt.core.domain.enums.CustomerStatus;
+import kernel360.ckt.core.domain.enums.CustomerType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -54,6 +55,29 @@ public interface CustomerRepository {
      * @param id 삭제할 고객 ID
      */
     void deleteById(Long id);
+
+    /**
+     * 고객 ID의 존재 여부를 확인합니다.
+     *
+     * @param id 고객 ID
+     * @return 존재하면 true, 아니면 false
+     */
+    boolean existsById(Long id);
+
+    /**
+     * 전체 고객 수를 조회합니다.
+     *
+     * @return 전체 고객 수
+     */
+    long countTotal();
+
+    /**
+     * 고객 유형별(INIDIVIDUAL 또는 CORPORATE) 고객 수를 조회합니다.
+     *
+     * @param type 고객 유형 ("INDIVIDUAL" 또는 "CORPORATE")
+     * @return 해당 유형의 고객 수
+     */
+    long countByType(CustomerType type);
 
     /**
      * Keyword에 맞는 고객을 조회합니다.

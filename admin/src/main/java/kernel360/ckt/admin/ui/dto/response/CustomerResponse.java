@@ -2,6 +2,8 @@ package kernel360.ckt.admin.ui.dto.response;
 
 import kernel360.ckt.core.domain.entity.CustomerEntity;
 
+import java.time.LocalDateTime;
+
 public record CustomerResponse (
     Long id,
     String customerName,
@@ -12,9 +14,10 @@ public record CustomerResponse (
     String detailAddress,
     String birthday,
     String status,
-    String statusName,
-    String memo
-){
+    String email,
+    LocalDateTime createdAt,
+    String customerType
+) {
     public static CustomerResponse from(CustomerEntity customerEntity) {
         return new CustomerResponse(
             customerEntity.getId(),
@@ -26,8 +29,9 @@ public record CustomerResponse (
             customerEntity.getDetailedAddress(),
             customerEntity.getBirthday(),
             customerEntity.getStatus().name(),
-            customerEntity.getStatus().getDescription(),
-            customerEntity.getMemo()
+            customerEntity.getEmail(),
+            customerEntity.getCreatedAt(),
+            customerEntity.getCustomerType().name()
         );
     }
 }

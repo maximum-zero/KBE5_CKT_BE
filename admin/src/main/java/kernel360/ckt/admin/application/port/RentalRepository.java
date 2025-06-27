@@ -82,4 +82,12 @@ public interface RentalRepository {
      * @return 해당 상태의 차량 수
      */
     long countVehiclesByStatus(RentalStatus status);
+
+    /**
+     * 현재 대여 중(RENTED 상태)인 고객 수를 조회합니다.
+     * 동일 고객이 여러 대여건을 가지고 있어도 1명으로 계산합니다.
+     *
+     * @return 대여 중인 고객 수
+     */
+    long countRentedCustomers();
 }
