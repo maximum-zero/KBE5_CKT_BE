@@ -1,7 +1,8 @@
 package kernel360.ckt.admin.application.service;
 
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import kernel360.ckt.admin.application.service.command.DrivingLogListCommand;
+import kernel360.ckt.admin.application.service.dto.DrivingLogListDto;
 import kernel360.ckt.admin.ui.dto.request.DrivingLogUpdateRequest;
 import kernel360.ckt.admin.ui.dto.response.DrivingLogDetailResponse;
 import kernel360.ckt.admin.ui.dto.response.DrivingLogListResponse;
@@ -9,7 +10,6 @@ import kernel360.ckt.core.common.error.DrivingLogErrorCode;
 import kernel360.ckt.core.common.exception.CustomException;
 import kernel360.ckt.core.domain.entity.DrivingLogEntity;
 import kernel360.ckt.core.domain.entity.RouteEntity;
-import kernel360.ckt.core.domain.enums.DrivingType;
 import kernel360.ckt.admin.application.port.DrivingLogRepository;
 import kernel360.ckt.admin.application.port.RouteRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,11 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.*;
 import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -32,32 +28,18 @@ public class DrivingLogService {
     private final DrivingLogRepository drivingLogRepository;
     private final RouteRepository routeRepository;
 
-    public DrivingLogListResponse getDrivingLogList(
-        String vehicleNumber,
-        String userName,
-        LocalDateTime startDate,
-        LocalDateTime endDate,
-        DrivingType type,
-        Pageable pageable
-    ) {
-
-        Page<DrivingLogEntity> drivingLogPage = drivingLogRepository.findAll(
-            vehicleNumber,
-            userName,
-            startDate,
-            endDate,
-            type,
-            pageable
-        );
-
-        log.info("운행 일지 조회 완료 - 운행일지 조회 건수: {}", drivingLogPage.getTotalElements());
-
-        List<RouteEntity> allRoutes = routeRepository.findByDrivingLogIn(drivingLogPage.getContent());
-
-        Map<Long, List<RouteEntity>> routeMap = allRoutes.stream()
-            .collect(Collectors.groupingBy(route -> route.getDrivingLog().getId()));
-
-        return DrivingLogListResponse.from(drivingLogPage, routeMap);
+    /**
+     * 운행 일지 목록을 조회합니다.
+     *
+     * @param command 검색 조건 {@link DrivingLogListCommand} 객체
+     * @param pageable  페이징 및 정렬 정보 객체
+     *
+     * @return 검색 조건과 페이징에 따라 조회된 운행일지 {@link DrivingLogEntity} 목록
+     */
+    public DrivingLogListResponse retrieveDrivingLogs(DrivingLogListCommand command, Pageable pageable) {
+        final Page<DrivingLogListDto> drivingLogs = drivingLogRepository.findAll(command, pageable);
+        log.info("운행 일지 조회 완료 - 운행일지 조회 건수: {}", drivingLogs.getTotalElements());
+        return DrivingLogListResponse.from(drivingLogs);
     }
 
     public DrivingLogDetailResponse getDrivingLogDetail(Long id) {

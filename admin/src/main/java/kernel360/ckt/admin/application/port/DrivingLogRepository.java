@@ -1,12 +1,12 @@
 package kernel360.ckt.admin.application.port;
 
+import kernel360.ckt.admin.application.service.command.DrivingLogListCommand;
+import kernel360.ckt.admin.application.service.dto.DrivingLogListDto;
 import kernel360.ckt.core.domain.entity.DrivingLogEntity;
 import kernel360.ckt.core.domain.entity.RentalEntity;
-import kernel360.ckt.core.domain.enums.DrivingType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 /**
@@ -26,22 +26,11 @@ public interface DrivingLogRepository {
     /**
      * 조건에 따라 운행 기록을 페이징 조회합니다.
      *
-     * @param vehicleNumber 차량 번호
-     * @param userName 사용자 이름
-     * @param startDate 운행 시작일시
-     * @param endDate 운행 종료일시
-     * @param type 운행 타입
+     * @param command 검색 조건 {@link DrivingLogListCommand} 객체
      * @param pageable 페이징 정보
      * @return 조건에 맞는 운행 기록 목록
      */
-    Page<DrivingLogEntity> findAll(
-        String vehicleNumber,
-        String userName,
-        LocalDateTime startDate,
-        LocalDateTime endDate,
-        DrivingType type,
-        Pageable pageable
-    );
+    Page<DrivingLogListDto> findAll(DrivingLogListCommand command, Pageable pageable);
 
     /**
      * 운행 기록 ID로 조회합니다.
