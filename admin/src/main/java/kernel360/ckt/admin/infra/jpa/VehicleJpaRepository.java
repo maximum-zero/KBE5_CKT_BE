@@ -19,6 +19,7 @@ public interface VehicleJpaRepository extends JpaRepository<VehicleEntity, Long>
         AND (v.company.id = :companyId)
         AND (:status IS NULL OR v.status = :status)
         AND (:keyword IS NULL OR v.registrationNumber LIKE %:keyword% OR v.modelName LIKE %:keyword%)
+        ORDER BY v.createdAt DESC
     """)
     Page<VehicleEntity> findAll(@Param("companyId") Long companyId, @Param("status") VehicleStatus status, @Param("keyword") String keyword, Pageable pageable);
 
