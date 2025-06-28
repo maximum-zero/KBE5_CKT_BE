@@ -18,6 +18,8 @@ public record VehicleResponse(
     String transmissionTypeName,
     VehicleStatus status,
     String statusName,
+    Double lat,
+    Double lon,
     String memo
 ) {
     public static VehicleResponse from(VehicleEntity vehicleEntity) {
@@ -34,6 +36,8 @@ public record VehicleResponse(
             vehicleEntity.getTransmissionType().getValue(),
             vehicleEntity.getStatus(),
             vehicleEntity.getStatus().getValue(),
+            vehicleEntity.getLat(),
+            vehicleEntity.getLon(),
             vehicleEntity.getMemo()
         );
     }
