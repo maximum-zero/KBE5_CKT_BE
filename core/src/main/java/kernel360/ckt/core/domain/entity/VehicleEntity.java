@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import kernel360.ckt.core.domain.enums.FuelType;
 import kernel360.ckt.core.domain.enums.TransmissionType;
 import kernel360.ckt.core.domain.enums.VehicleStatus;
+import kernel360.ckt.core.domain.persistence.BooleanToYNConverter;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -56,6 +57,10 @@ public class VehicleEntity extends BaseTimeEntity {
     @Lob
     private String memo;
 
+    @Column(nullable = false, length = 1)
+    @Convert(converter = BooleanToYNConverter.class)
+    private Boolean deleteYn = false;
+
     private VehicleEntity(String registrationNumber, String modelYear, String manufacturer, String modelName,
                           String batteryVoltage, FuelType fuelType, TransmissionType transmissionType,
                           VehicleStatus status, String memo) {
@@ -90,14 +95,13 @@ public class VehicleEntity extends BaseTimeEntity {
         this.memo = memo;
     }
 
-    public void initLocation() {
-        this.lat = 37.4955498697675;
-        this.lon = 127.029293901519;
-    }
-
     public void updateLocation(Double lat, Double lon, Long odometer) {
         this.lat = lat;
         this.lon = lon;
         this.odometer = this.odometer + odometer;
+    }
+
+    public void delete() {
+        this.deleteYn = true;
     }
 }
