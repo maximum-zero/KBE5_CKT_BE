@@ -18,7 +18,11 @@ public class VehicleEntity extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 10, unique = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "company_id")
+    private CompanyEntity company;
+
+    @Column(nullable = false, length = 10)
     private String registrationNumber;
 
     @Column(length = 4)
@@ -61,9 +65,10 @@ public class VehicleEntity extends BaseTimeEntity {
     @Convert(converter = BooleanToYNConverter.class)
     private Boolean deleteYn = false;
 
-    private VehicleEntity(String registrationNumber, String modelYear, String manufacturer, String modelName,
+    private VehicleEntity(CompanyEntity company, String registrationNumber, String modelYear, String manufacturer, String modelName,
                           String batteryVoltage, FuelType fuelType, TransmissionType transmissionType,
                           VehicleStatus status, String memo) {
+        this.company = company;
         this.registrationNumber = registrationNumber;
         this.modelYear = modelYear;
         this.manufacturer = manufacturer;
@@ -75,10 +80,10 @@ public class VehicleEntity extends BaseTimeEntity {
         this.memo = memo;
     }
 
-    public static VehicleEntity create(String registrationNumber, String modelYear, String manufacturer, String modelName,
+    public static VehicleEntity create(CompanyEntity company, String registrationNumber, String modelYear, String manufacturer, String modelName,
                                        String batteryVoltage, FuelType fuelType, TransmissionType transmissionType,
                                        VehicleStatus status, String memo) {
-        return new VehicleEntity(registrationNumber, modelYear, manufacturer, modelName,
+        return new VehicleEntity(company, registrationNumber, modelYear, manufacturer, modelName,
             batteryVoltage, fuelType, transmissionType, status, memo);
     }
 

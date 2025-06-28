@@ -51,7 +51,7 @@ public class RentalService {
         final CompanyEntity company = findCompanyById(command.companyId());
         log.info("회사 정보 조회 - 회사 ID : {}", company.getId());
 
-        final VehicleEntity vehicle = findVehicleById(command.vehicleId());
+        final VehicleEntity vehicle = findVehicleById(command.companyId(), command.vehicleId());
         log.info("차량 정보 조회 - 차량 ID : {}", vehicle.getId());
 
         final CustomerEntity customer = findCustomerById(command.customerId());
@@ -135,7 +135,7 @@ public class RentalService {
         }
 
         if (command.vehicleId() != null && !command.vehicleId().equals(rental.getVehicle().getId())) {
-            updatedVehicle = findVehicleById(command.vehicleId());
+            updatedVehicle = findVehicleById(command.companyId(), command.vehicleId());
             log.info("차량 정보 변경 - 차량 ID: {}", updatedVehicle.getId());
             checkedAvailability = true;
         }
@@ -245,12 +245,13 @@ public class RentalService {
     /**
      * 주어진 ID로 차량 정보를 조회합니다.
      *
+     * @param companyId 조회할 회사의 고유 ID
      * @param vehicleId 조회할 차량의 고유 ID
      * @return 조회된 {@link VehicleEntity} 객체
      * @throws CustomException 해당 ID의 차량 정보를 찾을 수 없는 경우 발생
      */
-    private VehicleEntity findVehicleById(Long vehicleId) {
-        return vehicleRepository.findById(vehicleId)
+    private VehicleEntity findVehicleById(Long companyId, Long vehicleId) {
+        return vehicleRepository.findById(companyId, vehicleId)
             .orElseThrow(() -> new CustomException(VehicleErrorCode.VEHICLE_NOT_FOUND, vehicleId));
     }
 

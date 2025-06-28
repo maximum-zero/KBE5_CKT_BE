@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 @Getter
 @RequiredArgsConstructor
 public class VehicleKeywordCommand {
+    private final Long companyId;
     private final String keyword;
     private final LocalDateTime pickupAt;
     private final LocalDateTime returnAt;

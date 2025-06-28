@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public class UpdateVehicleCommand {
+    private final Long companyId;
     private final String modelYear;
     private final String manufacturer;
     private final String modelName;

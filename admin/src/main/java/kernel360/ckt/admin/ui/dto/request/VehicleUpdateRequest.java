@@ -18,8 +18,9 @@ public record VehicleUpdateRequest(
     String transmissionType,
     @Size(max = 500, message = "메모는 500자 이하이어야 합니다.") String memo
 ) {
-    public UpdateVehicleCommand toCommand() {
+    public UpdateVehicleCommand toCommand(Long companyId) {
         return new UpdateVehicleCommand(
+            companyId,
             this.modelYear,
             this.manufacturer,
             this.modelName,

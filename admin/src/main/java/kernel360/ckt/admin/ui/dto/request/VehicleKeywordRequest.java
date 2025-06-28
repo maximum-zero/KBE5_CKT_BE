@@ -26,8 +26,9 @@ public record VehicleKeywordRequest(
         }
     }
 
-    public VehicleKeywordCommand toCommand() {
+    public VehicleKeywordCommand toCommand(Long companyId) {
         return new VehicleKeywordCommand(
+            companyId,
             this.keyword,
             this.pickupAt,
             this.returnAt

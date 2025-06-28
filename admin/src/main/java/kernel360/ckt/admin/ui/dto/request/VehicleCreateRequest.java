@@ -18,8 +18,9 @@ public record VehicleCreateRequest(
     String transmissionType,
     @Size(max = 500, message = "메모는 500자 이하이어야 합니다.") String memo
 ) {
-    public CreateVehicleCommand toCommand() {
+    public CreateVehicleCommand toCommand(Long companyId) {
         return new CreateVehicleCommand(
+            companyId,
             this.registrationNumber,
             this.modelYear,
             this.manufacturer,
