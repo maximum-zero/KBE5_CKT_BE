@@ -1,5 +1,6 @@
 package kernel360.ckt.admin.infra.jpa;
 
+import javax.swing.text.html.Option;
 import kernel360.ckt.core.domain.entity.VehicleEntity;
 import kernel360.ckt.core.domain.enums.VehicleStatus;
 import org.springframework.data.domain.Page;
@@ -15,12 +16,15 @@ import java.util.Optional;
 public interface VehicleJpaRepository extends JpaRepository<VehicleEntity, Long> {
     @Query("""
         SELECT v FROM VehicleEntity v
-        WHERE (:status IS NULL OR v.status = :status)
+        WHERE  v.deleteYn = false
+        AND (:status IS NULL OR v.status = :status)
         AND (:keyword IS NULL OR v.registrationNumber LIKE %:keyword% OR v.modelName LIKE %:keyword%)
     """)
     Page<VehicleEntity> findAll(@Param("status") VehicleStatus status, @Param("keyword") String keyword, Pageable pageable);
 
-    Optional<VehicleEntity> findByRegistrationNumber(String registrationNumber);
+    Optional<VehicleEntity> findByIdAndDeleteYnFalse(Long vehicleId);
+
+    Optional<VehicleEntity> findByRegistrationNumberAndDeleteYnFalse(String registrationNumber);
 
     @Query("""
         SELECT v
@@ -30,6 +34,8 @@ public interface VehicleJpaRepository extends JpaRepository<VehicleEntity, Long>
             AND r.pickupAt <= :returnAt
             AND r.returnAt >= :pickupAt
         WHERE
+            v.deleteYn = false
+        AND
             (LOWER(v.registrationNumber) LIKE LOWER(CONCAT('%', :keyword, '%')) OR
              LOWER(v.modelName) LIKE LOWER(CONCAT('%', :keyword, '%')))
         AND r.id IS NULL

@@ -1,7 +1,6 @@
 package kernel360.ckt.admin.application.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import kernel360.ckt.admin.application.service.command.CreateVehicleCommand;
 import kernel360.ckt.admin.application.service.command.VehicleKeywordCommand;
@@ -45,8 +44,8 @@ public class VehicleService {
                 throw new CustomException(VehicleErrorCode.DUPLICATE_REGISTRATION_NUMBER);
             });
 
-        final VehicleEntity vehicle = command.toEntity(); // entity 생성
-        final VehicleEntity savedVehicle = vehicleRepository.save(vehicle); // 저장
+        final VehicleEntity vehicle = command.toEntity();
+        final VehicleEntity savedVehicle = vehicleRepository.save(vehicle);
 
         log.info("차량 등록 완료 - ID: {}", savedVehicle.getId());
         return savedVehicle;
@@ -103,8 +102,11 @@ public class VehicleService {
 
     public void delete(Long vehicleId) {
         log.info("차량 삭제 시도 - vehicleId: {}", vehicleId);
-        findById(vehicleId);
-        vehicleRepository.deleteById(vehicleId);
+        final VehicleEntity vehicle = findById(vehicleId);
+
+        vehicle.delete();
+        vehicleRepository.save(vehicle);
+
         log.info("차량 삭제 성공 - vehicleId: {}", vehicleId);
     }
 

@@ -54,12 +54,6 @@ public interface VehicleRepository {
     long count();
 
     /**
-     * 차량 ID로 차량을 삭제합니다.
-     * @param vehicleId 삭제할 차량 ID
-     */
-    void deleteById(Long vehicleId);
-
-    /**
      * 예약가능한 차량을 조회합니다.
      * @param keyword 차량 번호 or 모델명
      * @param pickupAt 픽업 시간

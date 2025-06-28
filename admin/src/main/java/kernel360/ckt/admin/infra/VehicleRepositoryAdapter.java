@@ -30,22 +30,17 @@ public class VehicleRepositoryAdapter implements VehicleRepository {
 
     @Override
     public Optional<VehicleEntity> findById(Long vehicleId) {
-        return vehicleJpaRepository.findById(vehicleId);
+        return vehicleJpaRepository.findByIdAndDeleteYnFalse(vehicleId);
     }
 
     @Override
     public Optional<VehicleEntity> findByRegistrationNumber(String registrationNumber) {
-        return vehicleJpaRepository.findByRegistrationNumber(registrationNumber);
+        return vehicleJpaRepository.findByRegistrationNumberAndDeleteYnFalse(registrationNumber);
     }
 
     @Override
     public long count() {
         return vehicleJpaRepository.count();
-    }
-
-    @Override
-    public void deleteById(Long vehicleId) {
-        vehicleJpaRepository.deleteById(vehicleId);
     }
 
     @Override
