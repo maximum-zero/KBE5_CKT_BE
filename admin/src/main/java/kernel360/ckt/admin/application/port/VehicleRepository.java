@@ -1,7 +1,5 @@
 package kernel360.ckt.admin.application.port;
 
-import jakarta.validation.constraints.FutureOrPresent;
-import jakarta.validation.constraints.NotNull;
 import kernel360.ckt.core.domain.entity.VehicleEntity;
 import kernel360.ckt.core.domain.enums.VehicleStatus;
 import org.springframework.data.domain.Page;
@@ -26,26 +24,27 @@ public interface VehicleRepository {
 
     /**
      * 차량 차량 목록을 페이징하여 조회합니다.
+     * @param companyId 조회할 회사
      * @param status 차량 상태
      * @param keyword 검색 키워드 (차량 번호, 모델명 등)
      * @param pageable 페이징 정보
      * @return 조건에 부합하는 차량 목록 (Page)
      */
-    Page<VehicleEntity> findAll(VehicleStatus status, String keyword, Pageable pageable);
+    Page<VehicleEntity> findAll(Long companyId, VehicleStatus status, String keyword, Pageable pageable);
 
     /**
      * 차량 ID로 차량을 조회합니다.
      * @param vehicleId 차량 ID
      * @return 존재할 경우 차량 엔티티, 존재하지 않을 경우 빈 Optional
      */
-    Optional<VehicleEntity> findById(Long vehicleId);
+    Optional<VehicleEntity> findById(Long vehicleId, Long companyId);
 
     /**
      * 차량 등록 번호로 차량을 조회합니다.
      * @param registrationNumber 차량 등록 번호
      * @return 존재할 경우 차량 엔티티, 존재하지 않을 경우 빈 Optional
      */
-    Optional<VehicleEntity> findByRegistrationNumber(String registrationNumber);
+    Optional<VehicleEntity> findByRegistrationNumber(Long companyId, String registrationNumber);
 
     /**
      * 전체 차량 수를 반환합니다.
@@ -55,9 +54,10 @@ public interface VehicleRepository {
 
     /**
      * 예약가능한 차량을 조회합니다.
+     * @param companyId 조회할 회사
      * @param keyword 차량 번호 or 모델명
      * @param pickupAt 픽업 시간
      * @param returnAt 반납 시간
      */
-    List<VehicleEntity> searchAvailableVehiclesByKeyword(String keyword, LocalDateTime pickupAt, LocalDateTime returnAt);
+    List<VehicleEntity> searchAvailableVehiclesByKeyword(Long companyId, String keyword, LocalDateTime pickupAt, LocalDateTime returnAt);
 }

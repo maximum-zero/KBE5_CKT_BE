@@ -1,6 +1,5 @@
 package kernel360.ckt.admin.infra.jpa;
 
-import javax.swing.text.html.Option;
 import kernel360.ckt.core.domain.entity.VehicleEntity;
 import kernel360.ckt.core.domain.enums.VehicleStatus;
 import org.springframework.data.domain.Page;
@@ -17,14 +16,15 @@ public interface VehicleJpaRepository extends JpaRepository<VehicleEntity, Long>
     @Query("""
         SELECT v FROM VehicleEntity v
         WHERE  v.deleteYn = false
+        AND (v.company.id = :companyId)
         AND (:status IS NULL OR v.status = :status)
         AND (:keyword IS NULL OR v.registrationNumber LIKE %:keyword% OR v.modelName LIKE %:keyword%)
     """)
-    Page<VehicleEntity> findAll(@Param("status") VehicleStatus status, @Param("keyword") String keyword, Pageable pageable);
+    Page<VehicleEntity> findAll(@Param("companyId") Long companyId, @Param("status") VehicleStatus status, @Param("keyword") String keyword, Pageable pageable);
 
-    Optional<VehicleEntity> findByIdAndDeleteYnFalse(Long vehicleId);
+    Optional<VehicleEntity> findByIdAndCompanyIdAndDeleteYnFalse(Long vehicleId, Long companyId);
 
-    Optional<VehicleEntity> findByRegistrationNumberAndDeleteYnFalse(String registrationNumber);
+    Optional<VehicleEntity> findByCompanyIdAndRegistrationNumberAndDeleteYnFalse(Long companyId, String registrationNumber);
 
     @Query("""
         SELECT v
@@ -33,14 +33,15 @@ public interface VehicleJpaRepository extends JpaRepository<VehicleEntity, Long>
             AND r.status = 'RENTED'
             AND r.pickupAt <= :returnAt
             AND r.returnAt >= :pickupAt
-        WHERE
-            v.deleteYn = false
+        WHERE v.deleteYn = false
+        AND (v.company.id = :companyId)
         AND
             (LOWER(v.registrationNumber) LIKE LOWER(CONCAT('%', :keyword, '%')) OR
              LOWER(v.modelName) LIKE LOWER(CONCAT('%', :keyword, '%')))
         AND r.id IS NULL
     """)
     List<VehicleEntity> searchAvailableVehiclesByKeyword(
+        @Param("companyId") Long companyId,
         @Param("keyword") String keyword,
         @Param("pickupAt") LocalDateTime pickupAt,
         @Param("returnAt") LocalDateTime returnAt

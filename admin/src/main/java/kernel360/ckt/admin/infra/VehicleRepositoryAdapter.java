@@ -24,18 +24,18 @@ public class VehicleRepositoryAdapter implements VehicleRepository {
     }
 
     @Override
-    public Page<VehicleEntity> findAll(VehicleStatus status, String keyword, Pageable pageable) {
-        return vehicleJpaRepository.findAll(status, keyword, pageable);
+    public Page<VehicleEntity> findAll(Long companyId, VehicleStatus status, String keyword, Pageable pageable) {
+        return vehicleJpaRepository.findAll(companyId, status, keyword, pageable);
     }
 
     @Override
-    public Optional<VehicleEntity> findById(Long vehicleId) {
-        return vehicleJpaRepository.findByIdAndDeleteYnFalse(vehicleId);
+    public Optional<VehicleEntity> findById(Long vehicleId, Long companyId) {
+        return vehicleJpaRepository.findByIdAndCompanyIdAndDeleteYnFalse(vehicleId, companyId);
     }
 
     @Override
-    public Optional<VehicleEntity> findByRegistrationNumber(String registrationNumber) {
-        return vehicleJpaRepository.findByRegistrationNumberAndDeleteYnFalse(registrationNumber);
+    public Optional<VehicleEntity> findByRegistrationNumber(Long companyId, String registrationNumber) {
+        return vehicleJpaRepository.findByCompanyIdAndRegistrationNumberAndDeleteYnFalse(companyId, registrationNumber);
     }
 
     @Override
@@ -44,7 +44,7 @@ public class VehicleRepositoryAdapter implements VehicleRepository {
     }
 
     @Override
-    public List<VehicleEntity> searchAvailableVehiclesByKeyword(String keyword, LocalDateTime pickupAt, LocalDateTime returnAt) {
-        return vehicleJpaRepository.searchAvailableVehiclesByKeyword(keyword, pickupAt, returnAt);
+    public List<VehicleEntity> searchAvailableVehiclesByKeyword(Long companyId, String keyword, LocalDateTime pickupAt, LocalDateTime returnAt) {
+        return vehicleJpaRepository.searchAvailableVehiclesByKeyword(companyId, keyword, pickupAt, returnAt);
     }
 }
