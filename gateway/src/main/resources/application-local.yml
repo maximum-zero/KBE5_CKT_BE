@@ -2,11 +2,6 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: auth
-          uri: http://localhost:8082
-          predicates:
-            - Path=/api/v1/auth/**
-
         - id: collector
           uri: http://localhost:8090
           predicates:
@@ -15,32 +10,7 @@ spring:
         - id: admin
           uri: http://localhost:8081
           predicates:
-            - Path=/api/v1/companies/**
-
-        - id: customer
-          uri: http://localhost:8081
-          predicates:
-            - Path=/api/v1/customers/**
-
-        - id: vehicle
-          uri: http://localhost:8081
-          predicates:
-            - Path=/api/v1/vehicles/**
-
-        - id: rentals
-          uri: http://localhost:8081
-          predicates:
-            - Path=/api/v1/rentals/**
-
-        - id: logs
-          uri: http://localhost:8081
-          predicates:
-            - Path=/api/v1/logs/**
-
-        - id: tracking
-          uri: http://localhost:8081/
-          predicates:
-            - Path=/api/v1/tracking/**
+            - Path=/api/v1/auth/**, /api/v1/companies/**, /api/v1/customers/**, /api/v1/vehicles/**, /api/v1/rentals/**, /api/v1/logs/**, /api/v1/tracking/**
 
   reactor:
     context-propagation: AUTO
