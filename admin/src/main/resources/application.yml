@@ -17,12 +17,23 @@ spring:
       default_batch_fetch_size: 1000
       globally_quoted_identifiers: false
 
+jwt:
+  secret: ${JWT_SECRET}
+  access-token-expiration: 3600000         # 1시간 (ms)
+  refresh-token-expiration: 604800000      # 7일 (ms)
+
+logging:
+  level:
+    root: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
 management:
   endpoints:
     web:
       exposure:
         include: health, info, prometheus
-  metrics:
-    export:
-      prometheus:
+  prometheus:
+    metrics:
+      export:
         enabled: true

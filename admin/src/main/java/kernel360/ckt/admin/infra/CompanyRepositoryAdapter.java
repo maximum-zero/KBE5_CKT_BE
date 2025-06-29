@@ -34,4 +34,9 @@ public class CompanyRepositoryAdapter implements CompanyRepository {
     public void deleteById(Long companyId) {
         companyJpaRepository.deleteById(companyId);
     }
+
+    @Override
+    public Optional<CompanyEntity> findByEmail(String email) {
+        return companyJpaRepository.findByEmail(email);
+    }
 }

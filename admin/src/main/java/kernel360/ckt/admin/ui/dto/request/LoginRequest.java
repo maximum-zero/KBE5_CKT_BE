@@ -1,9 +1,9 @@
-package kernel360.ckt.auth.ui.dto.request;
+package kernel360.ckt.admin.ui.dto.request;
 
-import jakarta.validation.constraints.Size;
-import kernel360.ckt.auth.application.service.command.LoginCommand;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import kernel360.ckt.admin.application.service.command.LoginCommand;
 
 public record LoginRequest(
     @Size(max = 255, message = "이메일은 255자 이내여야 합니다.")

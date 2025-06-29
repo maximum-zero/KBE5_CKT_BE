@@ -40,4 +40,11 @@ public interface CompanyRepository {
      * @param companyId 삭제할 회사 ID
      */
     void deleteById(Long companyId);
+
+    /**
+     * 회사 email 로 회사를 조회합니다.
+     * @param email 조회할 회사 ID
+     * @return 존재할 경우 회사 엔티티, 존재하지 않을 경우 빈 Optional 객체
+     */
+    Optional<CompanyEntity> findByEmail(String email);
 }
