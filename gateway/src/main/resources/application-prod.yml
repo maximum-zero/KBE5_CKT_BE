@@ -2,45 +2,14 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: auth
-          uri: http://172.31.32.243:8082
-          predicates:
-            - Path=/api/v1/auth/**
-
         - id: collector
-          uri: http://172.31.38.199:8090
+          uri: http://collector.ckt:8090
           predicates:
             - Path=/api/v1/vehicles/collector/**
-
         - id: admin
-          uri: http://172.31.35.211:8081
+          uri: http://admin.ckt:8081
           predicates:
-            - Path=/api/v1/companies/**
-
-        - id: customer
-          uri: http://172.31.35.211:8081
-          predicates:
-            - Path=/api/v1/customers/**
-
-        - id: vehicle
-          uri: http://172.31.35.211:8081
-          predicates:
-            - Path=/api/v1/vehicles/**
-
-        - id: rentals
-          uri: http://172.31.35.211:8081
-          predicates:
-            - Path=/api/v1/rentals/**
-
-        - id: logs
-          uri: http://172.31.35.211:8081
-          predicates:
-            - Path=/api/v1/logs/**
-
-        - id: tracking
-          uri: http://172.31.35.211:8081
-          predicates:
-            - Path=/api/v1/tracking/**
+            - Path=/api/v1/auth/**, /api/v1/companies/**, /api/v1/customers/**, /api/v1/vehicles/**, /api/v1/rentals/**, /api/v1/logs/**, /api/v1/tracking/**
 
 cors:
   allowed-origins: https://ckt.services

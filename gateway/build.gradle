@@ -10,6 +10,9 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
+    // AWS Cloud Map
+    implementation 'io.awspring.cloud:spring-cloud-aws-starter'
+
     // Micrometer Tracing
     implementation 'io.micrometer:micrometer-tracing'
     implementation 'io.micrometer:micrometer-tracing-bridge-brave'
