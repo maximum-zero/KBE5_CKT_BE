@@ -1,33 +1,32 @@
-package kernel360.ckt.auth.application.service;
-import kernel360.ckt.core.common.util.MaskingUtil;
+package kernel360.ckt.admin.application.service;
 
-import kernel360.ckt.auth.application.service.command.LoginCommand;
-import kernel360.ckt.auth.application.service.command.ReissueCommand;
-import kernel360.ckt.auth.config.JwtTokenProvider;
+import java.time.LocalDateTime;
+import java.util.Date;
+import kernel360.ckt.admin.application.port.RefreshTokenRepository;
+import kernel360.ckt.admin.application.service.command.LoginCommand;
+import kernel360.ckt.admin.application.service.command.ReissueCommand;
+import kernel360.ckt.admin.config.JwtTokenProvider;
+import kernel360.ckt.admin.infra.jpa.CompanyJpaRepository;
+import kernel360.ckt.admin.ui.dto.response.TokenResponse;
 import kernel360.ckt.core.common.error.AuthErrorCode;
 import kernel360.ckt.core.common.error.TokenErrorCode;
 import kernel360.ckt.core.common.exception.CustomException;
-import kernel360.ckt.core.domain.enums.RefreshTokenStatus;
-import kernel360.ckt.auth.infra.CompanyReadJpaRepository;
-import kernel360.ckt.core.domain.entity.RefreshTokenEntity;
-import kernel360.ckt.auth.infra.RefreshTokenJpaRepository;
-import kernel360.ckt.auth.ui.dto.response.TokenResponse;
+import kernel360.ckt.core.common.util.MaskingUtil;
 import kernel360.ckt.core.domain.entity.CompanyEntity;
+import kernel360.ckt.core.domain.entity.RefreshTokenEntity;
+import kernel360.ckt.core.domain.enums.RefreshTokenStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
-import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class AuthService {
 
-    private final CompanyReadJpaRepository companyRepository;
-    private final RefreshTokenJpaRepository refreshTokenRepository;
+    private final CompanyJpaRepository companyRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
 

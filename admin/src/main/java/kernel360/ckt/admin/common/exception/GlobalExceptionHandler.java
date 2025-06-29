@@ -8,6 +8,7 @@ import kernel360.ckt.core.common.util.MaskingUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.util.ContentCachingRequestWrapper;
@@ -29,6 +30,23 @@ public class GlobalExceptionHandler {
             method, uri, params, ex.getErrorCode().getMessage());
         ErrorCode errorCode = ex.getErrorCode();
         return ResponseEntity.ok(ErrorResponse.from(errorCode));
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleValidationExceptions(
+        MethodArgumentNotValidException ex,
+        HttpServletRequest request
+    ) {
+        String method = request.getMethod();
+        String uri    = request.getRequestURI();
+        String params = getRequestParams(request);
+
+        log.error("⛔️ - URI: {} {}\n- Params: {}\nValidationException: {}",
+            method, uri, params, ex.getMessage(), ex);
+
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(ErrorResponse.from(400, "요청 파라미터 유효성 검사에 실패했습니다."));
     }
 
     @ExceptionHandler(Exception.class)
