@@ -114,12 +114,12 @@ public class DrivingLogJdbcTemplate {
 
         if (StringUtils.hasText(command.vehicleNumber())) {
             commonWhereClauseBuilder.append("AND v.registration_number LIKE ? ");
-            commonParams.add("%" + command.vehicleNumber() + "%");
+            commonParams.add(command.vehicleNumber() + "%");
             conditions.add(new Condition("v", "registration_number", "LIKE", true)); // true: 파라미터 사용
         }
         if (StringUtils.hasText(command.userName())) {
             commonWhereClauseBuilder.append("AND c.customer_name LIKE ? ");
-            commonParams.add("%" + command.userName() + "%");
+            commonParams.add(command.userName() + "%");
             conditions.add(new Condition("c", "customer_name", "LIKE", true));
         }
         if (command.startDate() != null) {
