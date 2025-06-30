@@ -67,6 +67,8 @@ public interface RentalRepository {
         Long excludeRentalId
     );
 
+    long countVehiclesByVehicleIds(List<Long> vehicleIds);
+
     /**
      * 특정 상태를 가진 대여 목록을 조회합니다.
      *

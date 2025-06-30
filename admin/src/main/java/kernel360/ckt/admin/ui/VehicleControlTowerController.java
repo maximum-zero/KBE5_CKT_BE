@@ -1,7 +1,7 @@
 package kernel360.ckt.admin.ui;
 
+import kernel360.ckt.admin.application.service.VehicleControlTowerService;
 import kernel360.ckt.admin.ui.dto.response.ControlTowerSummaryResponse;
-import kernel360.ckt.admin.application.service.VehicleService;
 import kernel360.ckt.admin.ui.dto.response.RunningVehicleResponse;
 import kernel360.ckt.core.common.response.CommonResponse;
 import lombok.RequiredArgsConstructor;
@@ -16,16 +16,16 @@ import java.util.List;
 @RestController
 public class VehicleControlTowerController {
 
-    private final VehicleService vehicleService;
+    private final VehicleControlTowerService vehicleControlTowerService;
 
     @GetMapping("/status")
     public CommonResponse<ControlTowerSummaryResponse> getControlTowerSummary() {
-        return CommonResponse.success(vehicleService.getControlTowerSummary());
+        return CommonResponse.success(vehicleControlTowerService.getControlTowerSummary());
     }
 
     @GetMapping("/vehicles/location")
     public CommonResponse<List<RunningVehicleResponse>> getVehicleLocations() {
-        return CommonResponse.success(vehicleService.getVehicleLocations());
+        return CommonResponse.success(vehicleControlTowerService.getRunningVehiclesFromNativeQuery());
     }
 
 }
