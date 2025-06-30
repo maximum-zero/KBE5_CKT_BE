@@ -41,4 +41,26 @@ public class RentalRepositoryAdapter implements RentalRepository {
 
     @Override
     public long countRentedCustomers() { return rentalJpaRepository.countRentedCustomers(); }
+
+    @Override
+    public Optional<RentalEntity> findLatestRentalByCustomerIdAndStatus(Long customerId, RentalStatus status) {
+        List<RentalEntity> result = rentalJpaRepository
+            .findFirstRentalByCustomerIdAndStatusFetchVehicle(customerId, status);
+        return result.stream().findFirst();
+    }
+
+    @Override
+    public List<RentalEntity> findAllByCustomerIdFetchVehicle(Long customerId) {
+        return rentalJpaRepository.findAllByCustomerIdFetchVehicle(customerId);
+    }
+
+    @Override
+    public long countByCustomerId(Long customerId) {
+        return rentalJpaRepository.countByCustomerId(customerId);
+    }
+
+    @Override
+    public long countByCustomerIdAndStatus(Long customerId, RentalStatus status) {
+        return rentalJpaRepository.countByCustomerIdAndStatus(customerId, status);
+    }
 }

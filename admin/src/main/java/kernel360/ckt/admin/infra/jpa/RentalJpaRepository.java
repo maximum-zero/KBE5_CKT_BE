@@ -59,4 +59,27 @@ public interface RentalJpaRepository extends JpaRepository<RentalEntity, Long> {
 
     @Query("SELECT COUNT(DISTINCT r.customer.id) FROM RentalEntity r WHERE r.status = 'RENTED'")
     long countRentedCustomers();
+
+    @Query("""
+    SELECT r FROM RentalEntity r
+    JOIN FETCH r.vehicle
+    WHERE r.customer.id = :customerId AND r.status = :status
+    ORDER BY r.pickupAt DESC
+""")
+    List<RentalEntity> findFirstRentalByCustomerIdAndStatusFetchVehicle(
+        @Param("customerId") Long customerId,
+        @Param("status") RentalStatus status
+    );
+
+    @Query("""
+    SELECT r FROM RentalEntity r
+    JOIN FETCH r.vehicle
+    WHERE r.customer.id = :customerId
+    ORDER BY r.pickupAt DESC
+""")
+    List<RentalEntity> findAllByCustomerIdFetchVehicle(@Param("customerId") Long customerId);
+
+    long countByCustomerId(Long customerId);
+
+    long countByCustomerIdAndStatus(Long customerId, RentalStatus status);
 }

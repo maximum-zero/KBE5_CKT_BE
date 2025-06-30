@@ -74,4 +74,40 @@ public interface RentalRepository {
      * @return 대여 중인 고객 수
      */
     long countRentedCustomers();
+
+    /**
+     * 특정 고객의 최신 대여 정보를 상태 조건과 함께 조회합니다.
+     * 차량 정보도 함께 조회(fetch join)합니다.
+     *
+     * @param customerId 고객 ID
+     * @param status 조회할 대여 상태
+     * @return 조건에 해당하는 최신 대여 정보 (없으면 Optional.empty)
+     */
+    Optional<RentalEntity> findLatestRentalByCustomerIdAndStatus(Long customerId, RentalStatus status);
+
+    /**
+     * 특정 고객의 전체 대여 이력을 최신순으로 조회합니다.
+     * 각 대여건의 차량 정보도 함께 조회(fetch join)합니다.
+     *
+     * @param customerId 고객 ID
+     * @return 해당 고객의 대여 이력 목록
+     */
+    List<RentalEntity> findAllByCustomerIdFetchVehicle(Long customerId);
+
+    /**
+     * 특정 고객의 전체 대여 건수를 조회합니다.
+     *
+     * @param customerId 고객 ID
+     * @return 전체 대여 횟수
+     */
+    long countByCustomerId(Long customerId);
+
+    /**
+     * 특정 고객이 특정 상태(RENTED 등)로 가지고 있는 대여 건수를 조회합니다.
+     *
+     * @param customerId 고객 ID
+     * @param status 조회할 대여 상태
+     * @return 조건에 맞는 대여 건수
+     */
+    long countByCustomerIdAndStatus(Long customerId, RentalStatus status);
 }

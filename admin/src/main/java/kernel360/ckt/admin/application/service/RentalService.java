@@ -251,7 +251,7 @@ public class RentalService {
      * @throws CustomException 해당 ID의 차량 정보를 찾을 수 없는 경우 발생
      */
     private VehicleEntity findVehicleById(Long companyId, Long vehicleId) {
-        return vehicleRepository.findById(companyId, vehicleId)
+        return vehicleRepository.findById(vehicleId, companyId)
             .orElseThrow(() -> new CustomException(VehicleErrorCode.VEHICLE_NOT_FOUND, vehicleId));
     }
 
