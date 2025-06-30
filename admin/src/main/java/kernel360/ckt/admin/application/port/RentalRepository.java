@@ -67,24 +67,6 @@ public interface RentalRepository {
         Long excludeRentalId
     );
 
-    long countVehiclesByVehicleIds(List<Long> vehicleIds);
-
-    /**
-     * 특정 상태를 가진 대여 목록을 조회합니다.
-     *
-     * @param status 조회할 대여 상태
-     * @return 해당 상태의 대여 목록
-     */
-    List<RentalEntity> findRentalsByStatus(RentalStatus status);
-
-    /**
-     * 특정 상태를 가진 차량 수를 계산합니다.
-     *
-     * @param status 대상 대여 상태
-     * @return 해당 상태의 차량 수
-     */
-    long countVehiclesByStatus(RentalStatus status);
-
     /**
      * 현재 대여 중(RENTED 상태)인 고객 수를 조회합니다.
      * 동일 고객이 여러 대여건을 가지고 있어도 1명으로 계산합니다.

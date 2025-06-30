@@ -1,6 +1,6 @@
 package kernel360.ckt.admin.ui.dto.response;
 
-import kernel360.ckt.core.domain.entity.RentalEntity;
+import kernel360.ckt.admin.domain.projection.RunningVehicleProjection;
 
 public record RunningVehicleResponse(
     Long vehicleId,
@@ -10,20 +10,18 @@ public record RunningVehicleResponse(
     String customerName,
     String lat,
     String lon,
-    String ang,
     String spd
 ) {
-    public static RunningVehicleResponse from(RentalEntity rental, GpsPointResponse location) {
+    public static RunningVehicleResponse from(RunningVehicleProjection p) {
         return new RunningVehicleResponse(
-            rental.getVehicle().getId(),
-            rental.getVehicle().getRegistrationNumber(),
-            rental.getVehicle().getManufacturer(),
-            rental.getVehicle().getModelName(),
-            rental.getCustomer().getCustomerName(),
-            location != null ? location.lat() : null,
-            location != null ? location.lon() : null,
-            location != null ? location.ang() : null,
-            location != null ? location.spd() : null
+            p.getVehicleId(),
+            p.getRegistrationNumber(),
+            p.getManufacturer(),
+            p.getModelName(),
+            p.getCustomerName(),
+            p.getLat(),
+            p.getLon(),
+            p.getSpd()
         );
     }
 }

@@ -40,10 +40,5 @@ public class RentalRepositoryAdapter implements RentalRepository {
     }
 
     @Override
-    public long countVehiclesByVehicleIds(List<Long> vehicleIds) {
-        return rentalJpaRepository.countVehiclesByVehicleIds(vehicleIds);
-    }
-
-    @Override
     public long countRentedCustomers() { return rentalJpaRepository.countRentedCustomers(); }
 }

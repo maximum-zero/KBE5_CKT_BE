@@ -3,10 +3,8 @@ package kernel360.ckt.admin.application.service;
 import kernel360.ckt.admin.application.port.VehicleRepository;
 import kernel360.ckt.admin.domain.projection.RunningVehicleProjection;
 import kernel360.ckt.admin.infra.basic.TraceLogQueryRepository;
-import kernel360.ckt.admin.infra.jpa.RentalJpaRepository;
 import kernel360.ckt.admin.ui.dto.response.ControlTowerSummaryResponse;
 import kernel360.ckt.admin.ui.dto.response.RunningVehicleResponse;
-import kernel360.ckt.core.domain.enums.RentalStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +16,6 @@ public class VehicleControlTowerService {
 
     private final VehicleRepository vehicleRepository;
     private final TraceLogQueryRepository traceLogQueryRepository;
-    private final RentalJpaRepository rentalJpaRepository;
 
     public ControlTowerSummaryResponse getControlTowerSummary() {
         // 전체 차량 수
@@ -30,9 +27,7 @@ public class VehicleControlTowerService {
             .map(RunningVehicleProjection::getVehicleId)
             .toList();
 
-        long running = runningVehicleIds.isEmpty()
-            ? 0
-            : rentalJpaRepository.countVehiclesByVehicleIds(runningVehicleIds);
+        long running = runningVehicleIds.toArray().length;
 
         long stopped = total - running;
 

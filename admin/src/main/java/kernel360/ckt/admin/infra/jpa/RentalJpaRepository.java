@@ -57,14 +57,6 @@ public interface RentalJpaRepository extends JpaRepository<RentalEntity, Long> {
     @EntityGraph(attributePaths = {"company", "vehicle", "customer"})
     Optional<RentalEntity> findById(Long id);
 
-    @Query("""
-    SELECT COUNT(DISTINCT r.vehicle.id)
-    FROM RentalEntity r
-    WHERE r.vehicle.id IN :vehicleIds
-""")
-    long countVehiclesByVehicleIds(@Param("vehicleIds") List<Long> vehicleIds);
-    List<RentalEntity> findRentedRentals();
-
     @Query("SELECT COUNT(DISTINCT r.customer.id) FROM RentalEntity r WHERE r.status = 'RENTED'")
     long countRentedCustomers();
 }
