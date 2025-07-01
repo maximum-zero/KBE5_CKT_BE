@@ -14,13 +14,14 @@ import java.util.Optional;
 
 public interface CustomerJpaRepository extends JpaRepository<CustomerEntity, Long> {
     @Query("""
-        SELECT c FROM CustomerEntity c
-        WHERE (:status IS NULL OR c.status = :status)
-          AND (
-            :keyword IS NULL
-            OR c.customerName LIKE %:keyword%
-            OR c.phoneNumber LIKE %:keyword%
-          )
+    SELECT c FROM CustomerEntity c
+    WHERE c.deleteYn = 'N'
+      AND (:status IS NULL OR c.status = :status)
+      AND (
+        :keyword IS NULL
+        OR c.customerName LIKE %:keyword%
+        OR c.phoneNumber LIKE %:keyword%
+      )
     """)
     Page<CustomerEntity> findAll(
         @Param("status") CustomerStatus status,
@@ -38,4 +39,8 @@ public interface CustomerJpaRepository extends JpaRepository<CustomerEntity, Lon
     long countByCustomerType(@Param("type") CustomerType type);
 
     List<CustomerEntity> findByCustomerNameContainingOrPhoneNumberContaining(String customerNameKeyword, String phoneNumberKeyword);
+
+    Optional<CustomerEntity> findByIdAndDeleteYn(Long id, String deleteYn);
+
+    Page<CustomerEntity> findAllByStatusAndDeleteYn(CustomerStatus status, String deleteYn, Pageable pageable);
 }

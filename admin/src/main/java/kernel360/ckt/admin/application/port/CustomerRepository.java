@@ -50,21 +50,6 @@ public interface CustomerRepository {
     Optional<CustomerEntity> findByLicenseNumber(String licenseNumber);
 
     /**
-     * 고객 ID로 고객을 삭제합니다.
-     *
-     * @param id 삭제할 고객 ID
-     */
-    void deleteById(Long id);
-
-    /**
-     * 고객 ID의 존재 여부를 확인합니다.
-     *
-     * @param id 고객 ID
-     * @return 존재하면 true, 아니면 false
-     */
-    boolean existsById(Long id);
-
-    /**
      * 전체 고객 수를 조회합니다.
      *
      * @return 전체 고객 수
@@ -86,4 +71,23 @@ public interface CustomerRepository {
      * @return
      */
     List<CustomerEntity> findByCustomerNameContainingOrPhoneNumberContaining(String customerNameKeyword, String phoneNumberKeyword);
+
+    /**
+     * ID 및 삭제 여부(deleteYn)를 기준으로 고객을 조회합니다.
+     *
+     * @param id        고객 ID
+     * @param deleteYn  삭제 여부 ('N' 또는 'Y')
+     * @return 조건에 맞는 고객 정보
+     */
+    Optional<CustomerEntity> findByIdAndDeleteYn(Long id, String deleteYn);
+
+    /**
+     * 고객 상태 및 삭제 여부(deleteYn)를 기준으로 페이징된 고객 목록을 조회합니다.
+     *
+     * @param status     고객 상태
+     * @param deleteYn   삭제 여부 ('N' 또는 'Y')
+     * @param pageable   페이징 정보
+     * @return 조건에 맞는 고객 페이지
+     */
+    Page<CustomerEntity> findAllByStatusAndDeleteYn(CustomerStatus status, String deleteYn, Pageable pageable);
 }

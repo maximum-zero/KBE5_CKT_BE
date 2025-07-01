@@ -39,6 +39,13 @@ public class CustomerEntity extends BaseTimeEntity {
     @Column(nullable = false)
     private CustomerStatus status;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "company_id", nullable = false)
+    private CompanyEntity company;
+
+    @Column(name = "delete_yn", nullable = false, length = 1, columnDefinition = "CHAR(1)")
+    private String deleteYn = "N";
+
     public CustomerEntity(CustomerType customerType,
                           String email,
                           String customerName,
@@ -109,8 +116,8 @@ public class CustomerEntity extends BaseTimeEntity {
         this.birthday = birthday;
     }
 
-    public void updateStatus(CustomerStatus status) {
-        this.status = status;
+    public void markAsDeleted() {
+        this.deleteYn = "Y";
     }
 
 }

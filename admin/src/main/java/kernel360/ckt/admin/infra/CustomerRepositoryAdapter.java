@@ -39,16 +39,6 @@ public class CustomerRepositoryAdapter implements CustomerRepository {
     }
 
     @Override
-    public void deleteById(Long id) {
-        customerJpaRepository.deleteById(id);
-    }
-
-    @Override
-    public boolean existsById(Long id) {
-        return customerJpaRepository.existsById(id);
-    }
-
-    @Override
     public long countTotal() {
         return customerJpaRepository.count();
     }
@@ -61,6 +51,16 @@ public class CustomerRepositoryAdapter implements CustomerRepository {
     @Override
     public List<CustomerEntity> findByCustomerNameContainingOrPhoneNumberContaining(String customerNameKeyword, String phoneNumberKeyword) {
         return customerJpaRepository.findByCustomerNameContainingOrPhoneNumberContaining(customerNameKeyword, phoneNumberKeyword);
+    }
+
+    @Override
+    public Optional<CustomerEntity> findByIdAndDeleteYn(Long id, String deleteYn) {
+        return customerJpaRepository.findByIdAndDeleteYn(id, deleteYn);
+    }
+
+    @Override
+    public Page<CustomerEntity> findAllByStatusAndDeleteYn(CustomerStatus status, String deleteYn, Pageable pageable) {
+        return customerJpaRepository.findAllByStatusAndDeleteYn(status, deleteYn, pageable);
     }
 
 }

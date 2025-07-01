@@ -72,9 +72,7 @@ public class CustomerService {
     }
 
     public CustomerEntity findById(Long id) {
-        log.info("고객 상세 조회 시도: id={}", id);
-
-        return customerRepository.findById(id)
+        return customerRepository.findByIdAndDeleteYn(id, "N")
             .orElseThrow(() -> new CustomException(CustomerErrorCode.CUSTOMER_NOT_FOUND));
     }
 
@@ -85,7 +83,7 @@ public class CustomerService {
         CustomerEntity customer = customerRepository.findById(id)
             .orElseThrow(() -> new CustomException(CustomerErrorCode.CUSTOMER_NOT_FOUND));
 
-        customerRepository.deleteById(id);
+        customer.markAsDeleted();
         log.info("고객 삭제 완료: id={}", id);
     }
 
