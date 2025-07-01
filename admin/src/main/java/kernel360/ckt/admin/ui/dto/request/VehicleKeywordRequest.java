@@ -12,12 +12,12 @@ public record VehicleKeywordRequest(
 
     @NotNull(message = "픽업 시간은 필수입니다.")
     @FutureOrPresent(message = "픽업 시간은 현재보다 미래여야 합니다.")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime pickupAt,
 
     @NotNull(message = "반납 시간은 필수입니다.")
     @FutureOrPresent(message = "반납 시간은 현재보다 미래여야 합니다.")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime returnAt
 ) {
     public VehicleKeywordRequest {
