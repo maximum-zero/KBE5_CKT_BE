@@ -23,11 +23,10 @@ public class LogSummaryService {
     public List<VehicleLogSummaryResponse> getVehicleLogSummary(
         LocalDateTime from,
         LocalDateTime to,
-        String registrationNumber,
-        String driverName
+        String registrationNumber
     ) {
         List<VehicleLogSummaryProjection> projections =
-            routeLogRepository.findVehicleLogSummaryBetween(from, to, registrationNumber, driverName);
+            routeLogRepository.findVehicleLogSummaryBetween(from, to, registrationNumber);
 
         return projections.stream()
             .map(p -> new VehicleLogSummaryResponse(

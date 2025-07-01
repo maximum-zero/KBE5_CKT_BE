@@ -28,10 +28,9 @@ public class LogSummaryController {
     public List<VehicleLogSummaryResponse> getSummary(
         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from,
         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime to,
-        @RequestParam(required = false) String registrationNumber,
-        @RequestParam(required = false) String driverName
+        @RequestParam(required = false) String registrationNumber
     ) {
-        return logSummaryService.getVehicleLogSummary(from, to, registrationNumber, driverName);
+        return logSummaryService.getVehicleLogSummary(from, to, registrationNumber);
     }
 
     @GetMapping("/weekly")

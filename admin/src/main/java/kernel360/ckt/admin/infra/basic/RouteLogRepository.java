@@ -29,13 +29,10 @@ public interface RouteLogRepository extends Repository<RouteEntity, Long> {
             ) AS averageDrivingTime
         FROM route r
         LEFT JOIN driving_log dl ON r.driving_log_id = dl.id
-        LEFT JOIN rental rent ON dl.rental_id = rent.id
-        LEFT JOIN vehicle v ON rent.vehicle_id = v.id
-        LEFT JOIN company c ON rent.company_id = c.id
-        LEFT JOIN customer cu ON rent.customer_id = cu.id
+        LEFT JOIN vehicle v ON dl.vehicle_id = v.id
+        LEFT JOIN company c ON v.company_id = c.id
         WHERE r.start_at BETWEEN :startDate AND :endDate
           AND (:registrationNumber IS NULL OR :registrationNumber = '' OR v.registration_number = :registrationNumber)
-          AND (:driverName IS NULL OR :driverName = '' OR cu.customer_name LIKE CONCAT('%', :driverName, '%'))
         GROUP BY v.registration_number, c.name
         """,
         nativeQuery = true
@@ -43,8 +40,7 @@ public interface RouteLogRepository extends Repository<RouteEntity, Long> {
     List<VehicleLogSummaryProjection> findVehicleLogSummaryBetween(
         @Param("startDate") LocalDateTime startDate,
         @Param("endDate") LocalDateTime endDate,
-        @Param("registrationNumber") String registrationNumber,
-        @Param("driverName") String driverName
+        @Param("registrationNumber") String registrationNumber
     );
 
     // 주간 운행 통계
@@ -62,11 +58,10 @@ public interface RouteLogRepository extends Repository<RouteEntity, Long> {
             ) AS totalDrivingTime,
             COUNT(DISTINCT DATE(r.start_at)) AS drivingDays
         FROM route r
-        JOIN driving_log dl ON r.driving_log_id = dl.id
-        JOIN rental rent ON dl.rental_id = rent.id
-        JOIN vehicle v ON rent.vehicle_id = v.id
+        LEFT JOIN driving_log dl ON r.driving_log_id = dl.id
+        LEFT JOIN vehicle v ON dl.vehicle_id = v.id
         WHERE r.start_at BETWEEN :startDate AND :endDate
-          AND v.registration_number = :registrationNumber
+          AND (:registrationNumber IS NULL OR :registrationNumber = '' OR v.registration_number = :registrationNumber)
         GROUP BY YEARWEEK(r.start_at, 1)
         ORDER BY startDate
         """,
@@ -77,8 +72,10 @@ public interface RouteLogRepository extends Repository<RouteEntity, Long> {
         @Param("endDate") LocalDateTime endDate,
         @Param("registrationNumber") String registrationNumber
     );
+
     // 일별 운행 통계
-    @Query(value = """
+    @Query(
+    value = """
     SELECT
         DATE(r.start_at) AS drivingDate,
         SUM(r.total_distance) AS totalDistance,
@@ -88,11 +85,10 @@ public interface RouteLogRepository extends Repository<RouteEntity, Long> {
             LPAD(MOD(SUM(TIMESTAMPDIFF(SECOND, r.start_at, r.end_at)), 60), 2, '0')
         ) AS totalDrivingTime
     FROM route r
-    JOIN driving_log dl ON r.driving_log_id = dl.id
-    JOIN rental rent ON dl.rental_id = rent.id
-    JOIN vehicle v ON rent.vehicle_id = v.id
+    LEFT JOIN driving_log dl ON r.driving_log_id = dl.id
+    LEFT JOIN vehicle v ON dl.vehicle_id = v.id
     WHERE r.start_at BETWEEN :startDate AND :endDate
-      AND v.registration_number = :registrationNumber
+      AND (:registrationNumber IS NULL OR :registrationNumber = '' OR v.registration_number = :registrationNumber)
     GROUP BY DATE(r.start_at)
     ORDER BY drivingDate
 """, nativeQuery = true)
@@ -101,5 +97,4 @@ public interface RouteLogRepository extends Repository<RouteEntity, Long> {
         @Param("endDate") LocalDateTime endDate,
         @Param("registrationNumber") String registrationNumber
     );
-
 }
