@@ -1,5 +1,6 @@
 package kernel360.ckt.admin.ui.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -14,10 +15,12 @@ public record RentalCreateRequest(
 
     @NotNull(message = "픽업 시간은 필수입니다.")
     @FutureOrPresent(message = "픽업 시간은 현재보다 미래여야 합니다.")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime pickupAt,
 
     @NotNull(message = "반납 시간은 필수입니다.")
     @FutureOrPresent(message = "반납 시간은 현재보다 미래여야 합니다.")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime returnAt,
 
     String memo
