@@ -101,7 +101,7 @@ public class CustomerService {
     }
 
     public List<CustomerEntity> searchKeyword(CustomerKeywordCommand command) {
-        return customerRepository.findByCustomerNameContainingOrPhoneNumberContaining(command.getKeyword(), command.getKeyword());
+        return customerRepository.search(command.getCompanyId(), command.getKeyword(), command.getKeyword());
     }
 
 }

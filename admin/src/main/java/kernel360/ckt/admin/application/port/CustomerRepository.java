@@ -66,11 +66,12 @@ public interface CustomerRepository {
 
     /**
      * Keyword에 맞는 고객을 조회합니다.
-     * @param customerNameKeyword
-     * @param phoneNumberKeyword
-     * @return
+     * @param companyId 회사의 ID
+     * @param customerNameKeyword 키워드 - 고객명
+     * @param phoneNumberKeyword 키워드 - 휴대폰 번호
+     * @return 조건에 맞은 고객 정보
      */
-    List<CustomerEntity> findByCustomerNameContainingOrPhoneNumberContaining(String customerNameKeyword, String phoneNumberKeyword);
+    List<CustomerEntity> search(Long companyId, String customerNameKeyword, String phoneNumberKeyword);
 
     /**
      * ID 및 삭제 여부(deleteYn)를 기준으로 고객을 조회합니다.

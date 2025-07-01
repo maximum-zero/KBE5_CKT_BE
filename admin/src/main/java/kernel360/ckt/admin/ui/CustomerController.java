@@ -24,6 +24,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/customers")
 public class CustomerController {
+    private static final String X_USER_ID_HEADER = "X-User-Id";
 
     private final CustomerService customerService;
     private final CustomerRentalQueryService customerRentalQueryService;
@@ -72,8 +73,8 @@ public class CustomerController {
     }
 
     @GetMapping("/search")
-    public CommonResponse<CustomerKeywordListResponse> searchKeyword(CustomerKeywordRequest request) {
-        final List<CustomerEntity> customers = customerService.searchKeyword(request.toCommand());
+    public CommonResponse<CustomerKeywordListResponse> searchKeyword(@RequestHeader(X_USER_ID_HEADER) Long companyId, CustomerKeywordRequest request) {
+        final List<CustomerEntity> customers = customerService.searchKeyword(request.toCommand(companyId));
         return CommonResponse.success(CustomerKeywordListResponse.from(customers));
     }
 

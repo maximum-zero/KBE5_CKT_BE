@@ -38,7 +38,7 @@ public interface CustomerJpaRepository extends JpaRepository<CustomerEntity, Lon
     @Query("SELECT COUNT(c) FROM CustomerEntity c WHERE c.customerType = :type")
     long countByCustomerType(@Param("type") CustomerType type);
 
-    List<CustomerEntity> findByCustomerNameContainingOrPhoneNumberContaining(String customerNameKeyword, String phoneNumberKeyword);
+    List<CustomerEntity> findByDeleteYnAndCompanyIdAndCustomerNameStartingWithOrPhoneNumberStartingWith(String deleteYn, Long companyId, String customerNameKeyword, String phoneNumberKeyword);
 
     Optional<CustomerEntity> findByIdAndDeleteYn(Long id, String deleteYn);
 

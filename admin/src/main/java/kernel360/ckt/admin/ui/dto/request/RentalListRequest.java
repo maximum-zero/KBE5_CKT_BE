@@ -9,10 +9,10 @@ public record RentalListRequest(
     RentalStatus status,
     String keyword,
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime startAt,
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime endAt
 ) {
     public RentalListCommand toCommand(Long companyId) {
