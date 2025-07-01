@@ -31,14 +31,14 @@ public interface VehicleJpaRepository extends JpaRepository<VehicleEntity, Long>
         SELECT v
         FROM VehicleEntity v
         LEFT JOIN RentalEntity r ON v.id = r.vehicle.id
-            AND r.status = 'RENTED'
+            AND r.status IN ('PENDING', 'RENTED')
             AND r.pickupAt <= :returnAt
             AND r.returnAt >= :pickupAt
         WHERE v.deleteYn = false
         AND (v.company.id = :companyId)
         AND
-            (LOWER(v.registrationNumber) LIKE LOWER(CONCAT('%', :keyword, '%')) OR
-             LOWER(v.modelName) LIKE LOWER(CONCAT('%', :keyword, '%')))
+            (LOWER(v.registrationNumber) LIKE LOWER(CONCAT(:keyword, '%')) OR
+             LOWER(v.modelName) LIKE LOWER(CONCAT(:keyword, '%')))
         AND r.id IS NULL
     """)
     List<VehicleEntity> searchAvailableVehiclesByKeyword(

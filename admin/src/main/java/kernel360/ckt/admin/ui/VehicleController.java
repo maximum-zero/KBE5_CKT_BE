@@ -90,7 +90,7 @@ public class VehicleController {
     @GetMapping("/search")
     public CommonResponse<VehicleKeywordListResponse> searchKeyword(
         @RequestHeader(X_USER_ID_HEADER) Long companyId,
-        VehicleKeywordRequest request
+        @Valid VehicleKeywordRequest request
     ) {
         final List<VehicleEntity> vehicles = vehicleService.searchKeyword(request.toCommand(companyId));
         return CommonResponse.success(VehicleKeywordListResponse.from(vehicles));
