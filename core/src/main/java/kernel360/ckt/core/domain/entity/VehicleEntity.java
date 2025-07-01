@@ -61,7 +61,7 @@ public class VehicleEntity extends BaseTimeEntity {
     @Lob
     private String memo;
 
-    @Column(nullable = false, length = 1)
+    @Column(nullable = false, length = 1, columnDefinition = "CHAR(1)")
     @Convert(converter = BooleanToYNConverter.class)
     private Boolean deleteYn = false;
 
