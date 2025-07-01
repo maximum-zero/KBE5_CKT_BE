@@ -8,6 +8,7 @@ import kernel360.ckt.core.domain.enums.DrivingType;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public record DrivingLogResponse(
@@ -40,15 +41,27 @@ public record DrivingLogResponse(
             .map(CustomerEntity::getCustomerName)
             .orElse(null);
 
+        LocalDateTime startAt = routes.stream()
+            .map(RouteEntity::getStartAt)
+            .filter(Objects::nonNull)
+            .min(LocalDateTime::compareTo)
+            .orElse(null);
+
+        LocalDateTime endAt = routes.stream()
+            .map(RouteEntity::getEndAt)
+            .filter(Objects::nonNull)
+            .max(LocalDateTime::compareTo)
+            .orElse(null);
+
         return new DrivingLogResponse(
             drivingLogEntity.getId(),
             drivingLogEntity.getVehicle().getModelName(),
             drivingLogEntity.getVehicle().getRegistrationNumber(),
-            drivingLogEntity.getRental().getPickupAt(),
-            drivingLogEntity.getRental().getReturnAt(),
+            startAt,
+            endAt,
             startOdometer,
             endOdometer,
-            endOdometer-startOdometer,
+            endOdometer - startOdometer,
             customerName,
             drivingLogEntity.getType(),
             drivingLogEntity.getType().getValue(),
