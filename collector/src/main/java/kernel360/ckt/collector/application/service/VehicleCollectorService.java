@@ -13,6 +13,7 @@ import kernel360.ckt.collector.ui.dto.response.VehicleCollectorResponse;
 import kernel360.ckt.core.common.error.VehicleErrorCode;
 import kernel360.ckt.core.common.error.VehicleEventErrorCode;
 import kernel360.ckt.core.common.exception.CustomException;
+import kernel360.ckt.core.domain.dto.CycleInformation;
 import kernel360.ckt.core.domain.entity.*;
 import kernel360.ckt.core.domain.enums.DrivingLogStatus;
 import kernel360.ckt.core.domain.enums.RentalStatus;
@@ -33,6 +34,8 @@ public class VehicleCollectorService {
     private final DrivingLogRepository drivingLogRepository;
     private final RouteRepository routeRepository;
     private final VehicleTraceLogRepository vehicleTraceLogRepository;
+
+    private static final double GPS_COORDINATE_DIVISOR = 1000000.0;
 
     /**
      * 차량 운행을 시작합니다.
@@ -169,6 +172,21 @@ public class VehicleCollectorService {
         final VehicleTraceLogEntity vehicleTraceLog = VehicleTraceLogEntity.create(route, command.cList(), command.onTime());
         vehicleTraceLogRepository.save(vehicleTraceLog);
         log.info("완료된 주기정보 - 주기정보 ID : {}", vehicleTraceLog.getId());
+
+        // 차량 위치 업데이트
+        final Optional<CycleInformation> lastElementOptional = Optional.ofNullable(command.cList())
+            .filter(list -> !list.isEmpty())
+            .map(list -> list.get(list.size() - 1));
+
+        if (lastElementOptional.isPresent()) {
+            final CycleInformation cycleInformation = lastElementOptional.get();
+            final double lat = Double.parseDouble(cycleInformation.lat()) / GPS_COORDINATE_DIVISOR;
+            final double lon = Double.parseDouble(cycleInformation.lon()) / GPS_COORDINATE_DIVISOR;
+            final long totalDistance = Long.parseLong(cycleInformation.sum());
+
+            vehicle.updateLocation(lat, lon, totalDistance);
+            vehicleRepository.save(vehicle);
+        };
 
         return VehicleCollectorResponse.from(command.mdn());
     }
