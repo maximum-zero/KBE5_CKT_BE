@@ -49,8 +49,8 @@ public class CustomerRepositoryAdapter implements CustomerRepository {
     }
 
     @Override
-    public List<CustomerEntity> findByCustomerNameContainingOrPhoneNumberContaining(String customerNameKeyword, String phoneNumberKeyword) {
-        return customerJpaRepository.findByCustomerNameContainingOrPhoneNumberContaining(customerNameKeyword, phoneNumberKeyword);
+    public List<CustomerEntity> search(Long companyId, String customerNameKeyword, String phoneNumberKeyword) {
+        return customerJpaRepository.findByDeleteYnAndCompanyIdAndCustomerNameStartingWithOrPhoneNumberStartingWith("N", companyId, customerNameKeyword, phoneNumberKeyword);
     }
 
     @Override

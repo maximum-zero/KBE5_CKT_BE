@@ -5,13 +5,15 @@ import kernel360.ckt.core.domain.entity.CustomerEntity;
 public record CustomerKeywordResponse(
     Long id,
     String customerName,
-    String phoneNumber
+    String phoneNumber,
+    String email
 ){
     public static CustomerKeywordResponse from(CustomerEntity customerEntity) {
         return new CustomerKeywordResponse(
             customerEntity.getId(),
             customerEntity.getCustomerName(),
-            customerEntity.getPhoneNumber()
+            customerEntity.getPhoneNumber(),
+            customerEntity.getEmail()
         );
     }
 }

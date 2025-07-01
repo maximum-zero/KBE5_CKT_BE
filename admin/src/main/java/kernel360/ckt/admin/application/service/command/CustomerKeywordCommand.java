@@ -6,5 +6,6 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public class CustomerKeywordCommand {
+    private final Long companyId;
     private final String keyword;
 }
