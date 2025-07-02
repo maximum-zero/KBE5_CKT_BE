@@ -40,7 +40,7 @@ public class CustomerEntity extends BaseTimeEntity {
     private CustomerStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "company_id", nullable = false)
+    @JoinColumn(name = "company_id")
     private CompanyEntity company;
 
     @Column(name = "delete_yn", nullable = false, length = 1, columnDefinition = "CHAR(1)")
