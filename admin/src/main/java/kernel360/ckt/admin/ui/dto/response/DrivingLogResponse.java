@@ -4,7 +4,6 @@ import kernel360.ckt.core.domain.entity.CustomerEntity;
 import kernel360.ckt.core.domain.entity.DrivingLogEntity;
 import kernel360.ckt.core.domain.entity.RentalEntity;
 import kernel360.ckt.core.domain.entity.RouteEntity;
-import kernel360.ckt.core.domain.enums.DrivingType;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,10 +19,7 @@ public record DrivingLogResponse(
     Long startOdometer,
     Long endOdometer,
     Long totalDistance,
-    String customerName,
-    DrivingType drivingType,
-    String statusName,
-    String memo
+    String customerName
 ) {
     public static DrivingLogResponse of(DrivingLogEntity drivingLogEntity, List<RouteEntity> routes) {
         Long startOdometer = routes.stream()
@@ -62,10 +58,7 @@ public record DrivingLogResponse(
             startOdometer,
             endOdometer,
             endOdometer - startOdometer,
-            customerName,
-            drivingLogEntity.getType(),
-            drivingLogEntity.getType().getValue(),
-            drivingLogEntity.getMemo()
+            customerName
         );
     }
 }

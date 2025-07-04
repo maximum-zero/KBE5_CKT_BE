@@ -1,23 +1,17 @@
 package kernel360.ckt.admin.application.service.command;
 
-import kernel360.ckt.core.domain.enums.DrivingType;
-
 import java.time.LocalDateTime;
 
 public record DrivingLogListCommand(
     String vehicleNumber,
-    String userName,
     LocalDateTime startDate,
-    LocalDateTime endDate,
-    DrivingType type
+    LocalDateTime endDate
 ) {
     public static DrivingLogListCommand create(
         String vehicleNumber,
-        String userName,
         LocalDateTime startDate,
-        LocalDateTime endDate,
-        DrivingType type
+        LocalDateTime endDate
     ) {
-        return new DrivingLogListCommand(vehicleNumber, userName, startDate, endDate, type);
+        return new DrivingLogListCommand(vehicleNumber, startDate, endDate);
     }
 }

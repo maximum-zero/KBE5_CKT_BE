@@ -9,12 +9,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import kernel360.ckt.core.domain.enums.DrivingLogStatus;
-import kernel360.ckt.core.domain.enums.DrivingType;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -41,19 +39,10 @@ public class DrivingLogEntity extends BaseTimeEntity {
     @Column(nullable = false)
     private DrivingLogStatus status;
 
-    @Lob
-    private String memo;
-
-    @Enumerated(EnumType.STRING)
-    @Column
-    private DrivingType type;
-
-
     private DrivingLogEntity(RentalEntity rental, VehicleEntity vehicle, DrivingLogStatus status) {
         this.rental = rental;
         this.vehicle = vehicle;
         this.status = status;
-        this.type = DrivingType.NOT_REGISTERED;
     }
 
     public static DrivingLogEntity create(RentalEntity rental, VehicleEntity vehicle) {
@@ -66,13 +55,5 @@ public class DrivingLogEntity extends BaseTimeEntity {
 
     public void completed() {
         this.status = DrivingLogStatus.COMPLETED;
-    }
-
-    public void setType(DrivingType type) {
-        this.type = type;
-    }
-
-    public void setMemo(String memo) {
-        this.memo = memo;
     }
 }
