@@ -4,7 +4,6 @@ import jakarta.transaction.Transactional;
 import kernel360.ckt.admin.application.port.VehicleTraceLogRepository;
 import kernel360.ckt.admin.application.service.command.DrivingLogListCommand;
 import kernel360.ckt.admin.application.service.dto.DrivingLogListDto;
-import kernel360.ckt.admin.ui.dto.request.DrivingLogUpdateRequest;
 import kernel360.ckt.admin.ui.dto.response.DrivingLogDetailResponse;
 import kernel360.ckt.admin.ui.dto.response.DrivingLogListResponse;
 import kernel360.ckt.core.common.error.DrivingLogErrorCode;
@@ -79,20 +78,4 @@ public class DrivingLogService {
         return DrivingLogDetailResponse.from(drivingLogEntity, routes, routeIdToTraceLogsMap);
     }
 
-    public DrivingLogEntity update(Long id, DrivingLogUpdateRequest request) {
-        DrivingLogEntity drivingLog = drivingLogRepository.findById(id)
-            .orElseThrow(() -> new CustomException(DrivingLogErrorCode.DRIVING_LOG_NOT_FOUND));
-
-        if (request.type() != null) {
-            log.info("운행 기록 타입 변경 - drivingLogId: {}, newType: {}", id, request.type());
-            drivingLog.setType(request.type());
-        }
-
-        if (request.memo() != null) {
-            log.info("운행 기록 메모 변경 - drivingLogId: {}, newMemo: {}", id, request.memo());
-            drivingLog.setMemo(request.memo());
-        }
-        log.info("운행 기록 수정 완료 - drivingLogId: {}", id);
-        return drivingLog;
-    }
 }

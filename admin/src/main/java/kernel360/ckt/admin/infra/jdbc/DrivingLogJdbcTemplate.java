@@ -3,7 +3,6 @@ package kernel360.ckt.admin.infra.jdbc;
 import kernel360.ckt.admin.application.service.command.DrivingLogListCommand;
 import kernel360.ckt.admin.application.service.dto.DrivingLogListDto;
 import kernel360.ckt.admin.application.service.dto.RouteSummaryDto;
-import kernel360.ckt.core.domain.enums.DrivingType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -72,9 +71,6 @@ public class DrivingLogJdbcTemplate {
                     rs.getString("v_registration_number"),
                     null, null, null, null, null,
                     rs.getString("c_customer_name"),
-                    DrivingType.valueOf(rs.getString("dl_type")),
-                    null,
-                    rs.getString("dl_memo"),
                     new ArrayList<>()
                 );
                 drivingLogDtoMap.put(drivingLogId, drivingLogDto);
@@ -117,11 +113,6 @@ public class DrivingLogJdbcTemplate {
             commonParams.add(command.vehicleNumber() + "%");
             conditions.add(new Condition("v", "registration_number", "LIKE", true)); // true: 파라미터 사용
         }
-        if (StringUtils.hasText(command.userName())) {
-            commonWhereClauseBuilder.append("AND c.customer_name LIKE ? ");
-            commonParams.add(command.userName() + "%");
-            conditions.add(new Condition("c", "customer_name", "LIKE", true));
-        }
         if (command.startDate() != null) {
             commonWhereClauseBuilder.append("AND rt.start_at >= ? ");
             commonParams.add(command.startDate());
@@ -136,11 +127,6 @@ public class DrivingLogJdbcTemplate {
                 .withNano(999999999);
             commonParams.add(adjustedEndDate);
             conditions.add(new Condition("rt", "end_at", "<=", true));
-        }
-        if (command.type() != null) {
-            commonWhereClauseBuilder.append("AND dl.type = ? ");
-            commonParams.add(command.type().name());
-            conditions.add(new Condition("dl", "type", "=", true));
         }
         return new SqlConditions(conditions, commonParams, commonWhereClauseBuilder.toString());
     }
@@ -288,9 +274,6 @@ public class DrivingLogJdbcTemplate {
             overallEndOdometer,
             overallTotalDistance,
             dto.customerName(),
-            dto.drivingType(),
-            dto.drivingType().getDescription(),
-            dto.memo(),
             dto.routes()
         );
     }

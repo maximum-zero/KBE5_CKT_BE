@@ -1,6 +1,5 @@
 package kernel360.ckt.admin.application.service.dto;
 
-import kernel360.ckt.core.domain.enums.DrivingType;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
@@ -16,9 +15,6 @@ public record DrivingLogListDto(
     Long endOdometer,
     Long totalDistance,
     String customerName,
-    DrivingType drivingType,
-    String drivingTypeName,
-    String memo,
     List<RouteSummaryDto> routes
 ) {
     public DrivingLogListDto {}
@@ -72,9 +68,6 @@ public record DrivingLogListDto(
             maxEndOdometer,
             sumTotalDistance,
             this.customerName,
-            this.drivingType,
-            this.drivingTypeName,
-            this.memo,
             this.routes
         );
     }
