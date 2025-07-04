@@ -12,8 +12,8 @@ import java.util.Optional;
 
 public record DrivingLogResponse(
     Long id,
-    String VehicleModelName,
-    String VehicleRegistrationNumber,
+    String vehicleModelName,
+    String vehicleRegistrationNumber,
     LocalDateTime startAt,
     LocalDateTime endAt,
     Long startOdometer,
