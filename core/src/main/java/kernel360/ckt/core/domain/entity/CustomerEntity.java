@@ -19,17 +19,18 @@ public class CustomerEntity extends BaseTimeEntity {
     @Column(nullable = false)
     private CustomerType customerType;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String email;
+
+    @Column
+    private String phoneNumber;
 
     @Column(nullable = false)
     private String customerName;
 
     @Column(nullable = false, unique = true)
-    private String phoneNumber;
-
-    @Column(nullable = false, unique = true)
     private String licenseNumber;
+
     private String zipCode;
     private String address;
     private String detailedAddress;
@@ -39,9 +40,8 @@ public class CustomerEntity extends BaseTimeEntity {
     @Column(nullable = false)
     private CustomerStatus status;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "company_id")
-    private CompanyEntity company;
+    @Column(name = "company_id", nullable = false)
+    private Long companyId;
 
     @Column(name = "delete_yn", nullable = false, length = 1, columnDefinition = "CHAR(1)")
     private String deleteYn = "N";
@@ -55,7 +55,8 @@ public class CustomerEntity extends BaseTimeEntity {
                           String address,
                           String detailedAddress,
                           String birthday,
-                          CustomerStatus status) {
+                          CustomerStatus status,
+                          Long companyId) {
         this.customerType = customerType;
         this.email = email;
         this.customerName = customerName;
@@ -66,6 +67,7 @@ public class CustomerEntity extends BaseTimeEntity {
         this.detailedAddress = detailedAddress;
         this.birthday = birthday;
         this.status = status;
+        this.companyId = companyId;
     }
 
     public static CustomerEntity create(
@@ -75,10 +77,11 @@ public class CustomerEntity extends BaseTimeEntity {
         String phoneNumber,
         String licenseNumber,
         String zipCode,
-        CustomerStatus status,
         String address,
         String detailedAddress,
-        String birthday
+        String birthday,
+        CustomerStatus status,
+        Long companyId
     ) {
         return new CustomerEntity(
             customerType,
@@ -90,7 +93,8 @@ public class CustomerEntity extends BaseTimeEntity {
             address,
             detailedAddress,
             birthday,
-            status
+            status,
+            companyId
         );
     }
 
@@ -119,5 +123,4 @@ public class CustomerEntity extends BaseTimeEntity {
     public void markAsDeleted() {
         this.deleteYn = "Y";
     }
-
 }
