@@ -1,5 +1,6 @@
 package kernel360.ckt.admin.ui;
 
+import jakarta.validation.Valid;
 import kernel360.ckt.admin.application.service.CustomerRentalQueryService;
 import kernel360.ckt.admin.application.service.CustomerService;
 import kernel360.ckt.admin.application.service.command.CreateCustomerCommand;
@@ -46,17 +47,14 @@ public class CustomerController {
     }
 
     @PostMapping
-    public CommonResponse<CustomerResponse> create(@RequestBody CustomerCreateRequest request) {
-        CreateCustomerCommand command = request.toCommand();
+    public CommonResponse<CustomerResponse> create(@RequestHeader(X_USER_ID_HEADER) Long companyId, @Valid @RequestBody CustomerCreateRequest request) {
+        CreateCustomerCommand command = request.toCommand(companyId);
         CustomerEntity customerEntity = customerService.create(command);
         return CommonResponse.success(CustomerResponse.from(customerEntity));
     }
 
     @PutMapping("/{id}")
-    public CommonResponse<CustomerResponse> update(
-        @PathVariable Long id,
-        @RequestBody CustomerUpdateRequest request
-    ) {
+    public CommonResponse<CustomerResponse> update(@PathVariable Long id, @Valid @RequestBody CustomerUpdateRequest request) {
         CustomerEntity customerEntity = customerService.update(id, request);
         return CommonResponse.success(CustomerResponse.from(customerEntity));
     }
