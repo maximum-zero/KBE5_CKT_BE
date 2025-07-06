@@ -51,6 +51,12 @@ public class CustomerService {
         CustomerEntity customer = customerRepository.findById(id)
             .orElseThrow(() -> new CustomException(CustomerErrorCode.CUSTOMER_NOT_FOUND));
 
+        customerRepository.findByLicenseNumber(request.licenseNumber())
+            .filter(existing -> !existing.getId().equals(id))
+            .ifPresent(existing -> {
+                throw new CustomException(CustomerErrorCode.DUPLICATE_LICENSE_NUMBER);
+            });
+
         try {
             customer.updateBasicInfo(
                 request.customerType(),
