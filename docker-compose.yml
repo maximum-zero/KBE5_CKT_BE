@@ -18,7 +18,9 @@ services:
 
   admin:
     build:
-      context: ./admin
+      context: . # <--- 빌드 컨텍스트를 프로젝트 루트(.)로 변경!
+      dockerfile: ./admin/Dockerfile # <--- Dockerfile 경로 명시!
+#      context: ./admin
     depends_on:
       - db
     environment:
@@ -34,14 +36,20 @@ services:
       - ./logs:/logs
     networks:
       - ckt_network  # 네트워크 이름 변경
+    command:
+      -Dprofiler.transport.grpc.collector.ip=pinpoint-collector
+      -Dprofiler.collector.ip=pinpoint-collector
+      -jar app.jar
 
   gateway:
     build:
-      context: ./gateway
+      context: . # <--- 빌드 컨텍스트를 프로젝트 루트(.)로 변경!
+      dockerfile: ./gateway/Dockerfile # <--- Dockerfile 경로 명시!
+#      context: ./gateway
     ports:
       - "8080:8080"
     environment:
-      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE} # docker
+      SPRING_PROFILES_ACTIVE: docker # ${SPRING_PROFILES_ACTIVE} # docker
       SPRING_REACTOR_CONTEXT_PROPAGATION: AUTO
       JWT_SECRET: ${JWT_SECRET}
     depends_on:
@@ -50,10 +58,16 @@ services:
       - ./logs:/logs
     networks:
       - ckt_network
+    command:
+      -Dprofiler.transport.grpc.collector.ip=pinpoint-collector
+      -Dprofiler.collector.ip=pinpoint-collector
+      -jar app.jar
 
   collector:
     build:
-      context: ./collector
+      context: .
+      dockerfile: ./collector/Dockerfile
+#      context: ./collector
     depends_on:
       - db
     environment:
@@ -68,6 +82,11 @@ services:
       - ./logs:/logs
     networks:
       - ckt_network
+    command:
+      -Dprofiler.transport.grpc.collector.ip=pinpoint-collector
+      -Dprofiler.collector.ip=pinpoint-collector
+      -jar app.jar
+
 
   prometheus:
     image: prom/prometheus
@@ -95,5 +114,6 @@ volumes:
     driver: local
 
 networks:
-  ckt_network:   # 네트워크 이름 변경
+  ckt_network:
+    name: ckt_network
     driver: bridge

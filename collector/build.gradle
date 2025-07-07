@@ -39,3 +39,12 @@ tasks.bootJar {
 tasks.jar {
     enabled = true
 }
+
+bootRun {
+    // Pinpoint 에이전트 JVM 인수 추가
+    jvmArgs = [
+        "-javaagent:${project.projectDir}/pinpoint-agent-2.5.4/pinpoint-bootstrap-2.5.4.jar",
+        "-Dpinpoint.agentId=${project.name}-${System.currentTimeMillis()}",
+        "-Dpinpoint.applicationName=CktApp",
+    ]
+}
