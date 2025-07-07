@@ -66,7 +66,7 @@ public class VehicleCollectorController {
      */
     @PostMapping("/cycle")
     CommonResponse<VehicleCollectorResponse> saveVehicleCycle(@Valid @RequestBody VehicleCollectorCycleRequest request) {
-        log.info("차량 주기적 위치 정보 저장 요청 - {}", request);
+        log.info("차량 주기적 위치 정보 저장 요청 - {}", request.mdn());
         final VehicleCollectorCycleCommand cycleCommand = request.toCommand();
         return CommonResponse.success(vehicleCollectorService.saveVehicleCycle(cycleCommand));
     }
