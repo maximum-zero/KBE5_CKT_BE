@@ -1,0 +1,180 @@
+services:
+  pinpoint-hbase:
+    container_name: "${PINPOINT_HBASE_NAME}"
+    image: "pinpointdocker/pinpoint-hbase:${PINPOINT_VERSION}"
+    networks:
+      - ckt_network
+    environment:
+      - AGENTINFO_TTL=${AGENTINFO_TTL}
+      - AGENTSTATV2_TTL=${AGENTSTATV2_TTL}
+      - APPSTATAGGRE_TTL=${APPSTATAGGRE_TTL}
+      - APPINDEX_TTL=${APPINDEX_TTL}
+      - AGENTLIFECYCLE_TTL=${AGENTLIFECYCLE_TTL}
+      - AGENTEVENT_TTL=${AGENTEVENT_TTL}
+      - STRINGMETADATA_TTL=${STRINGMETADATA_TTL}
+      - APIMETADATA_TTL=${APIMETADATA_TTL}
+      - SQLMETADATA_TTL=${SQLMETADATA_TTL}
+      - TRACEV2_TTL=${TRACEV2_TTL}
+      - APPTRACEINDEX_TTL=${APPTRACEINDEX_TTL}
+      - APPMAPSTATCALLERV2_TTL=${APPMAPSTATCALLERV2_TTL}
+      - APPMAPSTATCALLEV2_TTL=${APPMAPSTATCALLEV2_TTL}
+      - APPMAPSTATSELFV2_TTL=${APPMAPSTATSELFV2_TTL}
+      - HOSTAPPMAPV2_TTL=${HOSTAPPMAPV2_TTL}
+    volumes:
+      - hbase_data:/home/pinpoint/hbase
+      - /home/pinpoint/zookeeper
+    expose:
+      # HBase Master API port
+      - "60000"
+      # HBase Master Web UI
+      - "16010"
+      # Regionserver API port
+      - "60020"
+      # HBase Regionserver web UI
+      - "16030"
+    ports:
+      - "60000:60000"
+      - "16010:16010"
+      - "60020:60020"
+      - "16030:16030"
+    restart: always
+    depends_on:
+      - zoo1
+
+  pinpoint-web:
+    container_name: "${PINPOINT_WEB_NAME}"
+    image: "pinpointdocker/pinpoint-web:${PINPOINT_VERSION}"
+
+    depends_on:
+      - pinpoint-hbase
+      - zoo1
+    restart: always
+    expose:
+      - "9997"
+    ports:
+      - "9997:9997"
+      - "${WEB_SERVER_PORT:-8080}:8080"
+    environment:
+      - WEB_SERVER_PORT=${WEB_SERVER_PORT}
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES}
+      - PINPOINT_ZOOKEEPER_ADDRESS=${PINPOINT_ZOOKEEPER_ADDRESS}
+      - CLUSTER_ENABLE=${CLUSTER_ENABLE}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - CONFIG_SENDUSAGE=${CONFIG_SENDUSAGE}
+      - LOGGING_LEVEL_ROOT=${WEB_LOGGING_LEVEL_ROOT}
+      - CONFIG_SHOW_APPLICATIONSTAT=${CONFIG_SHOW_APPLICATIONSTAT}
+      - JDBC_DRIVERCLASSNAME=${JDBC_DRIVERCLASSNAME}
+      - JDBC_URL=${SPRING_DATASOURCE_HIKARI_JDBCURL}
+      - JDBC_USERNAME=${SPRING_DATASOURCE_HIKARI_USERNAME}
+      - JDBC_PASSWORD=${SPRING_DATASOURCE_HIKARI_PASSWORD}
+      - SPRING_DATASOURCE_HIKARI_JDBCURL=${SPRING_DATASOURCE_HIKARI_JDBCURL}
+      - SPRING_DATASOURCE_HIKARI_USERNAME=${SPRING_DATASOURCE_HIKARI_USERNAME}
+      - SPRING_DATASOURCE_HIKARI_PASSWORD=${SPRING_DATASOURCE_HIKARI_PASSWORD}
+      - SPRING_METADATASOURCE_HIKARI_JDBCURL=${SPRING_METADATASOURCE_HIKARI_JDBCURL}
+      - SPRING_METADATASOURCE_HIKARI_USERNAME=${SPRING_METADATASOURCE_HIKARI_USERNAME}
+      - SPRING_METADATASOURCE_HIKARI_PASSWORD=${SPRING_METADATASOURCE_HIKARI_PASSWORD}
+      - SPRING_DATA_REDIS_HOST=${SPRING_DATA_REDIS_HOST}
+      - SPRING_DATA_REDIS_PORT=${SPRING_DATA_REDIS_PORT}
+      - SPRING_DATA_REDIS_USERNAME=${SPRING_DATA_REDIS_USERNAME}
+      - SPRING_DATA_REDIS_PASSWORD=${SPRING_DATA_REDIS_PASSWORD}
+      - PINPOINT_MODULES_WEB_LOGIN=${PINPOINT_MODULES_WEB_LOGIN}
+      - WEB_SECURITY_AUTH_USER=${WEB_SECURITY_AUTH_USER}
+      - WEB_SECURITY_AUTH_ADMIN=${WEB_SECURITY_AUTH_ADMIN}
+      - WEB_SECURITY_AUTH_JWT_SECRETKEY=${WEB_SECURITY_AUTH_JWT_SECRETKEY}
+
+    networks:
+      - ckt_network
+
+  pinpoint-collector:
+    container_name: "${PINPOINT_COLLECTOR_NAME}"
+    image: "pinpointdocker/pinpoint-collector:${PINPOINT_VERSION}"
+
+    depends_on:
+      - pinpoint-hbase
+      - zoo1
+    restart: always
+    expose:
+      - "9991"
+      - "9992"
+      - "9993"
+      - "9994"
+      - "9995"
+      - "9996"
+    ports:
+      - "${COLLECTOR_RECEIVER_GRPC_AGENT_PORT:-9991}:9991/tcp"
+      - "${COLLECTOR_RECEIVER_GRPC_STAT_POR:-9992}T:9992/tcp"
+      - "${COLLECTOR_RECEIVER_GRPC_SPAN_PORT:-9993}:9993/tcp"
+      - "${COLLECTOR_RECEIVER_BASE_PORT:-9994}:9994"
+      - "${COLLECTOR_RECEIVER_STAT_UDP_PORT:-9995}:9995/tcp"
+      - "${COLLECTOR_RECEIVER_SPAN_UDP_PORT:-9996}:9996/tcp"
+      - "${COLLECTOR_RECEIVER_STAT_UDP_PORT:-9995}:9995/udp"
+      - "${COLLECTOR_RECEIVER_SPAN_UDP_PORT:-9996}:9996/udp"
+    networks:
+      - ckt_network
+    environment:
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES}
+      - PINPOINT_ZOOKEEPER_ADDRESS=${PINPOINT_ZOOKEEPER_ADDRESS}
+      - CLUSTER_ENABLE=${CLUSTER_ENABLE}
+      - LOGGING_LEVEL_ROOT=${COLLECTOR_LOGGING_LEVEL_ROOT}
+      - FLINK_CLUSTER_ENABLE=${FLINK_CLUSTER_ENABLE}
+      - FLINK_CLUSTER_ZOOKEEPER_ADDRESS=${FLINK_CLUSTER_ZOOKEEPER_ADDRESS}
+      - SPRING_DATA_REDIS_HOST=${SPRING_DATA_REDIS_HOST}
+      - SPRING_DATA_REDIS_PORT=${SPRING_DATA_REDIS_PORT}
+      - SPRING_DATA_REDIS_USERNAME=${SPRING_DATA_REDIS_USERNAME}
+      - SPRING_DATA_REDIS_PASSWORD=${SPRING_DATA_REDIS_PASSWORD}
+
+  #zookeepers
+  zoo1:
+    image: zookeeper:3.4.13
+    restart: always
+    hostname: zoo1
+    expose:
+      - "2181"
+      - "2888"
+      - "3888"
+    ports:
+      - "2181"
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_SERVERS: server.1=0.0.0.0:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
+    networks:
+      - ckt_network
+
+  zoo2:
+    image: zookeeper:3.4.13
+    restart: always
+    hostname: zoo2
+    expose:
+      - "2181"
+      - "2888"
+      - "3888"
+    ports:
+      - "2181"
+    environment:
+      ZOO_MY_ID: 2
+      ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=0.0.0.0:2888:3888 server.3=zoo3:2888:3888
+    networks:
+      - ckt_network
+
+  zoo3:
+    image: zookeeper:3.4.13
+    restart: always
+    hostname: zoo3
+    expose:
+      - "2181"
+      - "2888"
+      - "3888"
+    ports:
+      - "2181"
+    environment:
+      ZOO_MY_ID: 3
+      ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=0.0.0.0:2888:3888
+    networks:
+      - ckt_network
+
+volumes:
+  hbase_data:
+
+networks:
+  ckt_network:
+    external: true
