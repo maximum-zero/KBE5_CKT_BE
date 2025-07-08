@@ -40,3 +40,6 @@ out/
 ### .env ###
 .env
 .env.*
+
+### pinpoint ###
+pinpoint-agent-2.5.4/

@@ -12,4 +12,4 @@ spring:
             - Path=/api/v1/auth/**, /api/v1/companies/**, /api/v1/customers/**, /api/v1/vehicles/**, /api/v1/rentals/**, /api/v1/logs/**, /api/v1/tracking/**
 
 cors:
-  allowed-origins: https://ckt.services
+  allowed-origins: https://ckt.services, https://emulator.ckt.services
