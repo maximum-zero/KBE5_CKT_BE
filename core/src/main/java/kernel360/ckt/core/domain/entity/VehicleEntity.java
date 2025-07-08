@@ -103,7 +103,9 @@ public class VehicleEntity extends BaseTimeEntity {
     public void updateLocation(Double lat, Double lon, Long odometer) {
         this.lat = lat;
         this.lon = lon;
-        this.odometer = this.odometer + odometer;
+
+        final long currentOdometer = (this.odometer != null) ? this.odometer : 0L;
+        this.odometer = currentOdometer + odometer;
     }
 
     public void delete() {
