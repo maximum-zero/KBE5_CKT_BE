@@ -47,4 +47,14 @@ public class VehicleRepositoryAdapter implements VehicleRepository {
     public List<VehicleEntity> searchAvailableVehiclesByKeyword(Long companyId, String keyword, LocalDateTime pickupAt, LocalDateTime returnAt) {
         return vehicleJpaRepository.searchAvailableVehiclesByKeyword(companyId, keyword, pickupAt, returnAt);
     }
+
+    @Override
+    public long countStolenVehicles(List<Long> runningVehicleIds) {
+        return vehicleJpaRepository.countStolenVehicles(runningVehicleIds);
+    }
+
+    @Override
+    public List<Long> findStolenVehicleIds(List<Long> vehicleIds) {
+        return vehicleJpaRepository.findStolenVehicleIds(vehicleIds);
+    }
 }

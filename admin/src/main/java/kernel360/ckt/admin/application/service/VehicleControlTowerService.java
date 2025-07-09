@@ -29,14 +29,25 @@ public class VehicleControlTowerService {
 
         long running = runningVehicleIds.toArray().length;
 
-        long stopped = total - running;
+        long stolen = vehicleRepository.countStolenVehicles(runningVehicleIds);
 
-        return ControlTowerSummaryResponse.of((int) total, (int) running, (int) stopped);
+        long stopped = total - running - stolen;
+
+        return ControlTowerSummaryResponse.of((int) total, (int) running, (int) stolen, (int) stopped);
     }
 
     public List<RunningVehicleResponse> getRunningVehiclesFromNativeQuery() {
-        return traceLogQueryRepository.findRunningVehicleLocations().stream()
-            .map(RunningVehicleResponse::from)
+        List<RunningVehicleProjection> runningProjections = traceLogQueryRepository.findRunningVehicleLocations();
+        List<Long> runningVehicleIds = runningProjections.stream()
+            .map(RunningVehicleProjection::getVehicleId)
+            .toList();
+
+        // 도난 차량 ID 목록 조회
+        List<Long> stolenVehicleIds = vehicleRepository.findStolenVehicleIds(runningVehicleIds);
+
+        // 각 차량에 대해 도난 여부를 반영하여 DTO 생성
+        return runningProjections.stream()
+            .map(p -> RunningVehicleResponse.from(p, stolenVehicleIds.contains(p.getVehicleId())))
             .toList();
     }
 }

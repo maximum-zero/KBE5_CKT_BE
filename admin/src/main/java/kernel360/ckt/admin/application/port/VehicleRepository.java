@@ -60,4 +60,8 @@ public interface VehicleRepository {
      * @param returnAt 반납 시간
      */
     List<VehicleEntity> searchAvailableVehiclesByKeyword(Long companyId, String keyword, LocalDateTime pickupAt, LocalDateTime returnAt);
+
+    long countStolenVehicles(List<Long> runningVehicleIds);
+
+    List<Long> findStolenVehicleIds(List<Long> vehicleIds);
 }
