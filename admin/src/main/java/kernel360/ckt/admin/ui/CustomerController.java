@@ -32,11 +32,12 @@ public class CustomerController {
 
     @GetMapping
     public CommonResponse<CustomerListResponse> getAllCustomers(
+        @RequestHeader(X_USER_ID_HEADER) Long companyId,
         @RequestParam(required = false) CustomerStatus status,
         @RequestParam(required = false) String keyword,
         @PageableDefault(size = 10) Pageable pageable
     ) {
-        Page<CustomerEntity> customerPage = customerService.searchCustomers(status, keyword, pageable);
+        Page<CustomerEntity> customerPage = customerService.searchCustomers(companyId, status, keyword, pageable);
         return CommonResponse.success(CustomerListResponse.from(customerPage));
     }
 
@@ -66,8 +67,10 @@ public class CustomerController {
     }
 
     @GetMapping("/summary")
-    public CommonResponse<CustomerSummaryResponse> getCustomerSummary() {
-        return CommonResponse.success(customerService.getCustomerSummary());
+    public CommonResponse<CustomerSummaryResponse> getCustomerSummary(
+        @RequestHeader(X_USER_ID_HEADER) Long companyId
+    ) {
+        return CommonResponse.success(customerService.getCustomerSummary(companyId));
     }
 
     @GetMapping("/search")

@@ -110,4 +110,13 @@ public interface RentalRepository {
      * @return 조건에 맞는 대여 건수
      */
     long countByCustomerIdAndStatus(Long customerId, RentalStatus status);
+
+    /**
+     * 특정 회사의 현재 대여 중(RENTED 상태)인 고객 수를 조회합니다.
+     * 동일 고객이 여러 대여건을 가지고 있어도 1명으로 계산합니다.
+     *
+     * @param companyId 회사 ID
+     * @return 해당 회사의 대여 중인 고객 수
+     */
+    long countRentedCustomersByCompanyId(Long companyId);
 }

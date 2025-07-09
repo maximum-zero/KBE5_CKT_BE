@@ -16,6 +16,7 @@ public interface CustomerJpaRepository extends JpaRepository<CustomerEntity, Lon
     @Query("""
     SELECT c FROM CustomerEntity c
     WHERE c.deleteYn = 'N'
+      AND c.companyId = :companyId
       AND (:status IS NULL OR c.status = :status)
       AND (
         :keyword IS NULL
@@ -24,6 +25,7 @@ public interface CustomerJpaRepository extends JpaRepository<CustomerEntity, Lon
       )
     """)
     Page<CustomerEntity> findAll(
+        @Param("companyId") Long companyId,
         @Param("status") CustomerStatus status,
         @Param("keyword") String keyword,
         Pageable pageable
@@ -31,16 +33,11 @@ public interface CustomerJpaRepository extends JpaRepository<CustomerEntity, Lon
 
     Optional<CustomerEntity> findByLicenseNumber(String licenseNumber);
 
-    // 전체 고객 수
-    long count();
-
-    // 고객 유형별 (INDIVIDUAL / CORPORATE) 수
-    @Query("SELECT COUNT(c) FROM CustomerEntity c WHERE c.customerType = :type")
-    long countByCustomerType(@Param("type") CustomerType type);
-
     List<CustomerEntity> findByDeleteYnAndCompanyIdAndCustomerNameStartingWithOrPhoneNumberStartingWith(String deleteYn, Long companyId, String customerNameKeyword, String phoneNumberKeyword);
 
     Optional<CustomerEntity> findByIdAndDeleteYn(Long id, String deleteYn);
 
-    Page<CustomerEntity> findAllByStatusAndDeleteYn(CustomerStatus status, String deleteYn, Pageable pageable);
+    long countByCompanyId(Long companyId);
+
+    long countByCustomerTypeAndCompanyId(CustomerType type, Long companyId);
 }

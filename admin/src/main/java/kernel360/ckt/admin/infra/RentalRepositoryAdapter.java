@@ -63,4 +63,9 @@ public class RentalRepositoryAdapter implements RentalRepository {
     public long countByCustomerIdAndStatus(Long customerId, RentalStatus status) {
         return rentalJpaRepository.countByCustomerIdAndStatus(customerId, status);
     }
+
+    @Override
+    public long countRentedCustomersByCompanyId(Long companyId) {
+        return rentalJpaRepository.countRentedCustomersByCompanyId(companyId);
+    }
 }

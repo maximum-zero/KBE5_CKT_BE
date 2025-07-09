@@ -93,15 +93,15 @@ public class CustomerService {
         log.info("고객 삭제 완료: id={}", id);
     }
 
-    public Page<CustomerEntity> searchCustomers(CustomerStatus status, String keyword, Pageable pageable) {
-        return customerRepository.findAll(status, keyword, pageable);
+    public Page<CustomerEntity> searchCustomers(Long companyId, CustomerStatus status, String keyword, Pageable pageable) {
+        return customerRepository.findAll(companyId, status, keyword, pageable);
     }
 
-    public CustomerSummaryResponse getCustomerSummary() {
-        long total = customerRepository.countTotal();
-        long individual = customerRepository.countByType(CustomerType.INDIVIDUAL);
-        long corporate = customerRepository.countByType(CustomerType.CORPORATE);
-        long renting = rentalRepository.countRentedCustomers();
+    public CustomerSummaryResponse getCustomerSummary(Long companyId) {
+        long total = customerRepository.countTotalByCompanyId(companyId);
+        long individual = customerRepository.countByTypeAndCompanyId(CustomerType.INDIVIDUAL, companyId);
+        long corporate = customerRepository.countByTypeAndCompanyId(CustomerType.CORPORATE, companyId);
+        long renting = rentalRepository.countRentedCustomersByCompanyId(companyId);
 
         return CustomerSummaryResponse.of(total, individual, corporate, renting);
     }
