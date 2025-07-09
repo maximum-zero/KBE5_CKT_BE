@@ -31,7 +31,7 @@ public interface CustomerRepository {
      * @param pageable 페이징 정보
      * @return 조건에 맞는 고객 목록
      */
-    Page<CustomerEntity> findAll(Long companyId, CustomerStatus status, String keyword, Pageable pageable);
+    Page<CustomerEntity> findAll(Long companyId, CustomerType type, CustomerStatus status, String keyword, Pageable pageable);
 
     /**
      * 고객 ID로 고객을 조회합니다.

@@ -24,8 +24,8 @@ public class CustomerRepositoryAdapter implements CustomerRepository {
     }
 
     @Override
-    public Page<CustomerEntity> findAll(Long companyId, CustomerStatus status, String keyword, Pageable pageable) {
-        return customerJpaRepository.findAll(companyId, status, keyword, pageable);
+    public Page<CustomerEntity> findAll(Long companyId, CustomerType type, CustomerStatus status, String keyword, Pageable pageable) {
+        return customerJpaRepository.findAll(companyId, type, status, keyword, pageable);
     }
 
     @Override

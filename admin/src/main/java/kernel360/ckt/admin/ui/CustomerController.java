@@ -11,6 +11,7 @@ import kernel360.ckt.admin.ui.dto.response.*;
 import kernel360.ckt.core.common.response.CommonResponse;
 import kernel360.ckt.core.domain.entity.CustomerEntity;
 import kernel360.ckt.core.domain.enums.CustomerStatus;
+import kernel360.ckt.core.domain.enums.CustomerType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -34,10 +35,11 @@ public class CustomerController {
     public CommonResponse<CustomerListResponse> getAllCustomers(
         @RequestHeader(X_USER_ID_HEADER) Long companyId,
         @RequestParam(required = false) CustomerStatus status,
+        @RequestParam(required = false) CustomerType type,
         @RequestParam(required = false) String keyword,
         @PageableDefault(size = 10) Pageable pageable
     ) {
-        Page<CustomerEntity> customerPage = customerService.searchCustomers(companyId, status, keyword, pageable);
+        Page<CustomerEntity> customerPage = customerService.searchCustomers(companyId, type, status, keyword, pageable);
         return CommonResponse.success(CustomerListResponse.from(customerPage));
     }
 

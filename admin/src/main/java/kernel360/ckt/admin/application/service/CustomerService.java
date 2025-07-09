@@ -93,8 +93,8 @@ public class CustomerService {
         log.info("고객 삭제 완료: id={}", id);
     }
 
-    public Page<CustomerEntity> searchCustomers(Long companyId, CustomerStatus status, String keyword, Pageable pageable) {
-        return customerRepository.findAll(companyId, status, keyword, pageable);
+    public Page<CustomerEntity> searchCustomers(Long companyId, CustomerType type, CustomerStatus status, String keyword, Pageable pageable) {
+        return customerRepository.findAll(companyId, type, status, keyword, pageable);
     }
 
     public CustomerSummaryResponse getCustomerSummary(Long companyId) {
