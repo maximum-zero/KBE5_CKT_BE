@@ -49,13 +49,12 @@ public class CustomerRepositoryAdapter implements CustomerRepository {
     }
 
     @Override
-    public long countTotalByCompanyId(Long companyId) {
-        return customerJpaRepository.countByCompanyId(companyId);
+    public long countTotalByCompanyIdAndDeleteYn(Long companyId, String deleteYn) {
+        return customerJpaRepository.countByCompanyIdAndDeleteYn(companyId, deleteYn);
     }
 
     @Override
-    public long countByTypeAndCompanyId(CustomerType type, Long companyId) {
-        return customerJpaRepository.countByCustomerTypeAndCompanyId(type, companyId);
+    public long countByTypeAndCompanyIdAndDeleteYn(CustomerType type, Long companyId, String deleteYn) {
+        return customerJpaRepository.countByCustomerTypeAndCompanyIdAndDeleteYn(type, companyId, deleteYn);
     }
-
 }

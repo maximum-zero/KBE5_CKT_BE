@@ -37,7 +37,7 @@ public interface CustomerJpaRepository extends JpaRepository<CustomerEntity, Lon
 
     Optional<CustomerEntity> findByIdAndDeleteYn(Long id, String deleteYn);
 
-    long countByCompanyId(Long companyId);
+    long countByCompanyIdAndDeleteYn(Long companyId, String deleteYn);
 
-    long countByCustomerTypeAndCompanyId(CustomerType type, Long companyId);
+    long countByCustomerTypeAndCompanyIdAndDeleteYn(CustomerType type, Long companyId, String deleteYn);
 }

@@ -68,19 +68,21 @@ public interface CustomerRepository {
     Optional<CustomerEntity> findByIdAndDeleteYn(Long id, String deleteYn);
 
     /**
-     * 회사 ID별 전체 고객 수를 조회합니다.
+     * 회사 ID 및 삭제 여부 기준으로 전체 고객 수를 조회합니다.
      *
      * @param companyId 회사의 ID
-     * @return 해당 회사의 전체 고객 수
+     * @param deleteYn 삭제 여부 ('N' 또는 'Y')
+     * @return 해당 조건의 고객 수
      */
-    long countTotalByCompanyId(Long companyId);
+    long countTotalByCompanyIdAndDeleteYn(Long companyId, String deleteYn);
 
     /**
-     * 회사 ID 및 고객 유형별 고객 수를 조회합니다.
+     * 회사 ID, 고객 유형, 삭제 여부 기준으로 고객 수를 조회합니다.
      *
-     * @param type 고객 유형 ("INDIVIDUAL" 또는 "CORPORATE")
+     * @param type 고객 유형
      * @param companyId 회사의 ID
-     * @return 해당 회사 및 유형의 고객 수
+     * @param deleteYn 삭제 여부 ('N' 또는 'Y')
+     * @return 조건에 맞는 고객 수
      */
-    long countByTypeAndCompanyId(CustomerType type, Long companyId);
+    long countByTypeAndCompanyIdAndDeleteYn(CustomerType type, Long companyId, String deleteYn);
 }

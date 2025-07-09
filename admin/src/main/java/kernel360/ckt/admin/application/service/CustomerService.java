@@ -98,9 +98,9 @@ public class CustomerService {
     }
 
     public CustomerSummaryResponse getCustomerSummary(Long companyId) {
-        long total = customerRepository.countTotalByCompanyId(companyId);
-        long individual = customerRepository.countByTypeAndCompanyId(CustomerType.INDIVIDUAL, companyId);
-        long corporate = customerRepository.countByTypeAndCompanyId(CustomerType.CORPORATE, companyId);
+        long total = customerRepository.countTotalByCompanyIdAndDeleteYn(companyId, "N");
+        long individual = customerRepository.countByTypeAndCompanyIdAndDeleteYn(CustomerType.INDIVIDUAL, companyId, "N");
+        long corporate = customerRepository.countByTypeAndCompanyIdAndDeleteYn(CustomerType.CORPORATE, companyId, "N");
         long renting = rentalRepository.countRentedCustomersByCompanyId(companyId);
 
         return CustomerSummaryResponse.of(total, individual, corporate, renting);
