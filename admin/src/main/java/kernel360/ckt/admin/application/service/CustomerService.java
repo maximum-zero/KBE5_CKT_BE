@@ -51,6 +51,12 @@ public class CustomerService {
         CustomerEntity customer = customerRepository.findById(id)
             .orElseThrow(() -> new CustomException(CustomerErrorCode.CUSTOMER_NOT_FOUND));
 
+        customerRepository.findByLicenseNumber(request.licenseNumber())
+            .filter(existing -> !existing.getId().equals(id))
+            .ifPresent(existing -> {
+                throw new CustomException(CustomerErrorCode.DUPLICATE_LICENSE_NUMBER);
+            });
+
         try {
             customer.updateBasicInfo(
                 request.customerType(),
@@ -87,15 +93,15 @@ public class CustomerService {
         log.info("고객 삭제 완료: id={}", id);
     }
 
-    public Page<CustomerEntity> searchCustomers(CustomerStatus status, String keyword, Pageable pageable) {
-        return customerRepository.findAll(status, keyword, pageable);
+    public Page<CustomerEntity> searchCustomers(Long companyId, CustomerType type, CustomerStatus status, String keyword, Pageable pageable) {
+        return customerRepository.findAll(companyId, type, status, keyword, pageable);
     }
 
-    public CustomerSummaryResponse getCustomerSummary() {
-        long total = customerRepository.countTotal();
-        long individual = customerRepository.countByType(CustomerType.INDIVIDUAL);
-        long corporate = customerRepository.countByType(CustomerType.CORPORATE);
-        long renting = rentalRepository.countRentedCustomers();
+    public CustomerSummaryResponse getCustomerSummary(Long companyId) {
+        long total = customerRepository.countTotalByCompanyIdAndDeleteYn(companyId, "N");
+        long individual = customerRepository.countByTypeAndCompanyIdAndDeleteYn(CustomerType.INDIVIDUAL, companyId, "N");
+        long corporate = customerRepository.countByTypeAndCompanyIdAndDeleteYn(CustomerType.CORPORATE, companyId, "N");
+        long renting = rentalRepository.countRentedCustomersByCompanyId(companyId);
 
         return CustomerSummaryResponse.of(total, individual, corporate, renting);
     }

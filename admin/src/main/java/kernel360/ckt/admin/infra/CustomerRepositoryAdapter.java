@@ -24,8 +24,8 @@ public class CustomerRepositoryAdapter implements CustomerRepository {
     }
 
     @Override
-    public Page<CustomerEntity> findAll(CustomerStatus status, String keyword, Pageable pageable) {
-        return customerJpaRepository.findAll(status, keyword, pageable);
+    public Page<CustomerEntity> findAll(Long companyId, CustomerType type, CustomerStatus status, String keyword, Pageable pageable) {
+        return customerJpaRepository.findAll(companyId, type, status, keyword, pageable);
     }
 
     @Override
@@ -39,16 +39,6 @@ public class CustomerRepositoryAdapter implements CustomerRepository {
     }
 
     @Override
-    public long countTotal() {
-        return customerJpaRepository.count();
-    }
-
-    @Override
-    public long countByType(CustomerType type) {
-        return customerJpaRepository.countByCustomerType(type);
-    }
-
-    @Override
     public List<CustomerEntity> search(Long companyId, String customerNameKeyword, String phoneNumberKeyword) {
         return customerJpaRepository.findByDeleteYnAndCompanyIdAndCustomerNameStartingWithOrPhoneNumberStartingWith("N", companyId, customerNameKeyword, phoneNumberKeyword);
     }
@@ -59,8 +49,12 @@ public class CustomerRepositoryAdapter implements CustomerRepository {
     }
 
     @Override
-    public Page<CustomerEntity> findAllByStatusAndDeleteYn(CustomerStatus status, String deleteYn, Pageable pageable) {
-        return customerJpaRepository.findAllByStatusAndDeleteYn(status, deleteYn, pageable);
+    public long countTotalByCompanyIdAndDeleteYn(Long companyId, String deleteYn) {
+        return customerJpaRepository.countByCompanyIdAndDeleteYn(companyId, deleteYn);
     }
 
+    @Override
+    public long countByTypeAndCompanyIdAndDeleteYn(CustomerType type, Long companyId, String deleteYn) {
+        return customerJpaRepository.countByCustomerTypeAndCompanyIdAndDeleteYn(type, companyId, deleteYn);
+    }
 }

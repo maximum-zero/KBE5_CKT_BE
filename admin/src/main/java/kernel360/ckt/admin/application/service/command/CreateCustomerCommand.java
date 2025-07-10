@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CreateCustomerCommand {
 
+    private final Long companyId;
     private final CustomerType customerType;
     private final String email;
     private final String customerName;
@@ -29,10 +30,11 @@ public class CreateCustomerCommand {
             this.phoneNumber,
             this.licenseNumber,
             this.zipCode,
-            this.status,
             this.address,
             this.detailedAddress,
-            this.birthday
+            this.birthday,
+            this.status,
+            this.companyId
         );
     }
 }

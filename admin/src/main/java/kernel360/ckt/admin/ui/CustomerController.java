@@ -1,5 +1,6 @@
 package kernel360.ckt.admin.ui;
 
+import jakarta.validation.Valid;
 import kernel360.ckt.admin.application.service.CustomerRentalQueryService;
 import kernel360.ckt.admin.application.service.CustomerService;
 import kernel360.ckt.admin.application.service.command.CreateCustomerCommand;
@@ -10,6 +11,7 @@ import kernel360.ckt.admin.ui.dto.response.*;
 import kernel360.ckt.core.common.response.CommonResponse;
 import kernel360.ckt.core.domain.entity.CustomerEntity;
 import kernel360.ckt.core.domain.enums.CustomerStatus;
+import kernel360.ckt.core.domain.enums.CustomerType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -31,11 +33,13 @@ public class CustomerController {
 
     @GetMapping
     public CommonResponse<CustomerListResponse> getAllCustomers(
+        @RequestHeader(X_USER_ID_HEADER) Long companyId,
         @RequestParam(required = false) CustomerStatus status,
+        @RequestParam(required = false) CustomerType type,
         @RequestParam(required = false) String keyword,
         @PageableDefault(size = 10) Pageable pageable
     ) {
-        Page<CustomerEntity> customerPage = customerService.searchCustomers(status, keyword, pageable);
+        Page<CustomerEntity> customerPage = customerService.searchCustomers(companyId, type, status, keyword, pageable);
         return CommonResponse.success(CustomerListResponse.from(customerPage));
     }
 
@@ -46,17 +50,14 @@ public class CustomerController {
     }
 
     @PostMapping
-    public CommonResponse<CustomerResponse> create(@RequestBody CustomerCreateRequest request) {
-        CreateCustomerCommand command = request.toCommand();
+    public CommonResponse<CustomerResponse> create(@RequestHeader(X_USER_ID_HEADER) Long companyId, @Valid @RequestBody CustomerCreateRequest request) {
+        CreateCustomerCommand command = request.toCommand(companyId);
         CustomerEntity customerEntity = customerService.create(command);
         return CommonResponse.success(CustomerResponse.from(customerEntity));
     }
 
     @PutMapping("/{id}")
-    public CommonResponse<CustomerResponse> update(
-        @PathVariable Long id,
-        @RequestBody CustomerUpdateRequest request
-    ) {
+    public CommonResponse<CustomerResponse> update(@PathVariable Long id, @Valid @RequestBody CustomerUpdateRequest request) {
         CustomerEntity customerEntity = customerService.update(id, request);
         return CommonResponse.success(CustomerResponse.from(customerEntity));
     }
@@ -68,8 +69,10 @@ public class CustomerController {
     }
 
     @GetMapping("/summary")
-    public CommonResponse<CustomerSummaryResponse> getCustomerSummary() {
-        return CommonResponse.success(customerService.getCustomerSummary());
+    public CommonResponse<CustomerSummaryResponse> getCustomerSummary(
+        @RequestHeader(X_USER_ID_HEADER) Long companyId
+    ) {
+        return CommonResponse.success(customerService.getCustomerSummary(companyId));
     }
 
     @GetMapping("/search")

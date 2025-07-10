@@ -47,4 +47,24 @@ public interface VehicleJpaRepository extends JpaRepository<VehicleEntity, Long>
         @Param("pickupAt") LocalDateTime pickupAt,
         @Param("returnAt") LocalDateTime returnAt
     );
+
+    @Query("""
+    SELECT COUNT(v) FROM VehicleEntity v
+    WHERE v.id IN :vehicleIds
+    AND NOT EXISTS (
+        SELECT 1 FROM RentalEntity r
+        WHERE r.vehicle = v
+    )
+""")
+    long countStolenVehicles(@Param("vehicleIds") List<Long> vehicleIds);
+
+    @Query("""
+    SELECT v.id FROM VehicleEntity v
+    WHERE v.id IN :vehicleIds
+    AND NOT EXISTS (
+        SELECT 1 FROM RentalEntity r
+        WHERE r.vehicle = v
+    )
+""")
+    List<Long> findStolenVehicleIds(@Param("vehicleIds") List<Long> vehicleIds);
 }

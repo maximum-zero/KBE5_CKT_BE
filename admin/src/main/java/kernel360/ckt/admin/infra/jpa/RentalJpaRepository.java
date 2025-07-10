@@ -82,4 +82,12 @@ public interface RentalJpaRepository extends JpaRepository<RentalEntity, Long> {
     long countByCustomerId(Long customerId);
 
     long countByCustomerIdAndStatus(Long customerId, RentalStatus status);
+
+    @Query("""
+    SELECT COUNT(DISTINCT r.customer.id)
+    FROM RentalEntity r
+    WHERE r.customer.companyId = :companyId
+      AND r.status = 'RENTED'
+""")
+    long countRentedCustomersByCompanyId(@Param("companyId") Long companyId);
 }

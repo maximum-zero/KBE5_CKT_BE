@@ -31,7 +31,7 @@ public interface CustomerRepository {
      * @param pageable 페이징 정보
      * @return 조건에 맞는 고객 목록
      */
-    Page<CustomerEntity> findAll(CustomerStatus status, String keyword, Pageable pageable);
+    Page<CustomerEntity> findAll(Long companyId, CustomerType type, CustomerStatus status, String keyword, Pageable pageable);
 
     /**
      * 고객 ID로 고객을 조회합니다.
@@ -48,21 +48,6 @@ public interface CustomerRepository {
      * @return 존재할 경우 고객 엔티티, 존재하지 않을 경우 빈 Optional 객체
      */
     Optional<CustomerEntity> findByLicenseNumber(String licenseNumber);
-
-    /**
-     * 전체 고객 수를 조회합니다.
-     *
-     * @return 전체 고객 수
-     */
-    long countTotal();
-
-    /**
-     * 고객 유형별(INIDIVIDUAL 또는 CORPORATE) 고객 수를 조회합니다.
-     *
-     * @param type 고객 유형 ("INDIVIDUAL" 또는 "CORPORATE")
-     * @return 해당 유형의 고객 수
-     */
-    long countByType(CustomerType type);
 
     /**
      * Keyword에 맞는 고객을 조회합니다.
@@ -83,12 +68,21 @@ public interface CustomerRepository {
     Optional<CustomerEntity> findByIdAndDeleteYn(Long id, String deleteYn);
 
     /**
-     * 고객 상태 및 삭제 여부(deleteYn)를 기준으로 페이징된 고객 목록을 조회합니다.
+     * 회사 ID 및 삭제 여부 기준으로 전체 고객 수를 조회합니다.
      *
-     * @param status     고객 상태
-     * @param deleteYn   삭제 여부 ('N' 또는 'Y')
-     * @param pageable   페이징 정보
-     * @return 조건에 맞는 고객 페이지
+     * @param companyId 회사의 ID
+     * @param deleteYn 삭제 여부 ('N' 또는 'Y')
+     * @return 해당 조건의 고객 수
      */
-    Page<CustomerEntity> findAllByStatusAndDeleteYn(CustomerStatus status, String deleteYn, Pageable pageable);
+    long countTotalByCompanyIdAndDeleteYn(Long companyId, String deleteYn);
+
+    /**
+     * 회사 ID, 고객 유형, 삭제 여부 기준으로 고객 수를 조회합니다.
+     *
+     * @param type 고객 유형
+     * @param companyId 회사의 ID
+     * @param deleteYn 삭제 여부 ('N' 또는 'Y')
+     * @return 조건에 맞는 고객 수
+     */
+    long countByTypeAndCompanyIdAndDeleteYn(CustomerType type, Long companyId, String deleteYn);
 }
