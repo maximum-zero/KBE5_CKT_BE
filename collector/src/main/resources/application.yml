@@ -4,11 +4,6 @@ server:
 spring:
   application:
     name: collector
-  rabbitmq:
-    host: rabbitmq
-    port: 5672
-    username: ${SPRING_RABBITMQ_USERNAME}
-    password: ${SPRING_RABBITMQ_PASSWORD}
 
   datasource:
     url: jdbc:mysql://${DB_URL}:${DB_PORT}/${DB_DATABASE}
@@ -21,6 +16,13 @@ spring:
       naming.physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategySnakeCaseImpl
       default_batch_fetch_size: 1000
       globally_quoted_identifiers: false
+  rabbitmq:
+    host: ${SPRING_RABBITMQ_HOST}
+    port: ${SPRING_RABBITMQ_PORT}
+    username: ${SPRING_RABBITMQ_USERNAME}
+    password: ${SPRING_RABBITMQ_PASSWORD}
+    addresses: amqp://${SPRING_RABBITMQ_HOST}:${SPRING_RABBITMQ_PORT}
+    virtual-host: /
 
 management:
   endpoints:

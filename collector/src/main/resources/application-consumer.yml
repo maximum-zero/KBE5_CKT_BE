@@ -3,13 +3,6 @@ spring:
     activate:
       on-profile: consumer
 
-  rabbitmq:
-    host: rabbitmq
-    port: 5672
-    username: guest
-    password: guest
-    virtual-host: /
-
 management:
   tracing:
     enabled: true
