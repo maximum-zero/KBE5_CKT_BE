@@ -29,7 +29,9 @@ public record VehicleCollectorOnCommand(
         return DrivingLogEntity.create(rental, vehicle);
     }
 
-    public RouteEntity toRouteEntity(DrivingLogEntity drivingLog) {
-        return RouteEntity.create(drivingLog, this.lat, this.lon, this.totalDistance, this.onTime);
+    public RouteEntity toRouteEntity(DrivingLogEntity drivingLog, VehicleEntity vehicle) {
+        final Long odometer = vehicle.getOdometer();
+        final long startOdometer = ((odometer != null) ? odometer : 0L) + this.totalDistance;
+        return RouteEntity.create(drivingLog, this.lat, this.lon, startOdometer, this.onTime);
     }
 }

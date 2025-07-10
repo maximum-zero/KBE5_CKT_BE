@@ -54,8 +54,8 @@ public class VehicleCollectorService {
             throw new CustomException(VehicleEventErrorCode.ALREADY_RUNNING);
         }
 
-        // 차량 위치 및 총 주행거리 업데이트
-        vehicle.updateLocation(command.lat(), command.lon(), command.totalDistance());
+        // 차량 위치 업데이트
+        vehicle.updateLocation(command.lat(), command.lon());
         final VehicleEntity updatedVehicle = vehicleRepository.save(vehicle);
         log.info("차량 위치 및 총 주행거리 업데이트 - 위치 : {}, {}, 총 주행거리 : {}", updatedVehicle.getLat(), updatedVehicle.getLon(), updatedVehicle.getOdometer());
 
@@ -81,7 +81,7 @@ public class VehicleCollectorService {
         }
 
         // 새로운 경로 시작
-        final RouteEntity route = routeRepository.save(command.toRouteEntity(drivingLog));
+        final RouteEntity route = routeRepository.save(command.toRouteEntity(drivingLog, updatedVehicle));
         log.info("새로운 경로 생성 - 경로 ID : {}", route.getId());
 
         // 차량 이벤트 저장
@@ -119,8 +119,9 @@ public class VehicleCollectorService {
         final RouteEntity route = findActiveRoute(drivingLog);
         log.info("진행 중인 경로 - 경로 ID : {}", route.getId());
 
-        // 차량 위치 및 총 주행거리 업데이트
-        vehicle.updateLocation(command.lat(), command.lon(), command.totalDistance());
+        // 차량 위치 및 업데이트
+        vehicle.updateLocation(command.lat(), command.lon());
+        vehicle.updateOdometer(command.totalDistance());
         final VehicleEntity updatedVehicle = vehicleRepository.save(vehicle);
         log.info("차량 위치 및 총 주행거리 업데이트 - 위치 : {}, {}, 총 주행거리 : {}", updatedVehicle.getLat(), updatedVehicle.getLon(), updatedVehicle.getOdometer());
 
@@ -182,9 +183,8 @@ public class VehicleCollectorService {
             final CycleInformation cycleInformation = lastElementOptional.get();
             final double lat = Double.parseDouble(cycleInformation.lat()) / GPS_COORDINATE_DIVISOR;
             final double lon = Double.parseDouble(cycleInformation.lon()) / GPS_COORDINATE_DIVISOR;
-            final long totalDistance = Long.parseLong(cycleInformation.sum());
 
-            vehicle.updateLocation(lat, lon, totalDistance);
+            vehicle.updateLocation(lat, lon);
             vehicleRepository.save(vehicle);
         };
 
