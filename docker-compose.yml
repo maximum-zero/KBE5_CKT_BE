@@ -56,14 +56,36 @@ services:
       context: ./collector
     depends_on:
       - db
+      - rabbitmq
     environment:
-      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+      SPRING_PROFILES_ACTIVE: consumer
       SPRING_REACTOR_CONTEXT_PROPAGATION: AUTO
       SPRING_DATASOURCE_URL: jdbc:mysql://${DB_URL}:3306/${DB_DATABASE}
       SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      SPRING_RABBITMQ_USERNAME: ${SPRING_RABBITMQ_USERNAME}
+      SPRING_RABBITMQ_PASSWORD: ${SPRING_RABBITMQ_PASSWORD}
     ports:
       - "8090:8090"
+    volumes:
+      - ./logs:/logs
+    networks:
+      - ckt_network
+  consumer:
+    build:
+      context: ./collector
+    depends_on:
+      - db
+      - rabbitmq
+    environment:
+      SPRING_PROFILES_ACTIVE: consumer
+      SPRING_DATASOURCE_URL: jdbc:mysql://${DB_URL}:3306/${DB_DATABASE}
+      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      SPRING_RABBITMQ_USERNAME: ${SPRING_RABBITMQ_USERNAME}
+      SPRING_RABBITMQ_PASSWORD: ${SPRING_RABBITMQ_PASSWORD}
+    ports:
+      - "8091:8090"
     volumes:
       - ./logs:/logs
     networks:
@@ -88,6 +110,32 @@ services:
       - prometheus
     networks:
       - ckt_network
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"     # AMQP 통신 포트
+      - "15672:15672"   # 관리 콘솔 포트
+    environment:
+      RABBITMQ_DEFAULT_USER: ${SPRING_RABBITMQ_USERNAME}
+      RABBITMQ_DEFAULT_PASS: ${SPRING_RABBITMQ_PASSWORD}
+    networks:
+      - ckt_network
+
+  rabbitmq-exporter:
+    image: kbudde/rabbitmq-exporter
+    ports:
+      - "9419:9419"
+    environment:
+      RABBIT_URL: http://rabbitmq:15672
+      RABBIT_USER: ${SPRING_RABBITMQ_USERNAME}
+      RABBIT_PASSWORD: ${SPRING_RABBITMQ_PASSWORD}
+    networks:
+      - ckt_network
+    depends_on:
+      - rabbitmq
+
 
 volumes:
   db_data:

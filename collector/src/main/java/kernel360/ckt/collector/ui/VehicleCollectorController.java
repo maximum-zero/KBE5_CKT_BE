@@ -5,6 +5,7 @@ import kernel360.ckt.collector.application.service.VehicleCollectorService;
 import kernel360.ckt.collector.application.service.command.VehicleCollectorCycleCommand;
 import kernel360.ckt.collector.application.service.command.VehicleCollectorOffCommand;
 import kernel360.ckt.collector.application.service.command.VehicleCollectorOnCommand;
+import kernel360.ckt.collector.config.RabbitConfig;
 import kernel360.ckt.collector.ui.dto.request.VehicleCollectorCycleRequest;
 import kernel360.ckt.collector.ui.dto.request.VehicleCollectorOffRequest;
 import kernel360.ckt.collector.ui.dto.request.VehicleCollectorOnRequest;
@@ -12,10 +13,16 @@ import kernel360.ckt.collector.ui.dto.response.VehicleCollectorResponse;
 import kernel360.ckt.core.common.response.CommonResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.async.DeferredResult;
+
+import java.util.Map;
 
 /**
  * 차량 주행 API Controller
@@ -31,6 +38,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class VehicleCollectorController {
 
     private final VehicleCollectorService vehicleCollectorService;
+    private final RabbitTemplate rabbitTemplate;
+    private final ThreadPoolTaskExecutor collectorExec;
 
     /**
      * 차량 시동 ON 정보 전송 API
@@ -58,17 +67,37 @@ public class VehicleCollectorController {
         return CommonResponse.success(vehicleCollectorService.sendVehicleOff(command));
     }
 
-    /**
+   /*
      * 차량 주기적 위치 정보 저장 API
      *
      * @param request 차량 주기적 위치 정보 요청 정보 {@link VehicleCollectorCycleRequest} DTO
      * @return 차량 주기적 위치 정보 저장 결과 {@link VehicleCollectorResponse}
-     */
+     *
     @PostMapping("/cycle")
     CommonResponse<VehicleCollectorResponse> saveVehicleCycle(@Valid @RequestBody VehicleCollectorCycleRequest request) {
         log.info("차량 주기적 위치 정보 저장 요청 - {}", request.mdn());
         final VehicleCollectorCycleCommand cycleCommand = request.toCommand();
         return CommonResponse.success(vehicleCollectorService.saveVehicleCycle(cycleCommand));
+    }*/
+
+    @PostMapping("/cycle")
+    public DeferredResult<ResponseEntity<Map<String, String>>> handleCycleData(@RequestBody String payload) {
+        log.info("▶ 요청 수신, thread: {}", Thread.currentThread().getName());
+        DeferredResult<ResponseEntity<Map<String, String>>> dr = new DeferredResult<>();
+
+        collectorExec.execute(() -> {
+            log.info("  → AsyncTask 시작, thread: {}", Thread.currentThread().getName());
+
+            // DB 저장용 큐로 전송
+            rabbitTemplate.convertAndSend(RabbitConfig.EXCHANGE_NAME, "gps.db", payload);
+
+            // 실시간 관제용 큐로 전송
+            rabbitTemplate.convertAndSend(RabbitConfig.EXCHANGE_NAME, "gps.view", payload);
+
+            log.info("  → AsyncTask 완료");
+            dr.setResult(ResponseEntity.ok(Map.of("status", "queued")));
+        });
+        return dr;
     }
 
 }
