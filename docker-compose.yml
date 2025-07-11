@@ -58,7 +58,8 @@ services:
       - db
       - rabbitmq
     environment:
-      SPRING_PROFILES_ACTIVE: consumer
+      SERVER_PORT: 8090
+      SPRING_PROFILES_ACTIVE: publisher,${SPRING_PROFILES_ACTIVE}
       SPRING_REACTOR_CONTEXT_PROPAGATION: AUTO
       SPRING_DATASOURCE_URL: jdbc:mysql://${DB_URL}:3306/${DB_DATABASE}
       SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
@@ -75,13 +76,13 @@ services:
       - ckt_network
   consumer:
     build:
-      context: .
-      dockerfile: ./consumer/Dockerfile
+      context: ./collector
     depends_on:
       - db
       - rabbitmq
     environment:
-      SPRING_PROFILES_ACTIVE: consumer
+      SERVER_PORT: 8091
+      SPRING_PROFILES_ACTIVE: consumer,${SPRING_PROFILES_ACTIVE}
       SPRING_DATASOURCE_URL: jdbc:mysql://${DB_URL}:3306/${DB_DATABASE}
       SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
@@ -95,7 +96,6 @@ services:
       - ./logs:/logs
     networks:
       - ckt_network
-
 
   prometheus:
     image: prom/prometheus
