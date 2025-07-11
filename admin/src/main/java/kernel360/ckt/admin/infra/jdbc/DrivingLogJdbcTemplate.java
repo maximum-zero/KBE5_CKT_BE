@@ -178,7 +178,7 @@ public class DrivingLogJdbcTemplate {
         log.info("Transformed innerWhereClause (built directly for main query): {}", innerWhereClause);
 
         return "SELECT " +
-            "dl.id AS dl_id, dl.type AS dl_type, dl.memo AS dl_memo, " +
+            "dl.id AS dl_id, " +
             "v.id AS v_id, v.model_name AS v_model_name, v.registration_number AS v_registration_number, " +
             "r.id AS r_id, r.pickup_at AS r_pickup_at, r.return_at AS r_return_at, " +
             "c.id AS c_id, c.customer_name AS c_customer_name, " +
