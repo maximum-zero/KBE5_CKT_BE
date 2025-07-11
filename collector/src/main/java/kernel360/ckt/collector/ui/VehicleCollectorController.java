@@ -2,11 +2,9 @@ package kernel360.ckt.collector.ui;
 
 import jakarta.validation.Valid;
 import kernel360.ckt.collector.application.service.VehicleCollectorService;
-import kernel360.ckt.collector.application.service.command.VehicleCollectorCycleCommand;
 import kernel360.ckt.collector.application.service.command.VehicleCollectorOffCommand;
 import kernel360.ckt.collector.application.service.command.VehicleCollectorOnCommand;
 import kernel360.ckt.collector.config.RabbitConfig;
-import kernel360.ckt.collector.ui.dto.request.VehicleCollectorCycleRequest;
 import kernel360.ckt.collector.ui.dto.request.VehicleCollectorOffRequest;
 import kernel360.ckt.collector.ui.dto.request.VehicleCollectorOnRequest;
 import kernel360.ckt.collector.ui.dto.response.VehicleCollectorResponse;
@@ -14,7 +12,6 @@ import kernel360.ckt.core.common.response.CommonResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -81,9 +78,9 @@ public class VehicleCollectorController {
     }*/
 
     @PostMapping("/cycle")
-    public DeferredResult<ResponseEntity<Map<String, String>>> handleCycleData(@RequestBody String payload) {
+    public DeferredResult<CommonResponse<VehicleCollectorResponse>> handleCycleData(@RequestBody String payload) {
         log.info("▶ 요청 수신, thread: {}", Thread.currentThread().getName());
-        DeferredResult<ResponseEntity<Map<String, String>>> dr = new DeferredResult<>();
+        DeferredResult<CommonResponse<VehicleCollectorResponse>> dr = new DeferredResult<>();
 
         collectorExec.execute(() -> {
             log.info("  → AsyncTask 시작, thread: {}", Thread.currentThread().getName());
@@ -95,7 +92,7 @@ public class VehicleCollectorController {
             rabbitTemplate.convertAndSend(RabbitConfig.EXCHANGE_NAME, "gps.view", payload);
 
             log.info("  → AsyncTask 완료");
-            dr.setResult(ResponseEntity.ok(Map.of("status", "queued")));
+            dr.setResult(CommonResponse.success(VehicleCollectorResponse.from()));
         });
         return dr;
     }
