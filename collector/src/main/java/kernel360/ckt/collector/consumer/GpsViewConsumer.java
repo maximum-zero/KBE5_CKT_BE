@@ -14,6 +14,7 @@ import java.io.IOException;
 
 @Slf4j
 @Component
+@Profile("consumer")
 @RequiredArgsConstructor
 public class GpsViewConsumer {
 
