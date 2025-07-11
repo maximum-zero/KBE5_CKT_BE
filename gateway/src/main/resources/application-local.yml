@@ -7,6 +7,11 @@ spring:
           predicates:
             - Path=/api/v1/vehicles/collector/**
 
+        - id: consumer
+          uri: http://localhost:8091
+          predicates:
+            - Path=/api/v1/sse/**
+
         - id: admin
           uri: http://localhost:8081
           predicates:
