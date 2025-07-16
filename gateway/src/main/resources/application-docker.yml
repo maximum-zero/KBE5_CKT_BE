@@ -5,12 +5,7 @@ spring:
         - id: collector
           uri: http://collector:8090
           predicates:
-            - Path=/api/v1/vehicles/collector/**
-
-        - id: consumer
-          uri: http://consumer:8091
-          predicates:
-            - Path=/api/v1/sse/**
+            - Path=/api/v1/vehicles/collector/**, /api/v1/sse/**
 
         - id: admin
           uri: http://admin:8081
