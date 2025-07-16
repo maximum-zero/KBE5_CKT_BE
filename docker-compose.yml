@@ -41,7 +41,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE} # docker
+      SPRING_PROFILES_ACTIVE: docker #${SPRING_PROFILES_ACTIVE} # docker
       SPRING_REACTOR_CONTEXT_PROPAGATION: AUTO
       JWT_SECRET: ${JWT_SECRET}
     depends_on:
@@ -70,28 +70,6 @@ services:
       SPRING_RABBITMQ_PASSWORD: ${SPRING_RABBITMQ_PASSWORD}
     ports:
       - "8090:8090"
-    volumes:
-      - ./logs:/logs
-    networks:
-      - ckt_network
-  consumer:
-    build:
-      context: ./collector
-    depends_on:
-      - db
-      - rabbitmq
-    environment:
-      SERVER_PORT: 8091
-      SPRING_PROFILES_ACTIVE: consumer,${SPRING_PROFILES_ACTIVE}
-      SPRING_DATASOURCE_URL: jdbc:mysql://${DB_URL}:3306/${DB_DATABASE}
-      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
-      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
-      SPRING_RABBITMQ_HOST: ${SPRING_RABBITMQ_HOST}
-      SPRING_RABBITMQ_PORT: ${SPRING_RABBITMQ_PORT}
-      SPRING_RABBITMQ_USERNAME: ${SPRING_RABBITMQ_USERNAME}
-      SPRING_RABBITMQ_PASSWORD: ${SPRING_RABBITMQ_PASSWORD}
-    ports:
-      - "8091:8091"
     volumes:
       - ./logs:/logs
     networks:
