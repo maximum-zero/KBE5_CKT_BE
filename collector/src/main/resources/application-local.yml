@@ -3,6 +3,10 @@ spring:
     activate:
       on-profile: local
 
+  datasource:
+    hikari:
+      maximum-pool-size: 20
+
   jpa:
     hibernate:
       ddl-auto: update
