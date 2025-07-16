@@ -12,7 +12,6 @@ import kernel360.ckt.core.common.response.CommonResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,7 +27,6 @@ import org.springframework.web.context.request.async.DeferredResult;
  *
  */
 @Slf4j
-@Profile("publisher")
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/v1/vehicles/collector")
 @RestController
