@@ -71,6 +71,11 @@ public class RentalEntity extends BaseTimeEntity {
 
     public void changeStatus(RentalStatus status) {
         this.status.update(this, status);
+        if (status == RentalStatus.RENTED) {
+            this.pickupAt = LocalDateTime.now();
+        } else if (status == RentalStatus.RETURNED) {
+            this.returnAt = LocalDateTime.now();
+        }
     }
 
     public void updateStatus(RentalStatus status) {
