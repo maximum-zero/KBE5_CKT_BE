@@ -1,14 +1,20 @@
 package kernel360.ckt.collector.application.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+
+import java.io.IOException;
 import java.util.Optional;
 
 import kernel360.ckt.collector.application.port.*;
 import kernel360.ckt.collector.application.service.command.VehicleCollectorCycleCommand;
 import kernel360.ckt.collector.application.service.command.VehicleCollectorOffCommand;
 import kernel360.ckt.collector.application.service.command.VehicleCollectorOnCommand;
+import kernel360.ckt.collector.application.service.dto.GpsSseDto;
+import kernel360.ckt.collector.application.service.dto.GpsSummarySseDto;
+import kernel360.ckt.collector.config.SseEmitterManager;
 import kernel360.ckt.collector.ui.dto.response.VehicleCollectorResponse;
 import kernel360.ckt.core.common.error.VehicleErrorCode;
 import kernel360.ckt.core.common.error.VehicleEventErrorCode;
@@ -22,6 +28,7 @@ import kernel360.ckt.core.domain.enums.VehicleEventType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -34,8 +41,13 @@ public class VehicleCollectorService {
     private final DrivingLogRepository drivingLogRepository;
     private final RouteRepository routeRepository;
     private final VehicleTraceLogRepository vehicleTraceLogRepository;
+    private final SseEmitterManager sseEmitterManager;
+
+    private final ObjectMapper objectMapper;
 
     private static final double GPS_COORDINATE_DIVISOR = 1000000.0;
+    private static final String SSE_EVENT_NAME_ON = "gps-on";
+    private static final String SSE_EVENT_NAME_OFF = "gps-off";
 
     /**
      * 차량 운행을 시작합니다.
@@ -89,6 +101,26 @@ public class VehicleCollectorService {
         final VehicleEventEntity vehicleEvent = VehicleEventEntity.create(command.mdn(), VehicleEventType.ON, rentalIdForEvent);
         vehicleEventRepository.save(vehicleEvent);
         log.info("차량 이벤트 ON - 차량 이벤트 ID : {}", vehicleEvent.getId());
+
+        // SSE 로 차량 시동 ON 알림
+        for (SseEmitter emitter : sseEmitterManager.getEmitters()) {
+            try {
+                final GpsSseDto gpsSseDto = new GpsSseDto(
+                    command.mdn(),
+                    vehicle.getRegistrationNumber(),
+                    vehicle.getModelName(),
+                    vehicle.getManufacturer(),
+                    command.lat(),
+                    command.lon(),
+                    command.spd(),
+                    rental != null ? rental.getCustomer().getCustomerName() : null,
+                    rental == null
+                );
+                emitter.send(SseEmitter.event().name(SSE_EVENT_NAME_ON).data(objectMapper.writeValueAsString(gpsSseDto)));
+            } catch (IOException e) {
+                log.error("SSE GPS ON 전송 실패 > ", e);
+            }
+        }
 
         return VehicleCollectorResponse.from(command.mdn());
     }
@@ -147,6 +179,23 @@ public class VehicleCollectorService {
         );
         vehicleEventRepository.save(vehicleEvent);
         log.info("차량 이벤트 OFF - 차량 이벤트 ID : {}", vehicleEvent.getId());
+
+        // SSE 로 차량 시동 OFF 알림
+        for (SseEmitter emitter : sseEmitterManager.getEmitters()) {
+            try {
+                final GpsSummarySseDto gpsSseDto = new GpsSummarySseDto(
+                    command.mdn(),
+                    command.lat(),
+                    command.lon(),
+                    command.spd(),
+                    relatedRental == null
+                );
+
+                emitter.send(SseEmitter.event().name(SSE_EVENT_NAME_OFF).data(objectMapper.writeValueAsString(gpsSseDto)));
+            } catch (IOException e) {
+                log.error("SSE GPS OFF 전송 실패 > ", e);
+            }
+        }
 
         return VehicleCollectorResponse.from(command.mdn());
     }

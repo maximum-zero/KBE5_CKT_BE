@@ -14,20 +14,19 @@ public class SseEmitterManager {
 
     public void add(SseEmitter emitter) {
         this.sseEmitters.add(emitter);
-        log.info("새로운 SSE 클라이언트 연결됨. 현재 클라이언트 수: {}", this.sseEmitters.size());
+        log.debug("새로운 SSE 클라이언트 연결됨. 현재 클라이언트 수: {}", this.sseEmitters.size());
 
         // 타임아웃, 완료 시 리스트에서 제거
         emitter.onCompletion(() -> {
             this.sseEmitters.remove(emitter);
-            log.info("SSE 연결 완료로 제거됨. 현재 클라이언트 수: {}", this.sseEmitters.size());
+            log.debug("SSE 연결 완료로 제거됨. 현재 클라이언트 수: {}", this.sseEmitters.size());
         });
         emitter.onTimeout(() -> {
             this.sseEmitters.remove(emitter);
-            log.info("SSE 연결 타임아웃으로 제거됨. 현재 클라이언트 수: {}", this.sseEmitters.size());
+            log.debug("SSE 연결 타임아웃으로 제거됨. 현재 클라이언트 수: {}", this.sseEmitters.size());
         });
         emitter.onError(throwable -> {
             this.sseEmitters.remove(emitter);
-            log.error("SSE 연결 오류로 제거됨.", throwable);
         });
     }
 
