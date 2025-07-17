@@ -18,10 +18,8 @@ public class VehicleControlTowerService {
     private final TraceLogQueryRepository traceLogQueryRepository;
 
     public ControlTowerSummaryResponse getControlTowerSummary() {
-        // 전체 차량 수
         long total = vehicleRepository.count();
 
-        // 운행 중 차량 리스트
         List<RunningVehicleProjection> runningProjections = traceLogQueryRepository.findRunningVehicleLocations();
         List<Long> runningVehicleIds = runningProjections.stream()
             .map(RunningVehicleProjection::getVehicleId)
@@ -31,7 +29,7 @@ public class VehicleControlTowerService {
 
         long stolen = vehicleRepository.countStolenVehicles(runningVehicleIds);
 
-        long stopped = total - running - stolen;
+        long stopped = total - running;
 
         return ControlTowerSummaryResponse.of((int) total, (int) running, (int) stolen, (int) stopped);
     }
