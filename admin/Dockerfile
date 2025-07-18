@@ -1,4 +1,5 @@
 FROM amazoncorretto:17
 WORKDIR /app
-COPY build/libs/*.jar app.jar
-ENTRYPOINT ["java", "-jar", "app.jar"]
+COPY pinpoint-agent-2.5.4 /app/pinpoint-agent-2.5.4
+COPY ./admin/build/libs/*.jar app.jar
+ENTRYPOINT ["java"]
