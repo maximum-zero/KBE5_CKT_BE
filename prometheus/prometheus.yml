@@ -20,7 +20,7 @@ scrape_configs:
   - job_name: 'consumer'
     metrics_path: '/actuator/prometheus'
     static_configs:
-      - targets: [ 'consumer:8090' ]
+      - targets: [ 'consumer:8091' ]
 
   - job_name: 'rabbitmq'
     static_configs:
