@@ -7,6 +7,7 @@
 <br />
 <br />
 ## 🎬 시연 영상
+![차칸팀_시연영상](https://github.com/user-attachments/assets/b018f4e8-4f30-4a8a-a202-22faa56873bb)
 
 ## 🚀 기능 설명
 ### 1. 실시간 관제
